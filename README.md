@@ -88,6 +88,10 @@ make frontend
 Vite prints the local URL. The checked-in `frontend/public/data/` files contain the last validated
 production export.
 
+Make and the helper scripts automatically prefer the repository's `.venv` and add `pipeline/src` to
+the Python import path. This prevents an unrelated shell or desktop-app Python setting from causing
+`ModuleNotFoundError: memorypulse` during test collection.
+
 ### Windows PowerShell
 
 ```powershell

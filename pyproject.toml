@@ -41,6 +41,7 @@ where = ["pipeline/src"]
 
 [tool.pytest.ini_options]
 testpaths = ["pipeline/tests"]
+pythonpath = ["pipeline/src"]
 addopts = "-ra"
 
 [tool.ruff]

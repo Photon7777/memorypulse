@@ -33,6 +33,8 @@
   workflow deployment, and the initial CI/Pages runs executed successfully.
 - [x] GitHub Actions upgraded to the current maintained major releases after GitHub reported Node.js 20
   runtime deprecation warnings on the initial workflow run.
+- [x] Local verification hardened to prefer `.venv` and resolve the source-layout package even when a
+  surrounding terminal exports an unrelated Python interpreter.
 
 ## Remaining
 

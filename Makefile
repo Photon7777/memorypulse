@@ -1,4 +1,7 @@
-PYTHON ?= python3
+PROJECT_ROOT := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
+DEFAULT_PYTHON := $(if $(wildcard $(PROJECT_ROOT)/.venv/bin/python),$(PROJECT_ROOT)/.venv/bin/python,python3)
+PYTHON := $(if $(filter command line,$(origin PYTHON)),$(PYTHON),$(DEFAULT_PYTHON))
+export PYTHONPATH := $(PROJECT_ROOT)/pipeline/src$(if $(PYTHONPATH),:$(PYTHONPATH))
 
 .PHONY: install bootstrap update validate compact frontend test build verify
 
