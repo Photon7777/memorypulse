@@ -1,17 +1,17 @@
 import { DataBoundary } from '../components/DataBoundary'
 import { HashLink } from '../components/HashLink'
 import { MetricCard } from '../components/MetricCard'
-import { ScoreDial } from '../components/ScoreDial'
 import { useStaticData } from '../hooks/useStaticData'
-import type { MarketSummary, NewsData, SourceHealthData } from '../types/data'
+import type { DecisionBrief, MarketSummary, NewsData, SourceHealthData } from '../types/data'
 import { formatDate, formatNumber, freshnessLabel, missingDataMessage } from '../utils/format'
 
 export function OverviewPage() {
   const summary = useStaticData<MarketSummary>('market-summary.json')
   const news = useStaticData<NewsData>('news.json')
   const health = useStaticData<SourceHealthData>('source-health.json')
-  const loading = summary.loading || news.loading || health.loading
-  const error = summary.error || news.error || health.error
+  const brief = useStaticData<DecisionBrief>('decision-brief.json')
+  const loading = summary.loading || news.loading || health.loading || brief.loading
+  const error = summary.error || news.error || health.error || brief.error
   const index = summary.data?.latest_index ?? null
   const ddr4 = summary.data?.key_changes.ddr4_recent_change ?? null
   const ddr5 = summary.data?.key_changes.ddr5_recent_change ?? null
@@ -24,25 +24,31 @@ export function OverviewPage() {
     <DataBoundary loading={loading} error={error}>
       <section className="overview-hero">
         <div className="overview-copy">
-          <p className="kicker"><span className="live-pip" />Daily market monitoring · public data</p>
-          <h1>Memory markets,<br /><em>read in context.</em></h1>
+          <p className="kicker"><span className="live-pip" />Executive memory intelligence · refreshed daily</p>
+          <h1>Memory decisions,<br /><em>grounded in evidence.</em></h1>
           <p className="hero-deck">
-            A continuously updated view of memory pricing, supply signals, and the market context
-            connecting AI infrastructure demand with consumer memory.
+            A continuously updated operating view of memory pricing, supply pressure, public policy,
+            and the evidence behind a clear procurement and inventory posture.
           </p>
           <div className="hero-actions">
-            <HashLink className="button button--primary" to="/prices">Explore price trends</HashLink>
-            <HashLink className="button button--quiet" to="/methodology">How the index works</HashLink>
+            <HashLink className="button button--primary" to="/analytics">Inspect decision analytics</HashLink>
+            <HashLink className="button button--quiet" to="/prices">Compare price trends</HashLink>
           </div>
         </div>
-        <aside className="index-panel" aria-label="Latest Memory Pressure Index">
-          <div className="index-panel__head">
-            <div><p className="eyebrow">Memory Pressure Index</p><p>Latest validated reading</p></div>
-            <span className="method-badge">v{index?.methodology_version ?? '1.0.0'}</span>
-          </div>
-          <ScoreDial score={index?.total_score ?? null} status={index?.status_label ?? 'Collecting data'} confidence={summary.data?.confidence ?? 0} />
-          <p className="index-disclaimer">{summary.data?.disclaimer}</p>
+        <aside className="executive-decision-panel" aria-label="Latest executive conclusion">
+          <div className="index-panel__head"><div><p className="eyebrow">Run conclusion</p><p>{formatDate(brief.data?.generated_at, true)}</p></div><span className="method-badge">{brief.data?.confidence ?? '—'} confidence</span></div>
+          <span className="decision-regime"><i />{brief.data?.regime ?? 'Collecting'}</span>
+          <h2>{brief.data?.headline ?? 'Building the first decision brief'}</h2>
+          <p>{brief.data?.conclusion}</p>
+          <dl><div><dt>Procurement</dt><dd>{brief.data?.recommended_posture.procurement}</dd></div><div><dt>Inventory</dt><dd>{brief.data?.recommended_posture.inventory}</dd></div><div><dt>Budget risk</dt><dd>{brief.data?.recommended_posture.budget_risk}</dd></div></dl>
+          <HashLink className="text-link" to="/analytics">See the evidence and model gates <span aria-hidden="true">→</span></HashLink>
         </aside>
+      </section>
+
+      <section className="run-conclusion" aria-label="Latest run decision detail">
+        <div className="run-conclusion__copy"><p className="kicker">What changed this run</p><h2>One conclusion, with traceable inputs</h2><p>{brief.data?.method}</p></div>
+        <div className="change-grid">{brief.data?.changes.map((change) => <article key={change.label}><span>{change.label}</span><strong>{change.value == null ? '—' : `${change.value >= 0 ? '+' : ''}${formatNumber(change.value, 2)}${change.unit === '%' ? '%' : ''}`}</strong><small>{change.unit}</small></article>)}</div>
+        <div className="brief-driver-list">{brief.data?.drivers.map((driver, driverIndex) => <article key={driver.key}><span>{String(driverIndex + 1).padStart(2, '0')}</span><div><strong>{driver.label}</strong><p>{driver.effect} signal · score {formatNumber(driver.score, 1)}</p></div></article>)}</div>
       </section>
 
       <section className="update-strip" aria-label="Data recency">
@@ -64,6 +70,7 @@ export function OverviewPage() {
           <MetricCard eyebrow="Tracked events" value={formatNumber(news.data?.events.length ?? 0, 0)} detail={`Metadata retained for up to ${news.data?.retention_days ?? 365} days`} />
           <MetricCard eyebrow="Update freshness" value={freshnessLabel(summary.data?.last_successful_update)} detail={`Latest success: ${formatDate(summary.data?.last_successful_update, true)}`} />
           <MetricCard eyebrow="Core source health" value={sourceCount ? `${healthy} / ${sourceCount}` : '—'} detail="Optional and permission-gated feeds are reported separately" />
+          <MetricCard eyebrow="Pressure score" value={index == null ? '—' : formatNumber(index.total_score, 1)} detail={`${index?.status_label ?? 'Collecting'} · ${Math.round((summary.data?.confidence ?? 0) * 100)}% data confidence`} />
         </div>
       </section>
 

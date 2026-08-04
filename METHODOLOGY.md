@@ -1,6 +1,6 @@
 # MemoryPulse methodology
 
-Version: **1.0.0**
+Version: **1.1.0**
 
 > MemoryPulse is an independent research project. Its Memory Pressure Index and forecasts are
 > analytical estimates, not official industry benchmarks, investment advice, purchasing advice, or
@@ -65,9 +65,14 @@ These include price per GB, 7/30/90-period changes where observations exist, mon
 averages/volatility, DDR4–DDR5 spreads, retail discounts, availability counts, news intensity, freshness,
 coverage, and confidence.
 
+Official macro series remain independent because producer prices, employment, and export dollars are
+not compatible units. Only the configured FRED semiconductor producer-price series contributes to the
+macro-pressure component. BLS employment and World Bank exports are displayed as separate business
+context signals with their own changes, dates, and units.
+
 ## Memory Pressure Index
 
-Configured version 1.0 weights are:
+Configured version 1.1 weights are:
 
 | Component | Weight | Raw input |
 |---|---:|---|
@@ -113,11 +118,34 @@ earlier data.
 - `MAE = mean(|actual − forecast|)` drives model selection.
 - `MAPE = mean(|actual − forecast| ÷ |actual|) × 100` is reported only when actual values are nonzero.
 - The naive model is always evaluated.
-- A 95% interval is `point forecast ± 1.96 × standard deviation(backtest residuals)`, floored at zero.
+- A 95% interval starts with `point forecast ± 1.96 × standard deviation(backtest residuals)` and scales
+  by the square root of the 1-, 3-, or 6-month horizon, with the lower bound floored at zero.
 
 Forecast rows preserve model/version, training dates, observations used, metrics, target date, and
 creation vintage. Forecasts are recalculated at most weekly unless manually forced. The accuracy view
 joins matured forecast targets to subsequently observed compatible values.
+
+## Business conclusion and ML readiness
+
+Every validated run generates a deterministic executive brief from the versioned index, its component
+coverage, the latest comparable DDR5 movement, and the latest eligible rolling-backtest forecast. The
+rules classify the market as Watch, Stable, Tightening, Easing, or High pressure; state direction and
+confidence; and map those signals to procurement, inventory, and budget-risk postures. When less than
+35% of configured index weight is represented, the regime is always Watch and the conclusion explicitly
+avoids a change in business policy pending confirmation.
+
+Driver contributions are the component score multiplied by its normalized effective weight. Missing
+signals and forecast uncertainty are listed as risks. This is explainable rules-based decision support,
+not an LLM-generated recommendation. The current brief and its compact history are exported and stored
+with methodology version 1.1.
+
+Baseline forecasting becomes eligible at 12 comparable observations. A future advanced multivariate or
+boosted model is gated until at least 60 comparable monthly DDR5 observations exist. Until then, the
+Analytics page reports the exact point count and gap instead of labeling a small sample as ML-ready.
+
+The procurement lab is a scenario calculation: purchase-now cost plus proportional annual carrying cost
+is compared with a wait cost after an explicit expected price move. It does not model supplier terms,
+lead-time risk, taxes, financing constraints, or negotiated prices and is not purchasing advice.
 
 ## Causal-language limits
 

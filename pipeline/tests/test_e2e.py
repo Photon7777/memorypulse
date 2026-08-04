@@ -15,7 +15,11 @@ def test_offline_pipeline_and_react_build(tmp_path) -> None:
     manifest_path = tmp_path / "offline/frontend/public/data/manifest.json"
     manifest = json.loads(manifest_path.read_text())
     assert manifest["production_data"] is False
-    assert (tmp_path / "offline/data/exports/quality-report.json").exists()
+    quality_path = tmp_path / "offline/data/exports/quality-report.json"
+    quality = json.loads(quality_path.read_text())
+    assert quality["table_counts"]["decision_briefs"] == 1
+    decision = json.loads((tmp_path / "offline/frontend/public/data/decision-brief.json").read_text())
+    assert decision["history"][0]["conclusion"] == decision["conclusion"]
     if not shutil.which("npm") or not (root / "frontend/node_modules").exists():
         pytest.skip("frontend dependencies are not installed")
     subprocess.run(["npm", "run", "build"], cwd=root / "frontend", check=True)

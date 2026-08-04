@@ -6,10 +6,13 @@ import requests
 from memorypulse.config import source_config
 from memorypulse.sources import (
     BestBuyMemoryProductsSource,
+    BlsSemiconductorEmploymentSource,
     DramExchangeHomepageSource,
+    FederalRegisterSemiconductorSource,
     FredSemiconductorSource,
     GdeltMemoryNewsSource,
     StanfordMemoryPricesSource,
+    WorldBankHighTechExportsSource,
 )
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -43,6 +46,33 @@ def test_fred_csv_parser_normalizes_missing_values() -> None:
     assert health.status == "success"
     assert records[-1].series_id == "PCU3344133441"
     assert records[-1].value == 104.0
+
+
+def test_bls_employment_parser_excludes_annual_average() -> None:
+    source = BlsSemiconductorEmploymentSource(source_config(ROOT)["bls_semiconductor_employment"], ROOT)
+    records, health = source.run(FIXTURES / "bls_semiconductor_employment.json")
+    assert health.status == "success"
+    assert len(records) == 2
+    assert records[-1].series_id == "CES3133441301"
+    assert records[-1].unit == "thousand employees"
+
+
+def test_world_bank_parser_keeps_only_observed_values() -> None:
+    source = WorldBankHighTechExportsSource(source_config(ROOT)["world_bank_high_tech_exports"], ROOT)
+    records, health = source.run(FIXTURES / "world_bank_high_tech_exports.json")
+    assert health.status == "success"
+    assert len(records) == 2
+    assert records[-1].series_id == "TX.VAL.TECH.CD"
+
+
+def test_federal_register_parser_stores_policy_metadata_only() -> None:
+    source = FederalRegisterSemiconductorSource(source_config(ROOT)["federal_register_semiconductor"], ROOT)
+    records, health = source.run(FIXTURES / "federal_register_semiconductor.json")
+    assert health.status == "success"
+    assert len(records) == 1
+    assert records[0].source_domain == "federalregister.gov"
+    assert "export controls" in records[0].event_tags
+    assert records[0].manually_important is True
 
 
 def test_gdelt_metadata_rules_do_not_store_article_bodies() -> None:

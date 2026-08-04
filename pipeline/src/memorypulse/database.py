@@ -52,6 +52,11 @@ CREATE TABLE news_events (
  companies VARCHAR[], memory_types VARCHAR[], event_tags VARCHAR[], short_excerpt VARCHAR,
  relevance_score DOUBLE, duplicate_group_id VARCHAR, manually_important BOOLEAN
 );
+CREATE TABLE decision_briefs (
+ brief_id VARCHAR PRIMARY KEY, generated_at TIMESTAMPTZ, regime VARCHAR, direction VARCHAR,
+ confidence VARCHAR, confidence_score DOUBLE, pressure_score DOUBLE, procurement_posture VARCHAR,
+ inventory_posture VARCHAR, budget_risk VARCHAR, conclusion VARCHAR, methodology_version VARCHAR
+);
 """
 
 
@@ -129,6 +134,7 @@ FILE_TO_TABLE = {
     "forecasts.csv": "forecasts",
     "market_index.csv": "market_index",
     "source_runs.csv": "source_runs",
+    "decision_briefs.csv": "decision_briefs",
 }
 
 

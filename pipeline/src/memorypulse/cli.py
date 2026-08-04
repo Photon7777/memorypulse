@@ -18,6 +18,7 @@ from memorypulse.exports.frontend import export_frontend
 from memorypulse.forecasting.models import forecast_series
 from memorypulse.indicators.pressure import calculate_index, components_from_database
 from memorypulse.models import (
+    DecisionBriefObservation,
     MacroIndicatorObservation,
     NewsEvent,
     PriceObservation,
@@ -33,10 +34,13 @@ from memorypulse.quality.report import (
 )
 from memorypulse.sources import (
     BestBuyMemoryProductsSource,
+    BlsSemiconductorEmploymentSource,
     DramExchangeHomepageSource,
+    FederalRegisterSemiconductorSource,
     FredSemiconductorSource,
     GdeltMemoryNewsSource,
     StanfordMemoryPricesSource,
+    WorldBankHighTechExportsSource,
 )
 from memorypulse.transformations.storage import (
     append_csv_records,
@@ -49,6 +53,9 @@ ADAPTERS = {
     "stanford_memory_prices": StanfordMemoryPricesSource,
     "dramexchange_homepage": DramExchangeHomepageSource,
     "fred_semiconductor": FredSemiconductorSource,
+    "bls_semiconductor_employment": BlsSemiconductorEmploymentSource,
+    "world_bank_high_tech_exports": WorldBankHighTechExportsSource,
+    "federal_register_semiconductor": FederalRegisterSemiconductorSource,
     "gdelt_memory_news": GdeltMemoryNewsSource,
     "bestbuy_memory_products": BestBuyMemoryProductsSource,
 }
@@ -56,6 +63,9 @@ FIXTURES = {
     "stanford_memory_prices": "stanford_memory_prices.csv",
     "dramexchange_homepage": "dramexchange_homepage.html",
     "fred_semiconductor": "fred_semiconductor.csv",
+    "bls_semiconductor_employment": "bls_semiconductor_employment.json",
+    "world_bank_high_tech_exports": "world_bank_high_tech_exports.json",
+    "federal_register_semiconductor": "federal_register_semiconductor.json",
     "gdelt_memory_news": "gdelt_news.json",
     "bestbuy_memory_products": "bestbuy_products.json",
 }
@@ -71,6 +81,13 @@ def _next_month(value: date) -> date:
     year = value.year + (1 if value.month == 12 else 0)
     month = 1 if value.month == 12 else value.month + 1
     return date(year, month, min(value.day, calendar.monthrange(year, month)[1]))
+
+
+def _add_months(value: date, months: int) -> date:
+    result = value
+    for _ in range(months):
+        result = _next_month(result)
+    return result
 
 
 def _source_run(
@@ -139,9 +156,17 @@ def _generate_forecasts(connection: Any, history: Path, force: bool = False) -> 
     for series_id, points in grouped.items():
         dates = [point[0] for point in points]
         values = [point[1] for point in points]
-        result = forecast_series(series_id, dates, values, _next_month(max(dates)), created_at=created_at)
-        if result:
-            forecasts.append(result)
+        for horizon in (1, 3, 6):
+            result = forecast_series(
+                series_id,
+                dates,
+                values,
+                _add_months(max(dates), horizon),
+                created_at=created_at,
+                horizon=horizon,
+            )
+            if result:
+                forecasts.append(result)
     written, _ = append_csv_records(
         history / "forecasts.csv", forecasts, ("forecast_created_at", "series_id", "target_date")
     )
@@ -224,6 +249,31 @@ def run_update(offline: bool, output_root: Path | None, force_forecast: bool = F
             pipeline_run_id,
             production_data=not offline,
         )
+        connection.close()
+        brief_document = json.loads((frontend_data / "decision-brief.json").read_text(encoding="utf-8"))
+        posture = brief_document["recommended_posture"]
+        append_csv_records(
+            history / "decision_briefs.csv",
+            [
+                DecisionBriefObservation(
+                    brief_id=brief_document["brief_id"],
+                    generated_at=datetime.fromisoformat(brief_document["generated_at"].replace("Z", "+00:00")),
+                    regime=brief_document["regime"],
+                    direction=brief_document["direction"],
+                    confidence=brief_document["confidence"],
+                    confidence_score=float(brief_document["confidence_score"]),
+                    pressure_score=float(brief_document["pressure_score"]),
+                    procurement_posture=posture["procurement"],
+                    inventory_posture=posture["inventory"],
+                    budget_risk=posture["budget_risk"],
+                    conclusion=brief_document["conclusion"],
+                    methodology_version=indicator["methodology_version"],
+                )
+            ],
+            "brief_id",
+        )
+        connection = create_database(history, database_path)
+        build_quality_report(connection, exports_dir / "quality-report.json", not offline)
         connection.close()
     errors = validate_export_directory(frontend_data, expect_production=not offline)
     if errors:

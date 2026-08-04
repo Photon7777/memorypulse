@@ -3,8 +3,9 @@
 MemoryPulse is a continuously updated, open-source market-intelligence project that tracks public
 signals around AI infrastructure demand, HBM allocation, DRAM supply, semiconductor conditions,
 and consumer memory prices. It preserves historical facts, builds an ephemeral analytical database,
-publishes a transparent 0–100 Memory Pressure Index, withholds forecasts until the history is
-sufficient, and serves a static React research site through GitHub Pages.
+publishes a transparent 0–100 Memory Pressure Index, produces an auditable business conclusion on
+every validated run, withholds forecasts until the history is sufficient, and serves an interactive
+React decision-support site through GitHub Pages.
 
 It is designed to operate for **$0**: no continuously running server, paid database, paid API, API-key
 requirement, or paid LLM. Its language describes association and market context—not unsupported
@@ -28,15 +29,17 @@ missingness, and uncertainty visible.
 
 ```mermaid
 flowchart LR
-  A["Public sources\nStanford · FRED · GDELT"] --> B["Source adapters\ntimeouts · retries · validation"]
+  A["Public sources\nStanford · FRED · BLS · World Bank\nFederal Register · GDELT"] --> B["Source adapters\ntimeouts · retries · validation"]
   K["Optional Best Buy key"] -.-> B
   B --> C["Canonical history\nCSV · NDJSON"]
   C --> D["Ephemeral DuckDB"]
   D --> E["Polars normalization\nquality checks · views"]
   E --> F["Pressure Index\ntransparent baselines"]
-  E --> G["Forecast selection\nrolling-origin backtests"]
+  E --> G["Forecast selection\n1 · 3 · 6 month horizons\nrolling-origin backtests"]
+  F --> Q["Executive decision brief\nposture · drivers · risks"]
   F --> H["Atomic static JSON"]
   G --> H
+  Q --> H
   H --> I["React · TypeScript · ECharts"]
   I --> J["GitHub Pages"]
   L["Daily GitHub Action"] --> B
@@ -58,6 +61,9 @@ for every run and is never committed. The browser reads only generated static JS
 |---|---|---:|---|
 | [Stanford Memory Price Data](https://dam.stanford.edu/assets/memory-prices/memory-prices.csv) | Historical/monthly price context, including source attribution | None | Enabled |
 | [FRED PCU3344133441](https://fred.stlouisfed.org/series/PCU3344133441) | Broad semiconductor producer-price context | None | Enabled |
+| [BLS Public Data API](https://www.bls.gov/developers/home.htm) | U.S. semiconductor manufacturing employment | None | Enabled |
+| [World Bank Indicators API](https://api.worldbank.org/v2/country/WLD/indicator/TX.VAL.TECH.CD?format=json) | Global high-technology export context | None | Enabled |
+| [Federal Register API](https://www.federalregister.gov/developers/documentation/api/v1) | Official semiconductor policy and rule metadata | None | Enabled |
 | [GDELT DOC API](https://blog.gdeltproject.org/gdelt-doc-2-0-api-debuts/) | Article metadata and short excerpts | None | Enabled; failures are non-blocking |
 | [DRAMeXchange homepage](https://www.dramexchange.com/) | Public homepage spot/module tables only | None | Disabled pending owner terms/robots review |
 | [Best Buy Products API](https://bestbuyapis.github.io/api-documentation/) | Optional retail module observations | Optional key | Disabled automatically without a key |
@@ -167,12 +173,29 @@ Moderate Pressure (25–49), Elevated Pressure (50–74), and Severe Pressure (7
 The index is an independent analytical indicator, not an official benchmark or certain shortage
 predictor. Full formulas are in [METHODOLOGY.md](METHODOLOGY.md).
 
+## Business analytics and interactive decisions
+
+Each successful run publishes a versioned executive brief with a pressure regime, market direction,
+confidence, procurement and inventory posture, budget-risk label, top explainable drivers, known risks,
+and a plain-language conclusion. Briefs are also appended to `data/history/decision_briefs.csv`, so the
+website can show how conclusions changed over time instead of replacing the prior interpretation.
+
+The Analytics workspace separates incompatible official indicators, exposes each index component's
+effective weight and contribution, compares forecast candidates, and states whether the data volume is
+ready for baseline models or more advanced ML. Advanced multivariate ML remains disabled until at least
+60 comparable monthly DDR5 observations exist; the site reports the remaining evidence gap.
+
+Interactive tools include DDR-generation/source/date-range filters, per-series visibility controls,
+shareable price views, CSV downloads, event search/sort/export, forecast-horizon selection, device-cost
+scenarios, and a procurement lab that compares modeled price movement with inventory carrying cost.
+
 ## Forecasting
 
 A series needs at least 12 genuine comparable observations. MemoryPulse evaluates naive last value,
 drift, three-period rolling mean, and damped Holt trend with rolling-origin backtests. The model with
-the lowest MAE is selected while MAPE is reported only when actual values are nonzero. A 95% interval
-uses backtest residual variability. Forecast vintages remain in history for later accuracy checks.
+the lowest MAE is selected while MAPE is reported only when actual values are nonzero. Forecasts are
+published at 1-, 3-, and 6-month horizons; uncertainty expands with horizon using backtest residual
+variability. Forecast vintages remain in history for later accuracy checks.
 No synthetic history is generated, and insufficient series show: **“Collecting additional history
 before publishing a forecast.”**
 

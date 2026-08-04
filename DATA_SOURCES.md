@@ -51,6 +51,51 @@ URL and UTC collection time. The repository does not contain downloaded HTML or 
 - **Redistribution:** Normalized values and source attribution are retained; FRED/source notes apply.
 - **Failure behavior:** The source degrades independently; price and news collection can continue.
 
+## BLS semiconductor employment
+
+- **URL:** <https://api.bls.gov/publicAPI/v1/timeseries/data/CES3133441301>
+- **Series:** `CES3133441301`, U.S. semiconductor and related device manufacturing employment.
+- **Collected:** Monthly observation date, employment in thousands, series identifier/name, source URL,
+  and UTC collection time. The annual-average `M13` record is excluded.
+- **Frequency:** Checked daily; the underlying series is monthly.
+- **Authentication:** None through the BLS v1 Public Data API.
+- **Reliability:** Official U.S. labor statistics.
+- **Caveats:** Employment is a capacity/labor context signal, not a memory price and not a direct measure
+  of output. It is displayed separately and is not averaged with incompatible macro units.
+- **Failure behavior:** API status errors, malformed records, or zero valid rows degrade only this source.
+
+## World Bank high-technology exports
+
+- **URL:** <https://api.worldbank.org/v2/country/WLD/indicator/TX.VAL.TECH.CD?format=json&per_page=100>
+- **Series:** `TX.VAL.TECH.CD`, global high-technology exports in current U.S. dollars.
+- **Collected:** Annual observation date, value, series metadata, source URL, and UTC collection time.
+- **Frequency:** Checked daily; the underlying indicator is annual and may be revised.
+- **Authentication:** None.
+- **Reliability:** Official World Bank indicator API.
+- **Caveats:** The category is much broader than memory or semiconductors, uses nominal dollars, and is
+  retained as business context only. It is never combined numerically with price or employment units.
+- **Failure behavior:** API errors, empty responses, and invalid dates degrade only this source.
+
+## Federal Register semiconductor policy metadata
+
+- **URL:** <https://www.federalregister.gov/api/v1/documents.json?per_page=50&order=newest&conditions%5Bterm%5D=semiconductor>
+- **Collected:** Official document title, publication timestamp, canonical HTML URL, agency names,
+  abstract excerpt, and transparent policy tags. No full document body is retained.
+- **Frequency:** Once per daily run with a bounded 50-document response.
+- **Authentication:** None.
+- **Reliability:** Official U.S. government rule and notice metadata.
+- **Caveats:** A keyword match does not imply a market impact. Policy records support traceability and
+  event context; they do not establish causality or automatically change a procurement posture.
+- **Failure behavior:** Errors or empty results degrade independently and preserve earlier metadata.
+
+## Evaluated but not enabled
+
+- **SEC EDGAR:** The API is free, but automated clients must declare a responsible organization and
+  contact email in the User-Agent. MemoryPulse does not invent or expose the repository owner's email,
+  so EDGAR is not enabled until the owner explicitly supplies an approved contact identity.
+- **U.S. Census international trade:** The current API documentation requires an API key for all
+  international-trade queries. It remains a future optional integration rather than a keyless core feed.
+
 ## GDELT DOC API
 
 - **URL:** <https://api.gdeltproject.org/api/v2/doc/doc>

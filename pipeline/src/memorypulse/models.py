@@ -203,3 +203,27 @@ class ForecastObservation(Contract):
     backtest_mape: float | None
     observations_used: int
     data_frequency: str
+
+
+@dataclass(slots=True)
+class DecisionBriefObservation(Contract):
+    brief_id: str
+    generated_at: datetime
+    regime: str
+    direction: str
+    confidence: str
+    confidence_score: float
+    pressure_score: float
+    procurement_posture: str
+    inventory_posture: str
+    budget_risk: str
+    conclusion: str
+    methodology_version: str
+
+    def validate(self) -> None:
+        if not 0 <= self.confidence_score <= 1:
+            raise ValidationError("decision confidence must be between 0 and 1")
+        if not 0 <= self.pressure_score <= 100:
+            raise ValidationError("decision pressure score must be between 0 and 100")
+        if not self.conclusion:
+            raise ValidationError("decision brief requires a conclusion")

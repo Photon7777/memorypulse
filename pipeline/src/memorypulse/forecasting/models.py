@@ -10,7 +10,7 @@ from statsmodels.tsa.holtwinters import Holt
 from memorypulse.models import ForecastObservation
 
 MINIMUM_HISTORY = 12
-MODEL_VERSION = "1.0.0"
+MODEL_VERSION = "1.1.0"
 
 
 @dataclass(slots=True)
@@ -48,6 +48,25 @@ MODELS: dict[str, Callable[[np.ndarray], float]] = {
 }
 
 
+def forecast_model(values: np.ndarray, model_name: str, horizon: int = 1) -> float:
+    if horizon < 1:
+        raise ValueError("forecast horizon must be positive")
+    if model_name == "naive_last_value":
+        return _naive(values)
+    if model_name == "drift":
+        slope = (float(values[-1]) - float(values[0])) / max(1, len(values) - 1)
+        return float(values[-1] + slope * horizon)
+    if model_name == "rolling_mean_3":
+        extended = values.astype(float).tolist()
+        for _ in range(horizon):
+            extended.append(float(np.mean(extended[-min(3, len(extended)) :])))
+        return extended[-1]
+    if model_name == "holt_damped_trend":
+        fitted = Holt(values, damped_trend=True, initialization_method="estimated").fit(optimized=True)
+        return float(fitted.forecast(horizon)[-1])
+    raise KeyError(f"unknown model: {model_name}")
+
+
 def rolling_origin_backtest(values: list[float], model_name: str) -> BacktestResult:
     data = np.asarray(values, dtype=float)
     start = max(6, len(data) // 2)
@@ -75,6 +94,7 @@ def forecast_series(
     target_date: date,
     frequency: str = "monthly",
     created_at: datetime | None = None,
+    horizon: int = 1,
 ) -> ForecastObservation | None:
     if len(values) < MINIMUM_HISTORY or len(values) != len(dates):
         return None
@@ -82,12 +102,12 @@ def forecast_series(
     best = min(results, key=lambda result: (result.mae, result.name != "naive_last_value"))
     data = np.asarray(values, dtype=float)
     try:
-        point = MODELS[best.name](data)
+        point = forecast_model(data, best.name, horizon)
     except (ValueError, RuntimeError, np.linalg.LinAlgError):
         best = next(result for result in results if result.name == "naive_last_value")
         point = _naive(data)
     residual_scale = float(np.std(best.residuals, ddof=1)) if len(best.residuals) > 1 else best.mae
-    margin = max(0.0, 1.96 * residual_scale)
+    margin = max(0.0, 1.96 * residual_scale * float(np.sqrt(horizon)))
     return ForecastObservation(
         forecast_created_at=created_at or datetime.now(timezone.utc).replace(microsecond=0),
         target_date=target_date,

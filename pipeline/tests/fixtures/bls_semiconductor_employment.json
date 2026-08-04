@@ -1,0 +1,15 @@
+{
+  "status": "REQUEST_SUCCEEDED",
+  "responseTime": 12,
+  "message": [],
+  "Results": {
+    "series": [{
+      "seriesID": "CES3133441301",
+      "data": [
+        {"year": "2026", "period": "M05", "periodName": "May", "value": "180.1", "footnotes": []},
+        {"year": "2026", "period": "M04", "periodName": "April", "value": "181.1", "footnotes": []},
+        {"year": "2026", "period": "M13", "periodName": "Annual", "value": "181.5", "footnotes": []}
+      ]
+    }]
+  }
+}

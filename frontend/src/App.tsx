@@ -7,6 +7,7 @@ import { formatDate } from './utils/format'
 import { isManifest } from './utils/guards'
 
 const PricesPage = lazy(() => import('./pages/PricesPage').then((module) => ({ default: module.PricesPage })))
+const AnalyticsPage = lazy(() => import('./pages/AnalyticsPage').then((module) => ({ default: module.AnalyticsPage })))
 const ContextPage = lazy(() => import('./pages/ContextPage').then((module) => ({ default: module.ContextPage })))
 const EventsPage = lazy(() => import('./pages/EventsPage').then((module) => ({ default: module.EventsPage })))
 const ForecastsPage = lazy(() => import('./pages/ForecastsPage').then((module) => ({ default: module.ForecastsPage })))
@@ -15,7 +16,8 @@ const MethodologyPage = lazy(() => import('./pages/MethodologyPage').then((modul
 const HealthPage = lazy(() => import('./pages/HealthPage').then((module) => ({ default: module.HealthPage })))
 
 const navigation = [
-  ['/', 'Overview'],
+  ['/', 'Executive'],
+  ['/analytics', 'Analytics'],
   ['/prices', 'Prices'],
   ['/context', 'AI context'],
   ['/events', 'Events'],
@@ -26,7 +28,7 @@ const navigation = [
 ]
 
 function currentRoute(): string {
-  return window.location.hash.replace(/^#/, '') || '/'
+  return window.location.hash.replace(/^#/, '').split('?')[0] || '/'
 }
 
 function useHashRoute(): string {
@@ -46,6 +48,7 @@ function useHashRoute(): string {
 function RouteContent({ route }: { route: string }) {
   switch (route) {
     case '/': return <OverviewPage />
+    case '/analytics': return <AnalyticsPage />
     case '/prices': return <PricesPage />
     case '/context': return <ContextPage />
     case '/events': return <EventsPage />
@@ -76,8 +79,8 @@ function App() {
       <footer className="site-footer">
         <div><HashLink className="brand brand--footer" to="/"><span className="brand-mark"><i /><i /><i /></span><span>Memory<strong>Pulse</strong></span></HashLink><p>Open, explainable memory-market intelligence from public data.</p></div>
         <div><p className="eyebrow">Research</p><HashLink to="/methodology">Methodology</HashLink><HashLink to="/health">Data health</HashLink><a href="https://github.com/Photon7777/memorypulse">GitHub repository</a></div>
-        <div><p className="eyebrow">Attribution</p><span>Stanford · FRED · GDELT</span><span>DRAMeXchange when enabled</span><span>Best Buy API when configured</span></div>
-        <div><p className="eyebrow">Latest build</p><span>{manifest.error ? 'Manifest unavailable' : formatDate(manifest.data?.generated_at, true)}</span><span>Methodology v{manifest.data?.methodology_version ?? '1.0.0'}</span></div>
+        <div><p className="eyebrow">Attribution</p><span>Stanford · FRED · BLS</span><span>World Bank · GDELT</span><span>Federal Register</span></div>
+        <div><p className="eyebrow">Latest build</p><span>{manifest.error ? 'Manifest unavailable' : formatDate(manifest.data?.generated_at, true)}</span><span>Methodology v{manifest.data?.methodology_version ?? '1.1.0'}</span></div>
         <p className="footer-disclaimer">MemoryPulse is an independent research project. Its index and forecasts are analytical estimates—not official benchmarks, investment advice, purchasing advice, or guarantees of future prices.</p>
       </footer>
     </div>

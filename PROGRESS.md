@@ -35,6 +35,12 @@
   runtime deprecation warnings on the initial workflow run.
 - [x] Local verification hardened to prefer `.venv` and resolve the source-layout package even when a
   surrounding terminal exports an unrelated Python interpreter.
+- [x] Added keyless official BLS employment, World Bank high-technology export, and Federal Register
+  semiconductor-policy sources with isolated health reporting and lawful compact metadata storage.
+- [x] Added a versioned executive decision brief on every successful run with posture, drivers, risks,
+  conclusion history, separate official macro analytics, and explicit baseline/advanced-ML readiness.
+- [x] Added 1/3/6-month forecast horizons, candidate-model comparisons, business-signal visualization,
+  shareable/filterable price views, CSV exports, event search/sort, and a procurement decision lab.
 
 ## Remaining
 
@@ -62,6 +68,10 @@
   distribution without prior written permission; its robots endpoint also returned a 404-style page.
 - Best Buy data is absent without the optional key, reducing retail component confidence by design.
 - FRED is broad semiconductor context, not a direct RAM price; Stanford series definitions vary.
+- BLS employment and World Bank export dollars are contextual signals with incompatible units and are
+  intentionally not blended into the FRED-based macro-pressure component.
+- Advanced multivariate ML remains gated until 60 comparable monthly DDR5 observations are available;
+  transparent rolling-backtest baselines are used in the meantime.
 - Public news intensity and conceptual allocation mechanisms are associations, not causal proof.
 - GitHub Pages deployment is active; future workflow behavior still depends on GitHub-hosted runner and
   upstream public-source availability.

@@ -6,10 +6,13 @@ import { formatDate, formatNumber, freshnessLabel } from '../utils/format'
 
 const SOURCE_LABELS: Record<string, string> = {
   bestbuy_memory_products: 'Best Buy memory products',
+  bls_semiconductor_employment: 'BLS semiconductor employment',
   dramexchange_homepage: 'DRAMeXchange homepage',
+  federal_register_semiconductor: 'Federal Register semiconductor policy',
   fred_semiconductor: 'FRED semiconductor',
   gdelt_memory_news: 'GDELT memory news',
   stanford_memory_prices: 'Stanford memory prices',
+  world_bank_high_tech_exports: 'World Bank high-technology exports',
 }
 
 export function HealthPage() {

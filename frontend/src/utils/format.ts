@@ -10,6 +10,12 @@ export function formatCurrency(value: number | null | undefined): string {
     : new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value)
 }
 
+export function formatCompactNumber(value: number | null | undefined): string {
+  return value == null || !Number.isFinite(value)
+    ? 'Not available'
+    : new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 2 }).format(value)
+}
+
 export function formatDate(value: string | null | undefined, withTime = false): string {
   if (!value) return 'Not available'
   const date = new Date(value)

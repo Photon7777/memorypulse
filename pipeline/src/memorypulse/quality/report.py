@@ -24,6 +24,7 @@ def build_quality_report(
         "source_runs",
         "market_index",
         "forecasts",
+        "decision_briefs",
     ]
     counts = {table: connection.execute(f"SELECT count(*) FROM {table}").fetchone()[0] for table in tables}
     invalid_prices = connection.execute(
@@ -75,6 +76,8 @@ def build_quality_report(
 def validate_export_directory(data_dir: Path, expect_production: bool | None = None) -> list[str]:
     required = {
         "manifest.json",
+        "decision-brief.json",
+        "analytics.json",
         "market-summary.json",
         "prices.json",
         "retail.json",

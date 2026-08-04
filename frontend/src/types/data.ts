@@ -67,6 +67,91 @@ export interface PricesData {
   units_note: string
 }
 
+export interface DecisionDriver {
+  key: string
+  label: string
+  score: number
+  effect: 'tightening' | 'easing' | 'neutral'
+  contribution: number
+  evidence: Record<string, number | null>
+}
+
+export interface DecisionBrief {
+  brief_id: string
+  generated_at: string
+  regime: string
+  direction: string
+  confidence: string
+  confidence_score: number
+  pressure_score: number
+  headline: string
+  conclusion: string
+  recommended_posture: {
+    procurement: string
+    inventory: string
+    budget_risk: string
+  }
+  drivers: DecisionDriver[]
+  risks: string[]
+  changes: Array<{ label: string; value: number | null; unit: string }>
+  ddr5: {
+    latest_price_per_gb: number | null
+    latest_observation: string | null
+    recent_change_percent: number | null
+    forecast_change_percent: number | null
+    forecast: Forecast | null
+  }
+  method: string
+  disclaimer: string
+  history: Array<{
+    brief_id: string
+    generated_at: string
+    regime: string
+    direction: string
+    confidence: string
+    confidence_score: number
+    pressure_score: number
+    procurement_posture: string
+    inventory_posture: string
+    budget_risk: string
+    conclusion: string
+  }>
+}
+
+export interface AnalyticsMacroSeries {
+  series_id: string
+  name: string
+  unit: string
+  source_id: string
+  source_url: string
+  latest: { date: string; value: number }
+  change_percent: number | null
+  observations: number
+  points: Array<{ date: string; value: number }>
+}
+
+export interface ModelDiagnostic {
+  series_id: string
+  observations: number
+  selected_model: string
+  advanced_ml_ready: boolean
+  candidates: Array<{ model: string; mae: number; mape: number | null; selected: boolean }>
+}
+
+export interface AnalyticsData {
+  components: Array<IndexComponent & { label: string; effective_weight: number; weighted_contribution: number | null }>
+  macro_series: AnalyticsMacroSeries[]
+  model_diagnostics: ModelDiagnostic[]
+  event_pressure: { latest_30_days: number; prior_30_days: number; policy_events: number }
+  model_readiness: {
+    ddr5_monthly_points: number
+    baseline_models_ready: boolean
+    advanced_ml_ready: boolean
+    points_until_advanced_ml: number
+    explanation: string
+  }
+}
+
 export interface NewsEvent {
   event_id: string
   published_at: string

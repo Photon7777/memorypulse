@@ -9,10 +9,11 @@ from typing import Any
 
 import duckdb
 
+from memorypulse.analysis.briefing import build_business_analytics, build_decision_brief
 from memorypulse.indicators.pressure import IndexResult, calculate_index, components_from_database
 from memorypulse.transformations.storage import atomic_write_text
 
-SCHEMA_VERSION = "1.0.0"
+SCHEMA_VERSION = "1.1.0"
 
 
 def _json_value(value: Any) -> Any:
@@ -211,6 +212,7 @@ def export_frontend(
     latest_success = connection.execute(
         "SELECT max(completed_at) FROM source_runs WHERE status = 'success'"
     ).fetchone()[0]
+    key_changes = _key_changes(connection)
     summary = {
         "latest_index": index.to_record() if index.confidence_score > 0 else None,
         "components": [component.as_dict() for component in index_result.components],
@@ -219,11 +221,36 @@ def export_frontend(
         "last_pipeline_run": latest_run,
         "last_successful_update": latest_success,
         "website_build": generated,
-        "key_changes": _key_changes(connection),
+        "key_changes": key_changes,
         "insights": index_result.insights,
         "disclaimer": "The Memory Pressure Index is an analytical indicator, not an official industry index or a certain shortage predictor.",
     }
+    decision_brief = build_decision_brief(connection, index_result, weights, key_changes, generated)
+    prior_briefs = _rows(
+        connection,
+        """SELECT brief_id, generated_at, regime, direction, confidence, confidence_score,
+        pressure_score, procurement_posture, inventory_posture, budget_risk, conclusion
+        FROM decision_briefs ORDER BY generated_at DESC LIMIT 29""",
+    )
+    decision_brief["history"] = [
+        {
+            "brief_id": decision_brief["brief_id"],
+            "generated_at": decision_brief["generated_at"],
+            "regime": decision_brief["regime"],
+            "direction": decision_brief["direction"],
+            "confidence": decision_brief["confidence"],
+            "confidence_score": decision_brief["confidence_score"],
+            "pressure_score": decision_brief["pressure_score"],
+            "procurement_posture": decision_brief["recommended_posture"]["procurement"],
+            "inventory_posture": decision_brief["recommended_posture"]["inventory"],
+            "budget_risk": decision_brief["recommended_posture"]["budget_risk"],
+            "conclusion": decision_brief["conclusion"],
+        },
+        *[item for item in prior_briefs if item["brief_id"] != decision_brief["brief_id"]],
+    ]
     files = {
+        "decision-brief.json": decision_brief,
+        "analytics.json": build_business_analytics(connection, index_result, weights),
         "market-summary.json": summary,
         "prices.json": _price_export(connection),
         "retail.json": _retail_export(connection),

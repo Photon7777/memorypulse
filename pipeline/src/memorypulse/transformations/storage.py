@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any
 
 from memorypulse.models import (
+    DecisionBriefObservation,
     ForecastObservation,
     MacroIndicatorObservation,
     MarketIndexObservation,
@@ -26,6 +27,7 @@ HISTORY_CONTRACTS = {
     "forecasts.csv": ForecastObservation,
     "market_index.csv": MarketIndexObservation,
     "source_runs.csv": SourceRun,
+    "decision_briefs.csv": DecisionBriefObservation,
 }
 
 

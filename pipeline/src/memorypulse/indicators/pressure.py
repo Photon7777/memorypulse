@@ -71,7 +71,9 @@ def components_from_database(connection: duckdb.DuckDBPyConnection) -> list[Comp
     )
     macro_values = _series(
         connection,
-        "SELECT avg(value) FROM macro_indicators GROUP BY observation_date ORDER BY observation_date",
+        """SELECT avg(value) FROM macro_indicators
+        WHERE series_id = 'PCU3344133441'
+        GROUP BY observation_date ORDER BY observation_date""",
     )
     news_values = _series(
         connection,
