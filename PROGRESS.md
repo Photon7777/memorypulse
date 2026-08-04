@@ -29,11 +29,13 @@
   numerical history, frontend size enforcement, ignored Parquet output, and documented archival method.
 - [x] Live production path exercised successfully against Stanford and FRED; GDELT succeeded once and its
   later HTTP 429 was correctly recorded as degraded without losing earlier metadata.
+- [x] Public repository created at `Photon7777/memorypulse`, `main` pushed, GitHub Pages configured for
+  workflow deployment, and the initial CI/Pages runs executed successfully.
+- [x] GitHub Actions upgraded to the current maintained major releases after GitHub reported Node.js 20
+  runtime deprecation warnings on the initial workflow run.
 
 ## Remaining
 
-- [ ] Repository owner: replace GitHub `OWNER` placeholders, push to a public GitHub repository, and select
-  **Settings → Pages → Build and deployment → Source → GitHub Actions**.
 - [ ] Repository owner: review current DRAMeXchange robots/terms before enabling that adapter.
 - [ ] Optional: add `BESTBUY_API_KEY` as a GitHub Actions repository secret for retail coverage.
 - [ ] Optional: add deployment screenshots to the documented placeholders.
@@ -59,5 +61,5 @@
 - Best Buy data is absent without the optional key, reducing retail component confidence by design.
 - FRED is broad semiconductor context, not a direct RAM price; Stanford series definitions vary.
 - Public news intensity and conceptual allocation mechanisms are associations, not causal proof.
-- The GitHub Actions workflows and Pages deployment are locally syntax/build prepared but cannot be executed
-  until the repository is pushed and the Pages source is selected in GitHub.
+- GitHub Pages deployment is active; future workflow behavior still depends on GitHub-hosted runner and
+  upstream public-source availability.
