@@ -1,0 +1,57 @@
+name: Refresh public data
+
+on:
+  schedule:
+    - cron: "17 10 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: memorypulse-data-update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install pipeline
+        run: python -m pip install -e ".[dev]"
+      - name: Collect, validate, and export
+        env:
+          BESTBUY_API_KEY: ${{ secrets.BESTBUY_API_KEY }}
+        run: |
+          python -m memorypulse.cli update 2>&1 | tee pipeline.log
+          python -m memorypulse.cli validate
+          python -m pytest pipeline/tests/test_sources.py pipeline/tests/test_transformations.py pipeline/tests/test_indicators.py pipeline/tests/test_forecasting.py pipeline/tests/test_exports.py
+          python -m memorypulse.cli check-size
+          python -c "import json; from pathlib import Path; m=json.loads(Path('frontend/public/data/manifest.json').read_text()); assert m['production_data'] and not m['fixture_data']"
+      - name: Commit validated history and exports
+        run: |
+          git config user.name "memorypulse-data-bot"
+          git config user.email "memorypulse-data-bot@users.noreply.github.com"
+          git add data/history data/exports/quality-report.json frontend/public/data
+          if git diff --cached --quiet; then
+            echo "No validated data changes to commit."
+          else
+            git commit -m "data: refresh MemoryPulse observations [skip data-update]"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
+      - name: Upload diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: memorypulse-update-diagnostics
+          path: |
+            pipeline.log
+            data/exports/quality-report.json
+          if-no-files-found: warn
+          retention-days: 7

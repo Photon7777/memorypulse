@@ -1,0 +1,240 @@
+from __future__ import annotations
+
+import json
+import math
+from collections import defaultdict
+from datetime import date, datetime, timezone
+from pathlib import Path
+from typing import Any
+
+import duckdb
+
+from memorypulse.indicators.pressure import IndexResult, calculate_index, components_from_database
+from memorypulse.transformations.storage import atomic_write_text
+
+SCHEMA_VERSION = "1.0.0"
+
+
+def _json_value(value: Any) -> Any:
+    if isinstance(value, (date, datetime)):
+        return value.isoformat().replace("+00:00", "Z")
+    if isinstance(value, float) and not math.isfinite(value):
+        return None
+    if isinstance(value, dict):
+        return {str(key): _json_value(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_json_value(item) for item in value]
+    return value
+
+
+def _write(path: Path, value: Any) -> None:
+    content = json.dumps(_json_value(value), ensure_ascii=False, separators=(",", ":"), sort_keys=True, allow_nan=False)
+    atomic_write_text(path, content + "\n")
+
+
+def _rows(connection: duckdb.DuckDBPyConnection, query: str) -> list[dict[str, Any]]:
+    result = connection.execute(query)
+    columns = [description[0] for description in result.description]
+    return [dict(zip(columns, row, strict=True)) for row in result.fetchall()]
+
+
+def _latest_observation(connection: duckdb.DuckDBPyConnection) -> date | None:
+    return connection.execute(
+        """SELECT max(observation_date) FROM (
+        SELECT observation_date FROM spot_prices UNION ALL
+        SELECT observation_date FROM memory_prices UNION ALL
+        SELECT observation_date FROM retail_products UNION ALL
+        SELECT observation_date FROM macro_indicators)"""
+    ).fetchone()[0]
+
+
+def _key_changes(connection: duckdb.DuckDBPyConnection) -> dict[str, float | None]:
+    rows = _rows(
+        connection,
+        """SELECT observation_date, source_id, product_type, memory_generation, price_per_gb, price_basis
+        FROM memory_prices WHERE memory_generation IN ('DDR4', 'DDR5') AND price_per_gb IS NOT NULL
+        ORDER BY observation_date, source_id, product_type""",
+    )
+    chosen: dict[str, tuple[dict[str, Any], dict[str, Any]]] = {}
+    for generation in ("DDR4", "DDR5"):
+        candidates: dict[str, list[dict[str, Any]]] = defaultdict(list)
+        for row in rows:
+            if row["memory_generation"] == generation:
+                candidates[f"{row['source_id']}::{row['product_type']}"].append(row)
+        eligible = [points for points in candidates.values() if len(points) >= 2]
+        if eligible:
+            preferred = [points for points in eligible if str(points[-1]["product_type"]).startswith(f"{generation} (")]
+            points = max(preferred or eligible, key=lambda item: item[-1]["observation_date"])
+            chosen[generation] = (points[-2], points[-1])
+    output: dict[str, float | None] = {
+        "ddr4_recent_change": None,
+        "ddr5_recent_change": None,
+        "ddr5_minus_ddr4_spread": None,
+    }
+    for generation, key in (("DDR4", "ddr4_recent_change"), ("DDR5", "ddr5_recent_change")):
+        if generation in chosen:
+            previous, latest = chosen[generation]
+            output[key] = 100 * (float(latest["price_per_gb"]) / float(previous["price_per_gb"]) - 1)
+    if "DDR4" in chosen and "DDR5" in chosen:
+        ddr4 = chosen["DDR4"][1]
+        ddr5 = chosen["DDR5"][1]
+        compatible = ddr4["source_id"] == ddr5["source_id"] and ddr4["price_basis"] == ddr5["price_basis"]
+        if compatible:
+            output["ddr5_minus_ddr4_spread"] = float(ddr5["price_per_gb"]) - float(ddr4["price_per_gb"])
+    return output
+
+
+def _price_export(connection: duckdb.DuckDBPyConnection) -> dict[str, Any]:
+    rows = _rows(
+        connection,
+        """SELECT observation_date AS date, source_id, market_type, memory_generation,
+        product_type, price_value AS value, price_per_gb, currency, price_basis, is_estimate,
+        source_url, source_label FROM memory_prices
+        UNION ALL SELECT observation_date, source_id, market_type, memory_generation,
+        product_type, price_value, price_per_gb, currency, price_basis, is_estimate,
+        source_url, source_label FROM spot_prices
+        ORDER BY date, source_id, product_type""",
+    )
+    grouped: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    metadata: dict[str, dict[str, Any]] = {}
+    for row in rows:
+        key = f"{row['source_id']}::{row['product_type']}"
+        grouped[key].append(
+            {
+                "date": row["date"],
+                "value": row["value"],
+                "price_per_gb": row["price_per_gb"],
+                "estimate": row["is_estimate"],
+            }
+        )
+        metadata[key] = {
+            "id": key,
+            "label": row["product_type"],
+            "generation": row["memory_generation"],
+            "market_type": row["market_type"],
+            "currency": row["currency"],
+            "basis": row["price_basis"],
+            "source_id": row["source_id"],
+            "source_label": row["source_label"],
+            "source_url": row["source_url"],
+            "is_estimate": row["is_estimate"],
+        }
+    return {
+        "series": [{**metadata[key], "points": grouped[key]} for key in sorted(grouped)],
+        "units_note": "Series retain source definitions. Values are not combined across incompatible bases.",
+    }
+
+
+def _retail_export(connection: duckdb.DuckDBPyConnection) -> dict[str, Any]:
+    products = _rows(connection, "SELECT * FROM retail_products ORDER BY observation_date DESC, retailer, sku LIMIT 1000")
+    summaries = _rows(connection, "SELECT * FROM retail_generation_summary ORDER BY observation_date, generation")
+    return {"products": products, "generation_summaries": summaries}
+
+
+def _news_export(connection: duckdb.DuckDBPyConnection) -> dict[str, Any]:
+    events = _rows(
+        connection,
+        """SELECT event_id, published_at, title, source_domain, source_name, article_url,
+        query_category, companies, memory_types, event_tags, short_excerpt, relevance_score
+        FROM news_events ORDER BY published_at DESC LIMIT 2000""",
+    )
+    filters = {
+        "companies": sorted({item for row in events for item in (row["companies"] or []) if item}),
+        "memory_types": sorted({item for row in events for item in (row["memory_types"] or []) if item}),
+        "event_tags": sorted({item for row in events for item in (row["event_tags"] or []) if item}),
+    }
+    counts = _rows(connection, "SELECT published_at::DATE AS date, count(*) AS count FROM news_events GROUP BY 1 ORDER BY 1")
+    return {"events": events, "daily_counts": counts, "filters": filters, "retention_days": 365}
+
+
+def _forecast_export(connection: duckdb.DuckDBPyConnection) -> dict[str, Any]:
+    forecasts = _rows(connection, "SELECT * FROM forecasts ORDER BY forecast_created_at DESC, series_id, target_date")
+    accuracy = _rows(connection, "SELECT * FROM forecast_accuracy WHERE actual_value IS NOT NULL ORDER BY target_date")
+    return {
+        "forecasts": forecasts,
+        "historical_accuracy": accuracy,
+        "empty_message": "Collecting additional history before publishing a forecast.",
+        "disclaimer": "Forecasts are statistical estimates with uncertainty, not guarantees of future prices.",
+    }
+
+
+def _health_export(connection: duckdb.DuckDBPyConnection) -> dict[str, Any]:
+    latest = _rows(
+        connection,
+        """SELECT source_id, arg_max(status, completed_at) AS status,
+        max(completed_at) FILTER (status = 'success') AS latest_retrieval,
+        max(data_freshness_at) AS latest_observation, sum(records_written) AS records_collected,
+        arg_max(failure_reason, completed_at) AS reason,
+        arg_max(optional_key_configured, completed_at) AS optional_key_configured
+        FROM source_runs GROUP BY source_id ORDER BY source_id""",
+    )
+    return {"sources": latest}
+
+
+def export_frontend(
+    connection: duckdb.DuckDBPyConnection,
+    output_dir: Path,
+    weights: dict[str, float],
+    methodology_version: str,
+    pipeline_run_id: str,
+    production_data: bool,
+) -> dict[str, Any]:
+    output_dir.mkdir(parents=True, exist_ok=True)
+    generated = datetime.now(timezone.utc).replace(microsecond=0)
+    latest_observation = _latest_observation(connection)
+    components = components_from_database(connection)
+    index_result: IndexResult = calculate_index(
+        components, weights, methodology_version, latest_observation or generated.date()
+    )
+    index = index_result.observation
+    latest_run = connection.execute("SELECT max(completed_at) FROM source_runs").fetchone()[0]
+    latest_success = connection.execute(
+        "SELECT max(completed_at) FROM source_runs WHERE status = 'success'"
+    ).fetchone()[0]
+    summary = {
+        "latest_index": index.to_record() if index.confidence_score > 0 else None,
+        "components": [component.as_dict() for component in index_result.components],
+        "confidence": index.confidence_score,
+        "latest_observation": latest_observation,
+        "last_pipeline_run": latest_run,
+        "last_successful_update": latest_success,
+        "website_build": generated,
+        "key_changes": _key_changes(connection),
+        "insights": index_result.insights,
+        "disclaimer": "The Memory Pressure Index is an analytical indicator, not an official industry index or a certain shortage predictor.",
+    }
+    files = {
+        "market-summary.json": summary,
+        "prices.json": _price_export(connection),
+        "retail.json": _retail_export(connection),
+        "news.json": _news_export(connection),
+        "forecast.json": _forecast_export(connection),
+        "source-health.json": _health_export(connection),
+        "methodology.json": {
+            "version": methodology_version,
+            "weights": weights,
+            "normalization": "Robust 10th–90th percentile scaling; values are clamped to 0–100.",
+            "missing_data": "Available components are reweighted; confidence is represented configured weight.",
+            "unit_rule": "Gb means gigabits and GB means gigabytes. Conversion is never inferred from ambiguous text.",
+            "forecasting": "Rolling-origin backtesting selects among naive, drift, Holt trend, and rolling-mean baselines.",
+            "caveats": [
+                "Chip spot prices and retail module prices use different definitions.",
+                "HBM estimates are labeled and are not presented as observed public transaction prices.",
+                "Associations and conceptual mechanisms do not establish causality.",
+            ],
+        },
+    }
+    for name, value in files.items():
+        _write(output_dir / name, value)
+    manifest = {
+        "schema_version": SCHEMA_VERSION,
+        "generated_at": generated,
+        "pipeline_run_id": pipeline_run_id,
+        "methodology_version": methodology_version,
+        "files": sorted([*files, "manifest.json"]),
+        "latest_observation": latest_observation,
+        "production_data": production_data,
+        "fixture_data": not production_data,
+    }
+    _write(output_dir / "manifest.json", manifest)
+    return manifest

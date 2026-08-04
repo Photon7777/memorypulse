@@ -1,0 +1,16 @@
+date,category,series,metric,value,unit,source,n_samples,representative,notes
+2024-01-01,DRAM,DDR4 fixture series,usd_per_gb,2.00,USD/GB,fixture_source,3,16GB DDR4 3200MT/s module,TEST FIXTURE — not production data
+2024-02-01,DRAM,DDR4 fixture series,usd_per_gb,2.10,USD/GB,fixture_source,3,16GB DDR4 3200MT/s module,TEST FIXTURE — not production data
+2024-03-01,DRAM,DDR4 fixture series,usd_per_gb,2.05,USD/GB,fixture_source,3,16GB DDR4 3200MT/s module,TEST FIXTURE — not production data
+2024-04-01,DRAM,DDR4 fixture series,usd_per_gb,2.15,USD/GB,fixture_source,3,16GB DDR4 3200MT/s module,TEST FIXTURE — not production data
+2024-05-01,DRAM,DDR4 fixture series,usd_per_gb,2.20,USD/GB,fixture_source,3,16GB DDR4 3200MT/s module,TEST FIXTURE — not production data
+2024-06-01,DRAM,DDR4 fixture series,usd_per_gb,2.18,USD/GB,fixture_source,3,16GB DDR4 3200MT/s module,TEST FIXTURE — not production data
+2024-07-01,DRAM,DDR4 fixture series,usd_per_gb,2.25,USD/GB,fixture_source,3,16GB DDR4 3200MT/s module,TEST FIXTURE — not production data
+2024-08-01,DRAM,DDR4 fixture series,usd_per_gb,2.30,USD/GB,fixture_source,3,16GB DDR4 3200MT/s module,TEST FIXTURE — not production data
+2024-09-01,DRAM,DDR4 fixture series,usd_per_gb,2.28,USD/GB,fixture_source,3,16GB DDR4 3200MT/s module,TEST FIXTURE — not production data
+2024-10-01,DRAM,DDR4 fixture series,usd_per_gb,2.35,USD/GB,fixture_source,3,16GB DDR4 3200MT/s module,TEST FIXTURE — not production data
+2024-11-01,DRAM,DDR4 fixture series,usd_per_gb,2.45,USD/GB,fixture_source,3,16GB DDR4 3200MT/s module,TEST FIXTURE — not production data
+2024-12-01,DRAM,DDR4 fixture series,usd_per_gb,2.50,USD/GB,fixture_source,3,16GB DDR4 3200MT/s module,TEST FIXTURE — not production data
+2025-01-01,DRAM,DDR4 fixture series,usd_per_gb,2.55,USD/GB,fixture_source,3,16GB DDR4 3200MT/s module,TEST FIXTURE — not production data
+2025-02-01,DRAM,DDR4 fixture series,usd_per_gb,2.62,USD/GB,fixture_source,3,16GB DDR4 3200MT/s module,TEST FIXTURE — not production data
+2025-02-01,HBM,HBM3 fixture estimate,usd_per_gb,18.50,USD/GB,fixture_estimate,1,8Gb HBM3 stack,TEST FIXTURE — estimated context only

@@ -1,0 +1,33 @@
+sources:
+  stanford_memory_prices:
+    enabled: true
+    url: https://dam.stanford.edu/assets/memory-prices/memory-prices.csv
+    frequency: monthly
+    reliability: research_dataset
+  dramexchange_homepage:
+    enabled: false
+    url: https://www.dramexchange.com/
+    frequency: daily
+    reliability: public_homepage
+    disabled_reason: Disabled by default pending repository owner review of robots.txt and terms.
+  fred_semiconductor:
+    enabled: true
+    url_template: https://fred.stlouisfed.org/graph/fredgraph.csv?id={series_id}
+    series:
+      - id: PCU3344133441
+        name: Semiconductor and related device manufacturing producer price index
+        unit: index
+    frequency: monthly
+    reliability: official_statistics
+  gdelt_memory_news:
+    enabled: true
+    url: https://api.gdeltproject.org/api/v2/doc/doc
+    frequency: daily
+    reliability: aggregated_news_metadata
+    max_records: 75
+  bestbuy_memory_products:
+    enabled: true
+    requires_env: BESTBUY_API_KEY
+    url: https://api.bestbuy.com/v1/products
+    frequency: daily
+    reliability: optional_retail_api

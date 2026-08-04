@@ -1,0 +1,18 @@
+{
+  "articles": [
+    {
+      "url": "https://example.test/news/hbm-investment?tracking=fixture",
+      "title": "Micron outlines HBM investment and capacity allocation",
+      "domain": "example.test",
+      "seendate": "20250201T120000Z",
+      "snippet": "TEST FIXTURE: the announcement discusses HBM investment and manufacturing allocation."
+    },
+    {
+      "url": "https://wire.example.test/markets/inventory",
+      "title": "DRAM inventory remains in focus",
+      "domain": "wire.example.test",
+      "seendate": "20250202T090000Z",
+      "snippet": "TEST FIXTURE: reporting discusses Samsung memory inventory."
+    }
+  ]
+}

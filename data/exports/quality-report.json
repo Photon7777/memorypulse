@@ -1,0 +1,52 @@
+{
+  "checks": {
+    "fixture_publication_guard": {
+      "production_data": true,
+      "status": "pass"
+    },
+    "positive_prices": {
+      "status": "pass",
+      "violations": 0
+    },
+    "reasonable_dates": {
+      "status": "pass",
+      "violations": 0
+    },
+    "sudden_price_changes": {
+      "flagged_count_shown": 2,
+      "note": "Flagged observations remain in canonical history and retain source IDs.",
+      "observations": [
+        {
+          "current_value": 5242880000.0,
+          "observation_date": "1960-01-01",
+          "observation_id": "stanford_memory_prices_192760504a655a39dd95",
+          "prior_value": 67947725000.0,
+          "product_type": "McCallum DRAM (historical)",
+          "source_id": "stanford_memory_prices"
+        },
+        {
+          "current_value": 67947725000.0,
+          "observation_date": "1959-01-01",
+          "observation_id": "stanford_memory_prices_0c7500180fc07dd6b48a",
+          "prior_value": 411041792000.0,
+          "product_type": "McCallum DRAM (historical)",
+          "source_id": "stanford_memory_prices"
+        }
+      ],
+      "status": "warning"
+    }
+  },
+  "generated_at": "2026-08-04T05:16:02Z",
+  "production_data": true,
+  "status": "pass",
+  "table_counts": {
+    "forecasts": 6,
+    "macro_indicators": 499,
+    "market_index": 2,
+    "memory_prices": 703,
+    "news_events": 61,
+    "retail_products": 0,
+    "source_runs": 10,
+    "spot_prices": 0
+  }
+}

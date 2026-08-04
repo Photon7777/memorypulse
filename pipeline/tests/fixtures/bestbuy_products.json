@@ -1,0 +1,22 @@
+{
+  "products": [
+    {
+      "sku": 100001,
+      "name": "Fixture Brand 32GB (2 x 16GB) DDR5 6000MHz Desktop Memory",
+      "manufacturer": "Fixture Brand",
+      "salePrice": 99.99,
+      "regularPrice": 119.99,
+      "url": "https://example.test/products/100001",
+      "onlineAvailability": true
+    },
+    {
+      "sku": 100002,
+      "name": "Fixture Brand memory module with ambiguous capacity",
+      "manufacturer": "Fixture Brand",
+      "salePrice": 49.99,
+      "regularPrice": 49.99,
+      "url": "https://example.test/products/100002",
+      "onlineAvailability": false
+    }
+  ]
+}

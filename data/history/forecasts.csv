@@ -1,0 +1,7 @@
+forecast_created_at,target_date,series_id,model_name,model_version,point_forecast,lower_bound,upper_bound,training_start,training_end,backtest_mae,backtest_mape,observations_used,data_frequency
+2026-08-04T05:05:44Z,2024-08-01,McCallum DRAM (historical),naive_last_value,1.0.0,1.53,0.0,92.413191,1957-01-01,2024-07-01,15.515971,12.2578,411,monthly
+2026-08-04T05:05:44Z,2026-08-01,DDR3 (Keepa),rolling_mean_3,1.0.0,3.511147,1.200543,5.82175,2024-08-01,2026-07-01,0.769608,19.9497,24,monthly
+2026-08-04T05:05:44Z,2026-08-01,DDR4 (Keepa),drift,1.0.0,8.732697,6.514371,10.951023,2024-08-01,2026-07-01,0.843063,17.5297,24,monthly
+2026-08-04T05:05:44Z,2026-08-01,DDR5 (Keepa),naive_last_value,1.0.0,11.40609,7.16969,15.64249,2024-08-01,2026-07-01,1.823927,23.4686,24,monthly
+2026-08-04T05:05:44Z,2026-08-01,DRAM cheapest (Keepa),rolling_mean_3,1.0.0,3.511147,1.632325,5.389968,2024-08-01,2026-07-01,0.698503,19.4205,24,monthly
+2026-08-04T05:05:44Z,2026-08-01,NAND cheapest (Keepa),naive_last_value,1.0.0,0.105,0.090344,0.119656,2016-10-01,2026-07-01,0.004687,8.1543,118,monthly

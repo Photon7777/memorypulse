@@ -1,0 +1,11 @@
+run_id,source_id,started_at,completed_at,status,records_received,records_written,records_rejected,response_status,failure_reason,data_freshness_at,duration_seconds,optional_key_configured
+run_01a1aa6fa67dfcc430a5,stanford_memory_prices,2026-08-04T05:05:13Z,2026-08-04T05:05:14Z,success,705,703,2,304,,2026-07-01T00:00:00Z,1.0,false
+run_180639a32c3e41e217dd,bestbuy_memory_products,2026-08-04T05:05:09Z,2026-08-04T05:05:09Z,disabled,0,0,0,,Optional BESTBUY_API_KEY is not configured,,0.0,false
+run_7316d322c704b3510e39,stanford_memory_prices,2026-08-04T05:04:09Z,2026-08-04T05:04:10Z,degraded,0,0,0,,observation date is unreasonably far in the future,,1.0,false
+run_8af5a09f676fcc7042f7,dramexchange_homepage,2026-08-04T05:05:14Z,2026-08-04T05:05:14Z,disabled,0,0,0,,Disabled by default pending repository owner review of robots.txt and terms.,,0.0,false
+run_98b048dbae0207bcc66b,gdelt_memory_news,2026-08-04T05:05:14Z,2026-08-04T05:05:44Z,degraded,0,0,0,,GDELT DOC API request failed after limited retries: 429 Client Error: Too Many Requests for url: https://api.gdeltproject.org/api/v2/doc/doc?query=%28DRAM+OR+DDR4+OR+DDR5+OR+HBM+OR+%22high+bandwidth+memory%22+OR+%22memory+shortage%22+OR+%22semiconductor+memory%22+OR+%22AI+memory+demand%22+OR+%22Samsung+memory%22+OR+%22SK+hynix+memory%22+OR+%22Micron+memory%22%29+sourcelang%3Aenglish&mode=ArtList&maxrecords=75&format=json&timespan=1d&sort=DateDesc,,30.0,false
+run_a8ed63de32e7afae94be,dramexchange_homepage,2026-08-04T05:04:10Z,2026-08-04T05:04:10Z,disabled,0,0,0,,Disabled by default pending repository owner review of robots.txt and terms.,,0.0,false
+run_b2d7f36e534beb21cefa,fred_semiconductor,2026-08-04T05:04:10Z,2026-08-04T05:04:10Z,success,499,499,0,200,,2026-06-01T00:00:00Z,0.0,false
+run_be5fd3e90fe93cbb90c6,gdelt_memory_news,2026-08-04T05:04:10Z,2026-08-04T05:05:09Z,success,67,61,0,200,,2026-08-04T04:30:00Z,59.0,false
+run_c576c5882b4b3c6f7842,fred_semiconductor,2026-08-04T05:05:14Z,2026-08-04T05:05:14Z,success,499,0,499,200,,2026-06-01T00:00:00Z,0.0,false
+run_dcbc611ebed06c8de5b1,bestbuy_memory_products,2026-08-04T05:05:44Z,2026-08-04T05:05:44Z,disabled,0,0,0,,Optional BESTBUY_API_KEY is not configured,,0.0,false

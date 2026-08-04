@@ -1,0 +1,10 @@
+generation_patterns:
+  DDR3: '(?i)\bDDR3\b'
+  DDR4: '(?i)\bDDR4\b'
+  DDR5: '(?i)\bDDR5\b'
+  HBM: '(?i)\bHBM(?:2E?|3E?)?\b|high bandwidth memory'
+capacity_patterns:
+  gigabytes: '(?i)(\d+(?:\.\d+)?)\s*GB\b'
+  gigabits: '(?i)(\d+(?:\.\d+)?)\s*Gb\b'
+module_count_pattern: '(?i)(\d+)\s*[x×]\s*\d+(?:\.\d+)?\s*GB\b'
+speed_pattern: '(?i)(\d{3,5})\s*(?:MT/s|MHz)\b'

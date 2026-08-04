@@ -1,0 +1,16 @@
+methodology_version: "1.0.0"
+weights:
+  spot_momentum: 0.30
+  retail_momentum: 0.25
+  volatility: 0.15
+  news_pressure: 0.15
+  macro_pressure: 0.15
+normalization:
+  method: robust_percentile
+  lower_percentile: 10
+  upper_percentile: 90
+status_labels:
+  - {minimum: 0, maximum: 24.999, label: Normal}
+  - {minimum: 25, maximum: 49.999, label: Moderate Pressure}
+  - {minimum: 50, maximum: 74.999, label: Elevated Pressure}
+  - {minimum: 75, maximum: 100, label: Severe Pressure}
