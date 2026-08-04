@@ -38,6 +38,14 @@ class HealthResult:
     records_rejected: int = 0
 
 
+class SourceFetchError(RuntimeError):
+    """A safe-to-publish source error that never includes request credentials or query text."""
+
+    def __init__(self, message: str, status_code: int | None = None):
+        super().__init__(message)
+        self.status_code = status_code
+
+
 class SourceAdapter(ABC, Generic[RecordT]):
     source_id: str
     source_name: str
@@ -60,7 +68,7 @@ class SourceAdapter(ABC, Generic[RecordT]):
     def fetch(self) -> FetchedPayload:
         url = str(self.config["url"])
         timeout = http_timeout()
-        last_error: Exception | None = None
+        last_status: int | None = None
         cache_dir = self.root / "build/http-cache" / self.source_id
         metadata_path = cache_dir / "metadata.json"
         body_path = cache_dir / "response.bin"
@@ -83,12 +91,19 @@ class SourceAdapter(ABC, Generic[RecordT]):
                     time.sleep(self.rate_limit_seconds - elapsed)
                 response = self.session.get(url, timeout=timeout, headers=conditional_headers)
                 self._last_request_at[self.source_id] = time.monotonic()
+                last_status = response.status_code
                 if response.status_code == 304 and body_path.exists():
                     return FetchedPayload(
                         content=body_path.read_bytes(),
                         status_code=304,
                         url=response.url,
                         headers={key.lower(): value for key, value in response.headers.items()},
+                    )
+                if response.status_code == 429:
+                    raise SourceFetchError(
+                        f"{self.source_name} rate limit reached (HTTP 429); "
+                        "the next scheduled update will retry.",
+                        429,
                     )
                 response.raise_for_status()
                 cache_dir.mkdir(parents=True, exist_ok=True)
@@ -109,10 +124,17 @@ class SourceAdapter(ABC, Generic[RecordT]):
                     url=response.url,
                     headers={key.lower(): value for key, value in response.headers.items()},
                 )
+            except SourceFetchError:
+                raise
             except requests.RequestException as error:
-                last_error = error
+                if error.response is not None:
+                    last_status = error.response.status_code
                 LOGGER.warning("source_fetch_failed", extra={"source_id": self.source_id, "attempt": attempt + 1})
-        raise RuntimeError(f"{self.source_name} request failed after limited retries: {last_error}")
+        status_detail = f" (HTTP {last_status})" if last_status is not None else ""
+        raise SourceFetchError(
+            f"{self.source_name} request failed{status_detail} after {self.max_attempts} limited attempt(s).",
+            last_status,
+        )
 
     @abstractmethod
     def parse(self, payload: FetchedPayload) -> list[Any]: ...
@@ -171,6 +193,10 @@ class SourceAdapter(ABC, Generic[RecordT]):
                 self.freshness_timestamp(records),
                 self._validation_rejections,
             )
+        except SourceFetchError as error:
+            LOGGER.warning("source_run_degraded", extra={"source_id": self.source_id})
+            records = []
+            result = HealthResult("degraded", str(error)[:500], response_status=error.status_code)
         except Exception as error:  # an adapter cannot take down the rest of the pipeline
             LOGGER.exception("source_run_failed", extra={"source_id": self.source_id})
             records = []

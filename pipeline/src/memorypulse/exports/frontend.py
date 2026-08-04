@@ -161,13 +161,33 @@ def _forecast_export(connection: duckdb.DuckDBPyConnection) -> dict[str, Any]:
 def _health_export(connection: duckdb.DuckDBPyConnection) -> dict[str, Any]:
     latest = _rows(
         connection,
-        """SELECT source_id, arg_max(status, completed_at) AS status,
-        max(completed_at) FILTER (status = 'success') AS latest_retrieval,
-        max(data_freshness_at) AS latest_observation, sum(records_written) AS records_collected,
-        arg_max(failure_reason, completed_at) AS reason,
-        arg_max(optional_key_configured, completed_at) AS optional_key_configured
-        FROM source_runs GROUP BY source_id ORDER BY source_id""",
+        """WITH ranked AS (
+          SELECT *, row_number() OVER (
+            PARTITION BY source_id ORDER BY completed_at DESC, started_at DESC, run_id DESC
+          ) AS recency_rank
+          FROM source_runs
+        ), totals AS (
+          SELECT source_id,
+            max(completed_at) FILTER (status = 'success') AS latest_retrieval,
+            max(data_freshness_at) AS latest_observation,
+            sum(records_written) AS records_collected,
+            sum(records_rejected) AS records_rejected
+          FROM source_runs GROUP BY source_id
+        )
+        SELECT ranked.source_id, ranked.status, totals.latest_retrieval,
+          ranked.completed_at AS latest_attempt, totals.latest_observation,
+          totals.records_collected, totals.records_rejected,
+          CASE WHEN ranked.status = 'success' THEN '' ELSE coalesce(ranked.failure_reason, '') END AS reason,
+          coalesce(ranked.optional_key_configured, false) AS optional_key_configured
+        FROM ranked JOIN totals USING (source_id)
+        WHERE ranked.recency_rank = 1 ORDER BY ranked.source_id""",
     )
+    source_kinds = {
+        "bestbuy_memory_products": "optional",
+        "dramexchange_homepage": "permission_required",
+    }
+    for source in latest:
+        source["source_kind"] = source_kinds.get(str(source["source_id"]), "core")
     return {"sources": latest}
 
 

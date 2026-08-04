@@ -115,10 +115,13 @@ export interface ForecastData {
 
 export interface SourceHealth {
   source_id: string
+  source_kind: 'core' | 'optional' | 'permission_required'
   status: SourceStatus
   latest_retrieval: string | null
+  latest_attempt: string | null
   latest_observation: string | null
   records_collected: number
+  records_rejected: number
   reason: string
   optional_key_configured: boolean
 }

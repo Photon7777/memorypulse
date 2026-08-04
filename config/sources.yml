@@ -9,7 +9,7 @@ sources:
     url: https://www.dramexchange.com/
     frequency: daily
     reliability: public_homepage
-    disabled_reason: Disabled by default pending repository owner review of robots.txt and terms.
+    disabled_reason: Permission required; current Terms of Use restrict reproduction or distribution without prior written consent.
   fred_semiconductor:
     enabled: true
     url_template: https://fred.stlouisfed.org/graph/fredgraph.csv?id={series_id}
@@ -24,7 +24,7 @@ sources:
     url: https://api.gdeltproject.org/api/v2/doc/doc
     frequency: daily
     reliability: aggregated_news_metadata
-    max_records: 75
+    max_records: 50
   bestbuy_memory_products:
     enabled: true
     requires_env: BESTBUY_API_KEY

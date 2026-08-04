@@ -15,8 +15,9 @@ export function OverviewPage() {
   const index = summary.data?.latest_index ?? null
   const ddr4 = summary.data?.key_changes.ddr4_recent_change ?? null
   const ddr5 = summary.data?.key_changes.ddr5_recent_change ?? null
-  const healthy = health.data?.sources.filter((source) => source.status === 'success').length ?? 0
-  const sourceCount = health.data?.sources.length ?? 0
+  const coreSources = health.data?.sources.filter((source) => source.source_kind === 'core') ?? []
+  const healthy = coreSources.filter((source) => source.status === 'success').length
+  const sourceCount = coreSources.length
   const spread = summary.data?.key_changes.ddr5_minus_ddr4_spread ?? null
 
   return (
@@ -48,7 +49,7 @@ export function OverviewPage() {
         <span><strong>Website build</strong>{formatDate(summary.data?.website_build, true)}</span>
         <span><strong>Pipeline run</strong>{formatDate(summary.data?.last_pipeline_run, true)}</span>
         <span><strong>Latest observation</strong>{formatDate(summary.data?.latest_observation)}</span>
-        <span><strong>Source health</strong>{sourceCount ? `${healthy} of ${sourceCount} successful` : 'No runs yet'}</span>
+        <span><strong>Core source health</strong>{sourceCount ? `${healthy} of ${sourceCount} successful` : 'No runs yet'}</span>
       </section>
 
       <section className="section-block">
@@ -62,7 +63,7 @@ export function OverviewPage() {
           <MetricCard eyebrow="DDR5–DDR4 spread" value={spread == null ? '—' : `${spread >= 0 ? '+' : ''}$${formatNumber(spread, 2)} / GB`} detail={spread == null ? 'No same-source, same-basis pair is currently available.' : 'Latest compatible Stanford generation series'} />
           <MetricCard eyebrow="Tracked events" value={formatNumber(news.data?.events.length ?? 0, 0)} detail={`Metadata retained for up to ${news.data?.retention_days ?? 365} days`} />
           <MetricCard eyebrow="Update freshness" value={freshnessLabel(summary.data?.last_successful_update)} detail={`Latest success: ${formatDate(summary.data?.last_successful_update, true)}`} />
-          <MetricCard eyebrow="Source health" value={sourceCount ? `${healthy} / ${sourceCount}` : '—'} detail="Latest successful source states" />
+          <MetricCard eyebrow="Core source health" value={sourceCount ? `${healthy} / ${sourceCount}` : '—'} detail="Optional and permission-gated feeds are reported separately" />
         </div>
       </section>
 

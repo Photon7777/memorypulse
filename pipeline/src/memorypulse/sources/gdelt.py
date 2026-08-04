@@ -67,12 +67,15 @@ def _published(value: str, fallback: datetime) -> datetime:
 class GdeltMemoryNewsSource(SourceAdapter[NewsEvent]):
     source_id = "gdelt_memory_news"
     source_name = "GDELT DOC API"
+    # GDELT may return 429 for repeated requests. One bounded attempt per daily run
+    # avoids turning a rate-limit response into additional traffic.
+    max_attempts = 1
 
     def fetch(self) -> FetchedPayload:
         params = {
             "query": f"({' OR '.join(QUERIES)}) sourcelang:english",
             "mode": "ArtList",
-            "maxrecords": int(self.config.get("max_records", 75)),
+            "maxrecords": int(self.config.get("max_records", 50)),
             "format": "json",
             "timespan": "1d",
             "sort": "DateDesc",

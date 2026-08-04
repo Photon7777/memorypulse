@@ -28,11 +28,13 @@ URL and UTC collection time. The repository does not contain downloaded HTML or 
 - **Frequency:** At most once per pipeline run and no more than the daily scheduled run.
 - **Authentication:** None; member, login, paid-history, and bypass paths are prohibited.
 - **Reliability:** Public homepage snapshot; layout and availability can change without notice.
-- **Caveats:** `robots.txt` returned a 404-style page during development, so automatic collection is
-  disabled by default pending repository-owner review of current robots and applicable terms.
+- **Caveats:** The public `robots.txt` endpoint returned a 404-style page. The current Terms of Use were
+  reviewed on August 4, 2026 and restrict reproduction or distribution of site materials without prior
+  written consent, so automatic collection remains disabled unless that permission is obtained.
 - **Redistribution:** Normalized numerical facts only. Full HTML is never committed.
-- **Failure behavior:** Blocked access, a layout mismatch, more than 100 parsed rows, or zero rows marks
-  the source degraded while previous data remains intact.
+- **Failure behavior:** This source is reported as permission-gated, not failed. If written permission is
+  obtained and collection is explicitly enabled, blocked access, a layout mismatch, more than 100 parsed
+  rows, or zero rows marks the source degraded while previous data remains intact.
 
 ## FRED semiconductor indicator
 
@@ -62,8 +64,10 @@ URL and UTC collection time. The repository does not contain downloaded HTML or 
   Coverage intensity is not proof that an event occurred as described and does not establish causality.
 - **Redistribution:** Only metadata and short excerpts are retained for about 365 days; publisher
   content remains at the linked source.
-- **Failure behavior:** Rate limits (including HTTP 429), API errors, malformed JSON, and zero rows are
-  disclosed as degraded and never fail core price collection.
+- **Failure behavior:** A rate limit (including HTTP 429) is not retried during the same run. A concise,
+  query-free reason is disclosed as degraded, the next scheduled update retries once, and previously
+  validated metadata remains available. Other API errors, malformed JSON, and zero rows also remain
+  isolated from core price collection.
 
 ## Optional Best Buy Products API
 

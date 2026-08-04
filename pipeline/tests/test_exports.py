@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from datetime import datetime, timezone
 
 from memorypulse.database import create_database
 from memorypulse.exports.frontend import export_frontend
@@ -44,3 +45,33 @@ def test_fixture_publication_guard_is_detected(tmp_path) -> None:
         (data / name).write_text("{}")
     (data / "manifest.json").write_text('{"production_data": true, "fixture_data": true}')
     assert any("fixture" in error for error in validate_export_directory(data))
+
+
+def test_health_export_uses_latest_status_and_clears_stale_reason(tmp_path) -> None:
+    history = tmp_path / "history"
+    ensure_history_files(history)
+    connection = create_database(history, tmp_path / "test.duckdb")
+    first = datetime(2026, 8, 4, 9, 0, tzinfo=timezone.utc)
+    latest = datetime(2026, 8, 4, 10, 0, tzinfo=timezone.utc)
+    connection.execute(
+        """INSERT INTO source_runs VALUES
+        ('run-1', 'stanford_memory_prices', ?, ?, 'degraded', 2, 0, 2, 200,
+         'observation date is unreasonably far in the future', NULL, 1.0, false),
+        ('run-2', 'stanford_memory_prices', ?, ?, 'success', 705, 703, 2, 200,
+         '', '2026-07-01 00:00:00+00', 1.0, false),
+        ('run-3', 'bestbuy_memory_products', ?, ?, 'disabled', 0, 0, 0, NULL,
+         'Optional key is not configured', NULL, 0.0, false)""",
+        [first, first, latest, latest, latest, latest],
+    )
+    data_dir = tmp_path / "data"
+    export_frontend(connection, data_dir, {"spot_momentum": 1.0}, "test", "test_pipeline", True)
+    connection.close()
+
+    sources = {item["source_id"]: item for item in json.loads((data_dir / "source-health.json").read_text())["sources"]}
+    stanford = sources["stanford_memory_prices"]
+    assert stanford["status"] == "success"
+    assert stanford["reason"] == ""
+    assert stanford["records_collected"] == 703
+    assert stanford["records_rejected"] == 4
+    assert stanford["source_kind"] == "core"
+    assert sources["bestbuy_memory_products"]["source_kind"] == "optional"

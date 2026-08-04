@@ -38,7 +38,7 @@
 
 ## Remaining
 
-- [ ] Repository owner: review current DRAMeXchange robots/terms before enabling that adapter.
+- [ ] Repository owner: obtain written DRAMeXchange permission before enabling or redistributing that adapter's data.
 - [ ] Optional: add `BESTBUY_API_KEY` as a GitHub Actions repository secret for retail coverage.
 - [ ] Optional: add deployment screenshots to the documented placeholders.
 
@@ -56,10 +56,10 @@
 
 ## Known limitations
 
-- Public endpoints may revise schemas/history or enforce rate limits; GDELT returned HTTP 429 on a repeat
-  development request after a successful collection.
-- DRAMeXchange collection remains disabled because its robots endpoint returned a 404-style page during
-  development and owner review is required before production access.
+- Public endpoints may revise schemas/history or enforce rate limits. GDELT uses one bounded attempt per
+  daily run and preserves previously validated metadata when the API returns HTTP 429.
+- DRAMeXchange collection remains disabled because its current Terms of Use restrict reproduction or
+  distribution without prior written permission; its robots endpoint also returned a 404-style page.
 - Best Buy data is absent without the optional key, reducing retail component confidence by design.
 - FRED is broad semiconductor context, not a direct RAM price; Stanford series definitions vary.
 - Public news intensity and conceptual allocation mechanisms are associations, not causal proof.

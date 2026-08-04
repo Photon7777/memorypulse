@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import requests
 from memorypulse.config import source_config
 from memorypulse.sources import (
     BestBuyMemoryProductsSource,
@@ -51,6 +52,30 @@ def test_gdelt_metadata_rules_do_not_store_article_bodies() -> None:
     assert records[0].short_excerpt.startswith("TEST FIXTURE")
     assert "HBM investment" in records[0].event_tags
     assert records[0].source_domain == "example.test"
+
+
+def test_gdelt_rate_limit_is_not_retried_or_leaked(monkeypatch, tmp_path) -> None:
+    source = GdeltMemoryNewsSource(source_config(ROOT)["gdelt_memory_news"], tmp_path)
+    calls = 0
+
+    def rate_limited(*args, **kwargs):
+        nonlocal calls
+        calls += 1
+        response = requests.Response()
+        response.status_code = 429
+        response.url = "https://api.gdeltproject.org/api/v2/doc/doc?query=sensitive-query"
+        response._content = b"rate limited"
+        return response
+
+    monkeypatch.setattr(source.session, "get", rate_limited)
+    records, health = source.run()
+
+    assert records == []
+    assert calls == 1
+    assert health.status == "degraded"
+    assert health.response_status == 429
+    assert "HTTP 429" in health.reason
+    assert "query=" not in health.reason
 
 
 def test_bestbuy_is_optional_without_api_key(monkeypatch) -> None:
