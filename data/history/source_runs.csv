@@ -2,10 +2,13 @@ run_id,source_id,started_at,completed_at,status,records_received,records_written
 run_01a1aa6fa67dfcc430a5,stanford_memory_prices,2026-08-04T05:05:13Z,2026-08-04T05:05:14Z,success,705,703,2,304,,2026-07-01T00:00:00Z,1.0,false
 run_161c22f7831475092db5,bestbuy_memory_products,2026-08-04T15:16:38Z,2026-08-04T15:16:38Z,disabled,0,0,0,,Optional BESTBUY_API_KEY is not configured,,0.0,false
 run_180639a32c3e41e217dd,bestbuy_memory_products,2026-08-04T05:05:09Z,2026-08-04T05:05:09Z,disabled,0,0,0,,Optional BESTBUY_API_KEY is not configured,,0.0,false
+run_239623dc922e04458a89,fred_semiconductor,2026-08-05T12:19:43Z,2026-08-05T12:19:44Z,success,499,0,499,200,,2026-06-01T00:00:00Z,1.0,false
 run_2e98d2cea31168377bb0,stanford_memory_prices,2026-08-04T18:04:51Z,2026-08-04T18:04:51Z,success,705,0,705,304,,2026-07-01T00:00:00Z,0.0,false
 run_31b2bae6e89aebed7baa,federal_register_semiconductor,2026-08-04T18:03:06Z,2026-08-04T18:03:12Z,success,50,0,50,200,,2026-08-03T00:00:00Z,6.0,false
+run_34810a747f620b42c475,dramexchange_homepage,2026-08-05T12:19:43Z,2026-08-05T12:19:43Z,disabled,0,0,0,,Permission required; current Terms of Use restrict reproduction or distribution without prior written consent.,,0.0,false
 run_38137f828837d028da5c,federal_register_semiconductor,2026-08-04T18:04:52Z,2026-08-04T18:04:52Z,success,50,0,50,200,,2026-08-03T00:00:00Z,0.0,false
 run_42b2266845dff22364cd,federal_register_semiconductor,2026-08-04T18:01:05Z,2026-08-04T18:01:10Z,success,50,50,0,200,,2026-08-03T00:00:00Z,5.0,false
+run_43e727884f11f5744900,world_bank_high_tech_exports,2026-08-05T12:19:44Z,2026-08-05T12:19:44Z,success,66,0,13,200,,2023-01-01T00:00:00Z,0.0,false
 run_4f87b6002ed79ba5e116,dramexchange_homepage,2026-08-04T18:04:51Z,2026-08-04T18:04:51Z,disabled,0,0,0,,Permission required; current Terms of Use restrict reproduction or distribution without prior written consent.,,0.0,false
 run_66ab63261e0002cb4fe2,gdelt_memory_news,2026-08-04T18:01:10Z,2026-08-04T18:01:26Z,degraded,0,0,0,429,GDELT DOC API rate limit reached (HTTP 429); the next scheduled update will retry.,,16.0,false
 run_6de51003e8ee4203df8e,fred_semiconductor,2026-08-04T18:04:51Z,2026-08-04T18:04:51Z,success,499,0,499,200,,2026-06-01T00:00:00Z,0.0,false
@@ -19,6 +22,8 @@ run_8bf24351ce8ba14872ed,dramexchange_homepage,2026-08-04T18:00:51Z,2026-08-04T1
 run_8c21f59442878f6e23c9,bls_semiconductor_employment,2026-08-04T18:00:52Z,2026-08-04T18:00:52Z,success,29,29,0,200,,2026-05-01T00:00:00Z,0.0,false
 run_8e626903941435bad830,gdelt_memory_news,2026-08-04T15:16:22Z,2026-08-04T15:16:38Z,success,50,22,22,200,,2026-08-04T14:00:00Z,16.0,false
 run_98b048dbae0207bcc66b,gdelt_memory_news,2026-08-04T05:05:14Z,2026-08-04T05:05:44Z,degraded,0,0,0,,GDELT DOC API request failed after limited retries: 429 Client Error: Too Many Requests for url: https://api.gdeltproject.org/api/v2/doc/doc?query=%28DRAM+OR+DDR4+OR+DDR5+OR+HBM+OR+%22high+bandwidth+memory%22+OR+%22memory+shortage%22+OR+%22semiconductor+memory%22+OR+%22AI+memory+demand%22+OR+%22Samsung+memory%22+OR+%22SK+hynix+memory%22+OR+%22Micron+memory%22%29+sourcelang%3Aenglish&mode=ArtList&maxrecords=75&format=json&timespan=1d&sort=DateDesc,,30.0,false
+run_a48f23c2c972e239d03c,federal_register_semiconductor,2026-08-05T12:19:44Z,2026-08-05T12:19:46Z,success,50,0,50,200,,2026-08-03T00:00:00Z,2.0,false
+run_a5f0a3a3d92a8fa62352,bls_semiconductor_employment,2026-08-05T12:19:44Z,2026-08-05T12:19:44Z,success,29,0,29,200,,2026-05-01T00:00:00Z,0.0,false
 run_a8ed63de32e7afae94be,dramexchange_homepage,2026-08-04T05:04:10Z,2026-08-04T05:04:10Z,disabled,0,0,0,,Disabled by default pending repository owner review of robots.txt and terms.,,0.0,false
 run_b0f61408fb8c6e37f44c,bls_semiconductor_employment,2026-08-04T18:03:06Z,2026-08-04T18:03:06Z,success,29,0,29,200,,2026-05-01T00:00:00Z,0.0,false
 run_b2d7f36e534beb21cefa,fred_semiconductor,2026-08-04T05:04:10Z,2026-08-04T05:04:10Z,success,499,499,0,200,,2026-06-01T00:00:00Z,0.0,false
@@ -35,6 +40,9 @@ run_cf533166e936af42765e,stanford_memory_prices,2026-08-04T18:03:06Z,2026-08-04T
 run_d18f12699419c45f2285,bestbuy_memory_products,2026-08-04T18:01:26Z,2026-08-04T18:01:26Z,disabled,0,0,0,,Optional BESTBUY_API_KEY is not configured,,0.0,false
 run_d34a8e78d301dbb2887c,fred_semiconductor,2026-08-04T15:16:21Z,2026-08-04T15:16:22Z,success,499,0,499,200,,2026-06-01T00:00:00Z,1.0,false
 run_d70ebf79a1cb6bd4e0cb,world_bank_high_tech_exports,2026-08-04T18:04:51Z,2026-08-04T18:04:52Z,success,66,0,13,304,,2023-01-01T00:00:00Z,1.0,false
+run_dbdaf19d401dccf70dd0,bestbuy_memory_products,2026-08-05T12:19:56Z,2026-08-05T12:19:56Z,disabled,0,0,0,,Optional BESTBUY_API_KEY is not configured,,0.0,false
 run_dcbc611ebed06c8de5b1,bestbuy_memory_products,2026-08-04T05:05:44Z,2026-08-04T05:05:44Z,disabled,0,0,0,,Optional BESTBUY_API_KEY is not configured,,0.0,false
+run_f2059e3456aa10c89e21,gdelt_memory_news,2026-08-05T12:19:46Z,2026-08-05T12:19:56Z,degraded,0,0,0,429,GDELT DOC API rate limit reached (HTTP 429); the next scheduled update will retry.,,10.0,false
+run_fb0f5667accc93708f93,stanford_memory_prices,2026-08-05T12:19:42Z,2026-08-05T12:19:43Z,success,705,0,705,200,,2026-07-01T00:00:00Z,1.0,false
 run_fb6d86486aeb1f2f8105,world_bank_high_tech_exports,2026-08-04T18:03:06Z,2026-08-04T18:03:06Z,success,66,0,13,304,,2023-01-01T00:00:00Z,0.0,false
 run_fcc162e73f7d1a576deb,fred_semiconductor,2026-08-04T18:03:06Z,2026-08-04T18:03:06Z,success,499,0,499,200,,2026-06-01T00:00:00Z,0.0,false
