@@ -3,7 +3,7 @@ DEFAULT_PYTHON := $(if $(wildcard $(PROJECT_ROOT)/.venv/bin/python),$(PROJECT_RO
 PYTHON := $(if $(filter command line,$(origin PYTHON)),$(PYTHON),$(DEFAULT_PYTHON))
 export PYTHONPATH := $(PROJECT_ROOT)/pipeline/src$(if $(PYTHONPATH),:$(PYTHONPATH))
 
-.PHONY: install bootstrap update validate compact frontend test build verify
+.PHONY: install bootstrap update dataset validate compact frontend test build verify
 
 install:
 	$(PYTHON) -m pip install -e ".[dev]"
@@ -14,6 +14,9 @@ bootstrap:
 
 update:
 	$(PYTHON) -m memorypulse.cli update
+
+dataset:
+	$(PYTHON) -m memorypulse.cli dataset --production
 
 validate:
 	$(PYTHON) -m memorypulse.cli validate

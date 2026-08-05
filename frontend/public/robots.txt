@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://photon7777.github.io/memorypulse/sitemap.xml

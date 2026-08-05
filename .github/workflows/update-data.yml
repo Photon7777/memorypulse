@@ -31,20 +31,41 @@ jobs:
         run: |
           python -m memorypulse.cli update 2>&1 | tee pipeline.log
           python -m memorypulse.cli validate
-          python -m pytest pipeline/tests/test_sources.py pipeline/tests/test_transformations.py pipeline/tests/test_indicators.py pipeline/tests/test_forecasting.py pipeline/tests/test_exports.py
+          python -m pytest pipeline/tests
           python -m memorypulse.cli check-size
           python -c "import json; from pathlib import Path; m=json.loads(Path('frontend/public/data/manifest.json').read_text()); assert m['production_data'] and not m['fixture_data']"
       - name: Commit validated history and exports
         run: |
           git config user.name "memorypulse-data-bot"
           git config user.email "memorypulse-data-bot@users.noreply.github.com"
-          git add data/history data/exports/quality-report.json frontend/public/data
+          git add data/history data/exports/quality-report.json frontend/public/data frontend/public/datasets/latest
           if git diff --cached --quiet; then
             echo "No validated data changes to commit."
           else
             git commit -m "data: refresh MemoryPulse observations [skip data-update]"
             git push origin "HEAD:${GITHUB_REF_NAME}"
           fi
+      - name: Publish monthly public dataset snapshot
+        if: github.event_name == 'schedule'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "$(date -u +%d)" != "01" ]; then
+            echo "Monthly snapshot runs on the first UTC day of each month."
+            exit 0
+          fi
+          month="$(date -u +%Y-%m)"
+          tag="dataset-${month}"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "Release $tag already exists."
+            exit 0
+          fi
+          gh release create "$tag" \
+            frontend/public/datasets/latest/memorypulse-dataset-v1.0.0.zip \
+            frontend/public/datasets/latest/catalog.json \
+            frontend/public/datasets/latest/checksums.sha256 \
+            --title "MemoryPulse dataset ${month}" \
+            --notes "Immutable monthly snapshot of the public MemoryPulse dataset. Review DATA_LICENSE.md and the catalog before reuse."
       - name: Upload diagnostics
         if: always()
         uses: actions/upload-artifact@v7
@@ -53,5 +74,6 @@ jobs:
           path: |
             pipeline.log
             data/exports/quality-report.json
+            frontend/public/datasets/latest/catalog.json
           if-no-files-found: warn
           retention-days: 7

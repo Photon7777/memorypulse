@@ -1,0 +1,138 @@
+{
+  "$id": "https://photon7777.github.io/memorypulse/datasets/latest/schemas/retail_products.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Optional normalized retail memory-product observations.",
+  "properties": {
+    "availability": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "brand": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "collected_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "current_price": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "generation": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "module_count": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "observation_date": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "observation_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "parsing_confidence": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "price_per_gb": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "product_name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "product_url": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "regular_price": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "retailer": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "sku": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "speed_mts": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "total_capacity_gb": {
+      "type": [
+        "number",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "observation_id",
+    "observation_date",
+    "collected_at",
+    "source_id",
+    "retailer",
+    "sku",
+    "brand",
+    "product_name",
+    "generation",
+    "total_capacity_gb",
+    "module_count",
+    "speed_mts",
+    "current_price",
+    "regular_price",
+    "price_per_gb",
+    "availability",
+    "product_url",
+    "parsing_confidence"
+  ],
+  "title": "MemoryPulse retail products row",
+  "type": "object"
+}

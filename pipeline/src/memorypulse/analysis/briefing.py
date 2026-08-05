@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from datetime import datetime
+from datetime import date, datetime
 from typing import Any
 
 import duckdb
@@ -268,6 +268,61 @@ def _model_diagnostics(connection: duckdb.DuckDBPyConnection) -> list[dict[str, 
     return output
 
 
+def _pressure_history(connection: duckdb.DuckDBPyConnection) -> list[dict[str, Any]]:
+    return _rows(
+        connection,
+        """SELECT calculated_at AS date, total_score, confidence_score,
+        spot_momentum_score, retail_momentum_score, volatility_score,
+        news_pressure_score, macro_pressure_score, status_label
+        FROM market_index ORDER BY calculated_at""",
+    )
+
+
+def _momentum_matrix(connection: duckdb.DuckDBPyConnection) -> list[dict[str, Any]]:
+    rows = connection.execute(
+        """SELECT product_type, memory_generation, observation_date, avg(price_per_gb)
+        FROM memory_prices WHERE memory_generation IN ('DDR3', 'DDR4', 'DDR5', 'HBM', 'NAND')
+          AND price_per_gb IS NOT NULL
+        GROUP BY product_type, memory_generation, observation_date
+        ORDER BY product_type, observation_date"""
+    ).fetchall()
+    grouped: dict[tuple[str, str], list[tuple[date, float]]] = defaultdict(list)
+    for series_id, generation, observed, value in rows:
+        grouped[(str(series_id), str(generation))].append((observed, float(value)))
+    output: list[dict[str, Any]] = []
+    for (series_id, generation), points in grouped.items():
+        if len(points) < 2:
+            continue
+        for horizon in (1, 3, 6, 12):
+            if len(points) <= horizon or not points[-1 - horizon][1]:
+                continue
+            output.append(
+                {
+                    "series_id": series_id,
+                    "generation": generation,
+                    "horizon_months": horizon,
+                    "change_percent": 100 * (points[-1][1] / points[-1 - horizon][1] - 1),
+                    "latest_date": points[-1][0],
+                    "observations": len(points),
+                }
+            )
+    selected: dict[tuple[str, int], dict[str, Any]] = {}
+    for item in output:
+        key = (str(item["generation"]), int(item["horizon_months"]))
+        current = selected.get(key)
+        preference = (
+            str(item["series_id"]).startswith(f"{item['generation']} ("),
+            int(item["observations"]),
+        )
+        current_preference = (
+            str(current["series_id"]).startswith(f"{current['generation']} ("),
+            int(current["observations"]),
+        ) if current else (False, 0)
+        if current is None or preference > current_preference:
+            selected[key] = item
+    return [selected[key] for key in sorted(selected)]
+
+
 def build_business_analytics(
     connection: duckdb.DuckDBPyConnection,
     index_result: IndexResult,
@@ -307,6 +362,8 @@ def build_business_analytics(
     ).fetchone()[0]
     return {
         "components": components,
+        "pressure_history": _pressure_history(connection),
+        "momentum_matrix": _momentum_matrix(connection),
         "macro_series": _macro_series(connection),
         "model_diagnostics": _model_diagnostics(connection),
         "event_pressure": event_counts,

@@ -4,6 +4,10 @@ All production adapters identify MemoryPulse as a public research project, use t
 retries, respect source-specific limits, and fail independently. Normalized records retain the source
 URL and UTC collection time. The repository does not contain downloaded HTML or article bodies.
 
+Eligible normalized records are also packaged under `frontend/public/datasets/latest/` as canonical
+text, Parquet, schemas, checksums, and a ZIP. Distribution never overrides upstream rights: users must
+review [DATA_LICENSE.md](DATA_LICENSE.md) and the source-specific notes below before redistribution.
+
 ## Stanford Memory Price Data
 
 - **URL:** <https://dam.stanford.edu/assets/memory-prices/memory-prices.csv>

@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useRef } from 'react'
 import { LineChart } from 'echarts/charts'
-import { DataZoomComponent, GridComponent, LegendComponent, TooltipComponent } from 'echarts/components'
+import { DataZoomComponent, GridComponent, LegendComponent, ToolboxComponent, TooltipComponent } from 'echarts/components'
 import * as echarts from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import type { EChartsType } from 'echarts/core'
 import type { AnalyticsMacroSeries } from '../types/data'
 
-echarts.use([LineChart, DataZoomComponent, GridComponent, LegendComponent, TooltipComponent, CanvasRenderer])
+echarts.use([LineChart, DataZoomComponent, GridComponent, LegendComponent, ToolboxComponent, TooltipComponent, CanvasRenderer])
 
 export function BusinessSignalChart({ series }: { series: AnalyticsMacroSeries[] }) {
   const element = useRef<HTMLDivElement>(null)
@@ -15,6 +15,7 @@ export function BusinessSignalChart({ series }: { series: AnalyticsMacroSeries[]
     animation: false,
     backgroundColor: 'transparent',
     textStyle: { fontFamily: 'Manrope, ui-sans-serif, system-ui', color: '#75817d' },
+    toolbox: { right: 16, feature: { saveAsImage: { name: 'memorypulse-business-signals', title: 'Download chart' } } },
     grid: { top: 68, right: 28, bottom: 72, left: 62 },
     legend: { type: 'scroll', top: 8, textStyle: { color: '#75817d' } },
     tooltip: { trigger: 'axis', backgroundColor: '#102321', borderColor: '#28514b', textStyle: { color: '#f2f5ed' } },

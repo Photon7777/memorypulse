@@ -140,6 +140,25 @@ export interface ModelDiagnostic {
 
 export interface AnalyticsData {
   components: Array<IndexComponent & { label: string; effective_weight: number; weighted_contribution: number | null }>
+  pressure_history: Array<{
+    date: string
+    total_score: number
+    confidence_score: number
+    spot_momentum_score: number | null
+    retail_momentum_score: number | null
+    volatility_score: number | null
+    news_pressure_score: number | null
+    macro_pressure_score: number | null
+    status_label: string
+  }>
+  momentum_matrix: Array<{
+    series_id: string
+    generation: string
+    horizon_months: number
+    change_percent: number
+    latest_date: string
+    observations: number
+  }>
   macro_series: AnalyticsMacroSeries[]
   model_diagnostics: ModelDiagnostic[]
   event_pressure: { latest_30_days: number; prior_30_days: number; policy_events: number }
@@ -243,4 +262,37 @@ export interface RetailProduct {
 export interface RetailData {
   products: RetailProduct[]
   generation_summaries: Array<Record<string, string | number | null>>
+}
+
+export interface DatasetResource {
+  id: string
+  dataset: string
+  title: string
+  description: string
+  format: 'csv' | 'ndjson' | 'parquet'
+  path: string
+  schema_path: string
+  rows: number
+  bytes: number
+  sha256: string
+  start_date: string | null
+  end_date: string | null
+  source_ids: string[]
+}
+
+export interface DatasetCatalog {
+  dataset_version: string
+  schema_version: string
+  generated_at: string
+  pipeline_run_id: string
+  production_data: boolean
+  name: string
+  description: string
+  publisher: string
+  homepage: string
+  repository: string
+  license: string
+  attribution_required: boolean
+  bundle: { path: string; format: 'zip'; bytes: number; sha256: string }
+  resources: DatasetResource[]
 }

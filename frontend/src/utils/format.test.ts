@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest'
-import { formatCompactNumber, formatDate, formatNumber, freshnessLabel, missingDataMessage, scoreStatus } from './format'
+import { formatBytes, formatCompactNumber, formatDate, formatNumber, freshnessLabel, missingDataMessage, scoreStatus } from './format'
 
 describe('market formatting', () => {
   it('formats unavailable and finite values safely', () => {
     expect(formatNumber(null)).toBe('Not available')
     expect(formatNumber(1234.56, 1)).toBe('1,234.6')
     expect(formatCompactNumber(4_100_000_000_000)).toBe('4.1T')
+    expect(formatBytes(1536)).toBe('1.5 KB')
     expect(formatDate('not-a-date')).toBe('Invalid date')
   })
 

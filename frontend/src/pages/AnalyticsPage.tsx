@@ -1,33 +1,52 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
+import {
+  ContributionChart,
+  EventPriceChart,
+  ForecastFanChart,
+  MomentumMatrixChart,
+  PressureHistoryChart,
+} from '../charts/AnalyticsCharts'
 import { BusinessSignalChart } from '../charts/BusinessSignalChart'
 import { DataBoundary } from '../components/DataBoundary'
+import { HashLink } from '../components/HashLink'
 import { MetricCard } from '../components/MetricCard'
 import { PageIntro } from '../components/PageIntro'
 import { useStaticData } from '../hooks/useStaticData'
-import type { AnalyticsData, DecisionBrief } from '../types/data'
+import type { AnalyticsData, DecisionBrief, ForecastData, NewsData, PricesData } from '../types/data'
 import { formatCompactNumber, formatDate, formatNumber } from '../utils/format'
 
-function storedNumber(key: string, fallback: number): number {
-  const value = Number(window.localStorage.getItem(key))
-  return Number.isFinite(value) && value > 0 ? value : fallback
+type AnalyticsTab = 'market' | 'drivers' | 'forecast' | 'business'
+
+function componentTakeaway(score: number | null): string {
+  if (score == null) return 'Unavailable and excluded from the current score.'
+  if (score >= 55) return 'Currently adds tightening pressure.'
+  if (score <= 45) return 'Currently contributes an easing signal.'
+  return 'Currently near the center of its historical range.'
 }
+
+const tabs: Array<{ id: AnalyticsTab; label: string; description: string }> = [
+  { id: 'market', label: 'Market trends', description: 'Momentum and event context' },
+  { id: 'drivers', label: 'Pressure drivers', description: 'Index history and contributions' },
+  { id: 'forecast', label: 'Forecast & models', description: 'Ranges, errors, and readiness' },
+  { id: 'business', label: 'Business context', description: 'Official macro signals' },
+]
 
 export function AnalyticsPage() {
   const analytics = useStaticData<AnalyticsData>('analytics.json')
   const brief = useStaticData<DecisionBrief>('decision-brief.json')
+  const prices = useStaticData<PricesData>('prices.json')
+  const forecasts = useStaticData<ForecastData>('forecast.json')
+  const news = useStaticData<NewsData>('news.json')
+  const [activeTab, setActiveTab] = useState<AnalyticsTab>('market')
   const [hiddenSignals, setHiddenSignals] = useState<Set<string>>(() => new Set())
-  const [pressureThreshold, setPressureThreshold] = useState(() => storedNumber('memorypulse-pressure-threshold', 65))
-  const [moveThreshold, setMoveThreshold] = useState(() => storedNumber('memorypulse-ddr5-threshold', 5))
-  const visibleSignals = useMemo(() => analytics.data?.macro_series.filter((item) => !hiddenSignals.has(item.series_id)) ?? [], [analytics.data, hiddenSignals])
-  const eventDelta = (analytics.data?.event_pressure.latest_30_days ?? 0) - (analytics.data?.event_pressure.prior_30_days ?? 0)
-  const pressureAlert = (brief.data?.pressure_score ?? 0) >= pressureThreshold
-  const ddr5Move = Math.abs(brief.data?.ddr5.recent_change_percent ?? 0)
-  const moveAlert = ddr5Move >= moveThreshold
-
-  useEffect(() => {
-    window.localStorage.setItem('memorypulse-pressure-threshold', String(pressureThreshold))
-    window.localStorage.setItem('memorypulse-ddr5-threshold', String(moveThreshold))
-  }, [moveThreshold, pressureThreshold])
+  const ddr5Series = prices.data?.series.find((item) => item.generation === 'DDR5')
+  const ddr5Forecasts = forecasts.data?.forecasts.filter((item) => item.series_id === ddr5Series?.label) ?? []
+  const visibleSignals = useMemo(
+    () => analytics.data?.macro_series.filter((item) => !hiddenSignals.has(item.series_id)) ?? [],
+    [analytics.data, hiddenSignals],
+  )
+  const loading = analytics.loading || brief.loading || prices.loading || forecasts.loading || news.loading
+  const error = analytics.error || brief.error || prices.error || forecasts.error || news.error
 
   function toggleSignal(seriesId: string) {
     setHiddenSignals((current) => {
@@ -40,69 +59,58 @@ export function AnalyticsPage() {
 
   return (
     <>
-      <PageIntro kicker="Decision analytics" title="From market signals to an operating posture" description="Inspect the evidence, statistical baselines, model readiness, and business rules behind the latest MemoryPulse conclusion." />
-      <DataBoundary loading={analytics.loading || brief.loading} error={analytics.error || brief.error}>
-        <section className="analytics-decision-strip">
-          <div><p className="eyebrow">Latest conclusion</p><h2>{brief.data?.headline}</h2><p>{brief.data?.conclusion}</p></div>
-          <dl><div><dt>Regime</dt><dd>{brief.data?.regime}</dd></div><div><dt>Direction</dt><dd>{brief.data?.direction}</dd></div><div><dt>Confidence</dt><dd>{brief.data?.confidence}</dd></div></dl>
+      <PageIntro kicker="Market analytics" title="More evidence, less dashboard noise" description="Move between focused analytical questions. Each view keeps its source definitions, confidence, model assumptions, and downloadable chart output." />
+      <DataBoundary loading={loading} error={error}>
+        <section className="analytics-summary">
+          <div><span className="decision-card__status"><i />{brief.data?.regime} · {brief.data?.direction}</span><h2>{brief.data?.headline}</h2><p>{brief.data?.conclusion}</p></div>
+          <dl><div><dt>Pressure</dt><dd>{formatNumber(brief.data?.pressure_score, 1)}</dd></div><div><dt>Confidence</dt><dd>{brief.data?.confidence}</dd></div><div><dt>Latest run</dt><dd>{formatDate(brief.data?.generated_at, true)}</dd></div></dl>
         </section>
-        <details className="decision-history">
-          <summary>Conclusion history · {brief.data?.history.length ?? 0} runs retained in this view</summary>
-          <div className="health-table-wrap"><table className="health-table"><thead><tr><th>Run</th><th>Regime</th><th>Direction</th><th>Pressure</th><th>Confidence</th><th>Procurement posture</th></tr></thead><tbody>{brief.data?.history.slice(0, 20).map((item) => <tr key={item.brief_id}><td>{formatDate(item.generated_at, true)}</td><td>{item.regime}</td><td>{item.direction}</td><td>{formatNumber(item.pressure_score, 1)}</td><td>{item.confidence}</td><td>{item.procurement_posture}</td></tr>)}</tbody></table></div>
-        </details>
 
-        <div className="metric-grid">
-          <MetricCard eyebrow="Policy + market events" value={formatNumber(analytics.data?.event_pressure.latest_30_days, 0)} detail={`${eventDelta >= 0 ? '+' : ''}${eventDelta} versus the prior 30-day window`} />
-          <MetricCard eyebrow="Official policy records" value={formatNumber(analytics.data?.event_pressure.policy_events, 0)} detail="Federal Register semiconductor metadata retained" />
-          <MetricCard eyebrow="DDR5 model history" value={`${analytics.data?.model_readiness.ddr5_monthly_points ?? 0} months`} detail={analytics.data?.model_readiness.baseline_models_ready ? 'Transparent baseline models are active' : 'Still below the baseline-model gate'} tone="accent" />
-          <MetricCard eyebrow="Advanced ML gate" value={analytics.data?.model_readiness.advanced_ml_ready ? 'Ready' : `${analytics.data?.model_readiness.points_until_advanced_ml ?? 0} to go`} detail="60 comparable monthly observations required" />
+        <nav className="analytics-tabs" aria-label="Analytics views">
+          {tabs.map((tab) => <button key={tab.id} type="button" className={activeTab === tab.id ? 'active' : ''} aria-selected={activeTab === tab.id} role="tab" onClick={() => setActiveTab(tab.id)}><strong>{tab.label}</strong><span>{tab.description}</span></button>)}
+        </nav>
+
+        <div className="analytics-pane" role="tabpanel">
+          {activeTab === 'market' && <>
+            <div className="metric-grid metric-grid--three analytics-kpis">
+              <MetricCard eyebrow="DDR5 latest move" value={brief.data?.ddr5.recent_change_percent == null ? '—' : `${brief.data.ddr5.recent_change_percent >= 0 ? '+' : ''}${formatNumber(brief.data.ddr5.recent_change_percent, 1)}%`} detail={`${ddr5Series?.points.length ?? 0} genuine public observations`} tone="accent" />
+              <MetricCard eyebrow="Recent event volume" value={formatNumber(analytics.data?.event_pressure.latest_30_days, 0)} detail={`${(analytics.data?.event_pressure.latest_30_days ?? 0) - (analytics.data?.event_pressure.prior_30_days ?? 0) >= 0 ? '+' : ''}${(analytics.data?.event_pressure.latest_30_days ?? 0) - (analytics.data?.event_pressure.prior_30_days ?? 0)} versus prior 30 days`} />
+              <MetricCard eyebrow="Policy records" value={formatNumber(analytics.data?.event_pressure.policy_events, 0)} detail="Official Federal Register metadata" />
+            </div>
+            <section className="analytics-chart-grid">
+              <article className="chart-card"><div className="chart-title"><div><p className="kicker">Momentum matrix</p><h2>Which generations are moving?</h2></div><p>Each cell uses one traceable representative series; definitions are never averaged.</p></div><MomentumMatrixChart cells={analytics.data?.momentum_matrix ?? []} /></article>
+              <article className="chart-card"><div className="chart-title"><div><p className="kicker">Event context</p><h2>DDR5 and public event volume</h2></div><p>Co-movement supports investigation, not a causal claim.</p></div><EventPriceChart price={ddr5Series} news={news.data} /></article>
+            </section>
+            <div className="analytics-next"><HashLink className="text-link" to="/prices">Open the full source-level price explorer <span aria-hidden="true">→</span></HashLink><HashLink className="text-link" to="/events">Search every retained event <span aria-hidden="true">→</span></HashLink></div>
+          </>}
+
+          {activeTab === 'drivers' && <>
+            <section className="analytics-chart-grid analytics-chart-grid--wide-first">
+              <article className="chart-card"><div className="chart-title"><div><p className="kicker">Across runs</p><h2>Pressure and evidence coverage</h2></div><p>A score is more useful when its coverage is visible beside it.</p></div><PressureHistoryChart history={analytics.data?.pressure_history ?? []} /></article>
+              <article className="chart-card"><div className="chart-title"><div><p className="kicker">Latest run</p><h2>Weighted contributions</h2></div><p>Available components are reweighted; missing components contribute nothing.</p></div><ContributionChart components={analytics.data?.components ?? []} /></article>
+            </section>
+            <section className="component-ledger">
+              {analytics.data?.components.map((component) => <article key={component.key} className={component.score == null ? 'missing' : ''}><header><span>{component.label}</span><strong>{component.score == null ? 'Missing' : formatNumber(component.score, 1)}</strong></header><p>{componentTakeaway(component.score)}</p><small>{component.score == null ? 'Excluded from this run' : `${formatNumber(component.effective_weight * 100, 0)}% effective weight · ${formatNumber(component.weighted_contribution, 1)} points`}</small></article>)}
+            </section>
+          </>}
+
+          {activeTab === 'forecast' && <>
+            <section className="chart-card"><div className="chart-title"><div><p className="kicker">Forecast fan</p><h2>DDR5 point estimates with uncertainty</h2></div><p>Longer horizons widen the interval. The latest vintage is shown.</p></div><ForecastFanChart history={ddr5Series} forecasts={ddr5Forecasts} /></section>
+            <section className="model-readiness-band">
+              <div><p className="kicker">Model governance</p><h2>{analytics.data?.model_readiness.advanced_ml_ready ? 'Advanced model gate reached' : `${analytics.data?.model_readiness.points_until_advanced_ml ?? 0} monthly observations to advanced ML`}</h2><p>{analytics.data?.model_readiness.explanation}</p></div>
+              <div className="readiness-meter"><i><b style={{ width: `${Math.min(100, ((analytics.data?.model_readiness.ddr5_monthly_points ?? 0) / 60) * 100)}%` }} /></i><span>{analytics.data?.model_readiness.ddr5_monthly_points ?? 0} / 60 comparable months</span></div>
+              <HashLink className="button button--quiet" to="/forecasts">Open model diagnostics</HashLink>
+            </section>
+            <section className="model-summary-grid">{analytics.data?.model_diagnostics.map((item) => <article key={item.series_id}><span>{item.observations} observations</span><h3>{item.series_id}</h3><strong>{item.selected_model.replaceAll('_', ' ')}</strong><p>Lowest rolling-origin MAE among {item.candidates.length} transparent candidates.</p></article>)}</section>
+          </>}
+
+          {activeTab === 'business' && <>
+            <section className="chart-card"><div className="chart-title"><div><p className="kicker">Official context</p><h2>Signals normalized for direction</h2></div><p>Original units remain separate below. Normalization starts each visible series at 100.</p></div><div className="signal-toggles">{analytics.data?.macro_series.map((item) => <button type="button" aria-pressed={!hiddenSignals.has(item.series_id)} className={!hiddenSignals.has(item.series_id) ? 'active' : ''} onClick={() => toggleSignal(item.series_id)} key={item.series_id}>{item.name}</button>)}</div>{visibleSignals.length ? <BusinessSignalChart series={visibleSignals} /> : <div className="empty-state"><strong>Select at least one official signal</strong></div>}</section>
+            <section className="business-signal-grid">{analytics.data?.macro_series.map((item) => <article key={item.series_id}><span>{item.source_id.replaceAll('_', ' ')}</span><h3>{item.name}</h3><strong>{formatCompactNumber(item.latest.value)}</strong><p>{item.change_percent == null ? 'No comparable prior observation' : `${item.change_percent >= 0 ? '+' : ''}${formatNumber(item.change_percent, 2)}% latest change`} · {item.unit}</p><a href={item.source_url} target="_blank" rel="noreferrer">Observation {formatDate(item.latest.date)}</a></article>)}</section>
+          </>}
         </div>
 
-        <section className="section-block">
-          <div className="section-heading"><div><p className="kicker">Explainable index</p><h2>What is moving the conclusion</h2></div><p>Contributions are reweighted only across components with comparable validated data.</p></div>
-          <div className="driver-grid">
-            {analytics.data?.components.map((component) => <article key={component.key} className={component.score == null ? 'driver-card driver-card--missing' : 'driver-card'}>
-              <div><span>{component.label}</span><strong>{component.score == null ? 'Missing' : formatNumber(component.score, 1)}</strong></div>
-              <i><b style={{ width: `${component.score ?? 0}%` }} /></i>
-              <p>{component.transformation}</p>
-              <small>{component.score == null ? 'Excluded from the current weighted score' : `${formatNumber(component.effective_weight * 100, 0)}% effective weight · ${formatNumber(component.weighted_contribution, 1)} points`}</small>
-            </article>)}
-          </div>
-        </section>
-
-        <section className="chart-card">
-          <div className="section-heading analytics-chart-heading"><div><p className="kicker">Business context</p><h2>Official signals, normalized for direction</h2></div><p>Normalization supports directional comparison only; original units remain visible below.</p></div>
-          <div className="signal-toggles" aria-label="Business signal visibility">
-            {analytics.data?.macro_series.map((item) => <button type="button" aria-pressed={!hiddenSignals.has(item.series_id)} className={!hiddenSignals.has(item.series_id) ? 'active' : ''} onClick={() => toggleSignal(item.series_id)} key={item.series_id}>{item.name}</button>)}
-          </div>
-          {visibleSignals.length ? <BusinessSignalChart series={visibleSignals} /> : <div className="empty-state"><strong>Select at least one signal</strong></div>}
-        </section>
-
-        <section className="business-signal-grid">
-          {analytics.data?.macro_series.map((item) => <article key={item.series_id}>
-            <span>{item.source_id.replaceAll('_', ' ')}</span><h3>{item.name}</h3>
-            <strong>{formatCompactNumber(item.latest.value)}</strong>
-            <p>{item.change_percent == null ? 'No comparable prior observation' : `${item.change_percent >= 0 ? '+' : ''}${formatNumber(item.change_percent, 2)}% latest change`} · {item.unit}</p>
-            <a href={item.source_url} target="_blank" rel="noreferrer">Latest observation {formatDate(item.latest.date)}</a>
-          </article>)}
-        </section>
-
-        <section className="section-block">
-          <div className="section-heading"><div><p className="kicker">Model governance</p><h2>Backtests before complexity</h2></div><p>{analytics.data?.model_readiness.explanation}</p></div>
-          {analytics.data?.model_diagnostics.map((diagnostic) => <article className="model-diagnostic" key={diagnostic.series_id}>
-            <header><div><span>{diagnostic.observations} observations</span><h3>{diagnostic.series_id}</h3></div><strong>{diagnostic.selected_model.replaceAll('_', ' ')}</strong></header>
-            <div className="health-table-wrap"><table className="health-table"><thead><tr><th>Candidate</th><th>Rolling MAE</th><th>MAPE</th><th>Decision</th></tr></thead><tbody>{diagnostic.candidates.map((candidate) => <tr key={candidate.model}><td>{candidate.model.replaceAll('_', ' ')}</td><td>{formatNumber(candidate.mae, 3)}</td><td>{candidate.mape == null ? '—' : `${formatNumber(candidate.mape, 1)}%`}</td><td>{candidate.selected ? 'Selected' : 'Benchmark'}</td></tr>)}</tbody></table></div>
-          </article>)}
-        </section>
-
-        <section className="watchlist-panel">
-          <div><p className="kicker">Device-local watchlist</p><h2>Set decision thresholds</h2><p>Preferences stay in this browser. This static site does not transmit or email them.</p></div>
-          <div className="watchlist-controls">
-            <label>Pressure alert <span>{pressureThreshold}</span><input type="range" min="25" max="90" step="5" value={pressureThreshold} onChange={(event) => setPressureThreshold(Number(event.target.value))} /></label>
-            <label>DDR5 move alert <span>{moveThreshold}%</span><input type="range" min="1" max="25" step="1" value={moveThreshold} onChange={(event) => setMoveThreshold(Number(event.target.value))} /></label>
-          </div>
-          <div className="watchlist-status"><span className={pressureAlert ? 'alert-on' : ''}>{pressureAlert ? 'Pressure threshold reached' : 'Pressure below threshold'}</span><span className={moveAlert ? 'alert-on' : ''}>{moveAlert ? 'DDR5 move threshold reached' : 'DDR5 move below threshold'}</span></div>
-        </section>
+        <details className="decision-history compact-details"><summary>Conclusion history · {brief.data?.history.length ?? 0} runs</summary><div className="health-table-wrap"><table className="health-table"><thead><tr><th>Run</th><th>Regime</th><th>Direction</th><th>Pressure</th><th>Confidence</th><th>Posture</th></tr></thead><tbody>{brief.data?.history.slice(0, 20).map((item) => <tr key={item.brief_id}><td>{formatDate(item.generated_at, true)}</td><td>{item.regime}</td><td>{item.direction}</td><td>{formatNumber(item.pressure_score, 1)}</td><td>{item.confidence}</td><td>{item.procurement_posture}</td></tr>)}</tbody></table></div></details>
       </DataBoundary>
     </>
   )

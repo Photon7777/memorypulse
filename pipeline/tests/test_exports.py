@@ -33,7 +33,7 @@ def test_export_contracts_are_valid(tmp_path) -> None:
     manifest = json.loads((data_dir / "manifest.json").read_text())
     assert manifest["production_data"] is True
     assert manifest["fixture_data"] is False
-    assert manifest["schema_version"] == "1.1.0"
+    assert manifest["schema_version"] == "1.2.0"
     brief = json.loads((data_dir / "decision-brief.json").read_text())
     assert brief["regime"] == "Watch"
     assert brief["conclusion"]

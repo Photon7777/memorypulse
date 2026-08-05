@@ -13,7 +13,7 @@ from memorypulse.analysis.briefing import build_business_analytics, build_decisi
 from memorypulse.indicators.pressure import IndexResult, calculate_index, components_from_database
 from memorypulse.transformations.storage import atomic_write_text
 
-SCHEMA_VERSION = "1.1.0"
+SCHEMA_VERSION = "1.2.0"
 
 
 def _json_value(value: Any) -> Any:

@@ -14,6 +14,7 @@ from typing import Any
 
 from memorypulse.config import indicator_config, repository_root, source_config
 from memorypulse.database import create_database
+from memorypulse.exports.dataset import build_public_dataset, validate_public_dataset
 from memorypulse.exports.frontend import export_frontend
 from memorypulse.forecasting.models import forecast_series
 from memorypulse.indicators.pressure import calculate_index, components_from_database
@@ -241,7 +242,7 @@ def run_update(offline: bool, output_root: Path | None, force_forecast: bool = F
         report = build_quality_report(connection, exports_dir / "quality-report.json", not offline)
         if report["status"] != "pass":
             raise RuntimeError("data-quality validation failed; frontend exports were not replaced")
-        export_frontend(
+        manifest = export_frontend(
             connection,
             frontend_data,
             indicator["weights"],
@@ -273,9 +274,19 @@ def run_update(offline: bool, output_root: Path | None, force_forecast: bool = F
             "brief_id",
         )
         connection = create_database(history, database_path)
+        build_public_dataset(
+            connection,
+            history,
+            frontend_data.parent / "datasets/latest",
+            pipeline_run_id,
+            manifest["generated_at"],
+            not offline,
+            repo,
+        )
         build_quality_report(connection, exports_dir / "quality-report.json", not offline)
         connection.close()
     errors = validate_export_directory(frontend_data, expect_production=not offline)
+    errors.extend(validate_public_dataset(frontend_data.parent / "datasets/latest"))
     if errors:
         raise RuntimeError("export validation failed: " + "; ".join(errors))
     print(f"MemoryPulse {'offline fixture' if offline else 'production'} update complete: {pipeline_run_id}")
@@ -290,13 +301,40 @@ def run_export(production: bool) -> None:
         indicator = indicator_config(repo)
         run_id = stable_id("export", utc_now().isoformat())
         build_quality_report(connection, exports_dir / "quality-report.json", production)
-        export_frontend(
+        manifest = export_frontend(
             connection,
             frontend_data,
             indicator["weights"],
             indicator["methodology_version"],
             run_id,
             production_data=production,
+        )
+        build_public_dataset(
+            connection,
+            history,
+            frontend_data.parent / "datasets/latest",
+            run_id,
+            manifest["generated_at"],
+            production,
+            repo,
+        )
+        connection.close()
+
+
+def run_dataset(production: bool) -> None:
+    repo = repository_root()
+    history, frontend_data, _ = _layout(repo, production)
+    ensure_history_files(history)
+    with tempfile.TemporaryDirectory(prefix="memorypulse-") as temporary:
+        connection = create_database(history, Path(temporary) / "memorypulse.duckdb")
+        build_public_dataset(
+            connection,
+            history,
+            frontend_data.parent / "datasets/latest",
+            stable_id("dataset", utc_now().isoformat()),
+            utc_now(),
+            production,
+            repo,
         )
         connection.close()
 
@@ -305,6 +343,7 @@ def run_validate(root: Path | None) -> None:
     base = root.resolve() if root else repository_root()
     data_dir = base / "frontend/public/data"
     errors = validate_export_directory(data_dir, expect_production=None if root else True)
+    errors.extend(validate_public_dataset(base / "frontend/public/datasets/latest"))
     if errors:
         raise RuntimeError("validation failed: " + "; ".join(errors))
     print(f"Validated static data in {data_dir}")
@@ -317,7 +356,18 @@ def check_size() -> None:
         if path.stat().st_size > MAX_FRONTEND_FILE_BYTES:
             warnings.append(f"{path.name}: {path.stat().st_size} bytes")
     history_total = sum(path.stat().st_size for path in (repo / "data/history").glob("*"))
-    report = {"frontend_warnings": warnings, "history_bytes": history_total}
+    dataset_total = sum(
+        path.stat().st_size
+        for path in (repo / "frontend/public/datasets/latest").rglob("*")
+        if path.is_file()
+    )
+    if dataset_total > 25 * 1024 * 1024:
+        warnings.append(f"public dataset: {dataset_total} bytes")
+    report = {
+        "frontend_warnings": warnings,
+        "history_bytes": history_total,
+        "dataset_bytes": dataset_total,
+    }
     print(json.dumps(report, sort_keys=True))
     if warnings:
         raise RuntimeError("generated frontend data exceeded the configured size threshold")
@@ -347,6 +397,8 @@ def parser() -> argparse.ArgumentParser:
     update.add_argument("--force-forecast", action="store_true")
     export = subparsers.add_parser("export", help="rebuild frontend JSON from canonical history")
     export.add_argument("--production", action="store_true")
+    dataset = subparsers.add_parser("dataset", help="build the versioned public dataset release")
+    dataset.add_argument("--production", action="store_true")
     validate = subparsers.add_parser("validate", help="validate generated frontend contracts")
     validate.add_argument("--root", type=Path)
     subparsers.add_parser("check-size", help="enforce repository growth limits")
@@ -363,6 +415,8 @@ def main(argv: list[str] | None = None) -> None:
             run_update(args.offline, args.output_root, args.force_forecast)
         elif args.command == "export":
             run_export(args.production)
+        elif args.command == "dataset":
+            run_dataset(args.production)
         elif args.command == "validate":
             run_validate(args.root)
         elif args.command == "check-size":

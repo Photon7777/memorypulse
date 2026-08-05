@@ -16,6 +16,19 @@ export function formatCompactNumber(value: number | null | undefined): string {
     : new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 2 }).format(value)
 }
 
+export function formatBytes(value: number | null | undefined): string {
+  if (value == null || !Number.isFinite(value) || value < 0) return 'Not available'
+  if (value < 1024) return `${value} B`
+  const units = ['KB', 'MB', 'GB']
+  let size = value / 1024
+  let index = 0
+  while (size >= 1024 && index < units.length - 1) {
+    size /= 1024
+    index += 1
+  }
+  return `${size.toFixed(size >= 10 ? 0 : 1)} ${units[index]}`
+}
+
 export function formatDate(value: string | null | undefined, withTime = false): string {
   if (!value) return 'Not available'
   const date = new Date(value)

@@ -41,6 +41,12 @@
   conclusion history, separate official macro analytics, and explicit baseline/advanced-ML readiness.
 - [x] Added 1/3/6-month forecast horizons, candidate-model comparisons, business-signal visualization,
   shareable/filterable price views, CSV exports, event search/sort, and a procurement decision lab.
+- [x] Reorganized the site around Executive, Market analytics, Forecasts, Scenario lab, and Data; added
+  focused analytical tabs, five downloadable chart types, mobile-responsive layouts, and LinkedIn-ready
+  conclusion copy plus a generated insight-card download.
+- [x] Added a public dataset release layer with CSV/NDJSON, Parquet, JSON Schemas, catalog metadata,
+  SHA-256 checksums, a complete ZIP, source-specific reuse terms, daily regeneration, and monthly GitHub
+  Release snapshots.
 
 ## Remaining
 

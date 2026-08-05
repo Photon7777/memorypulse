@@ -40,13 +40,16 @@ flowchart LR
   F --> H["Atomic static JSON"]
   G --> H
   Q --> H
+  E --> R["Versioned public dataset\nCSV · NDJSON · Parquet\nschemas · checksums · ZIP"]
   H --> I["React · TypeScript · ECharts"]
+  R --> I
   I --> J["GitHub Pages"]
   L["Daily GitHub Action"] --> B
 ```
 
 The committed CSV and NDJSON files are canonical. DuckDB is recreated inside a temporary directory
-for every run and is never committed. The browser reads only generated static JSON.
+for every run and is never committed. The browser reads generated static JSON and a versioned public
+dataset release; no live database or application server is required.
 
 ## Technology
 
@@ -151,8 +154,9 @@ That command runs Ruff, Pytest (including the offline end-to-end path and React 
 offline export validation, frontend linting, strict type checks, Vitest, the Vite production build,
 and generated-file size limits.
 
-Other targets: `make install`, `make bootstrap`, `make update`, `make validate`, `make frontend`,
-`make test`, `make build`, and `make compact` (an ignored Zstandard Parquet analytical export).
+Other targets: `make install`, `make bootstrap`, `make update`, `make dataset`, `make validate`,
+`make frontend`, `make test`, `make build`, and `make compact` (an ignored Zstandard Parquet analytical
+export). `make dataset` rebuilds the public CSV/NDJSON, Parquet, schema, checksum, and ZIP release.
 
 ## Memory Pressure Index
 
@@ -180,14 +184,29 @@ confidence, procurement and inventory posture, budget-risk label, top explainabl
 and a plain-language conclusion. Briefs are also appended to `data/history/decision_briefs.csv`, so the
 website can show how conclusions changed over time instead of replacing the prior interpretation.
 
-The Analytics workspace separates incompatible official indicators, exposes each index component's
-effective weight and contribution, compares forecast candidates, and states whether the data volume is
-ready for baseline models or more advanced ML. Advanced multivariate ML remains disabled until at least
-60 comparable monthly DDR5 observations exist; the site reports the remaining evidence gap.
+The Analytics workspace organizes decision evidence into market-trend, pressure-driver, forecast/model,
+and business-context views. It includes a DDR-generation momentum matrix, Pressure Index history,
+weighted contribution bars, an event/DDR5 overlay, forecast fan chart, and explicit takeaway beneath
+each visual. It compares forecast candidates and states whether the data volume is ready for baseline
+models or more advanced ML. Advanced multivariate ML remains disabled until at least 60 comparable
+monthly DDR5 observations exist; the site reports the remaining evidence gap.
 
 Interactive tools include DDR-generation/source/date-range filters, per-series visibility controls,
 shareable price views, CSV downloads, event search/sort/export, forecast-horizon selection, device-cost
 scenarios, and a procurement lab that compares modeled price movement with inventory carrying cost.
+
+## Public dataset
+
+The **Data** workspace publishes the latest normalized tables without an account or API key. Every
+release includes canonical CSV or NDJSON, equivalent Zstandard Parquet files, JSON Schemas, a machine
+catalog, Schema.org metadata, SHA-256 checksums, and a complete ZIP. The catalog records row counts,
+date coverage, source IDs, artifact sizes, and content hashes. Scheduled updates rebuild the release only
+after validation; the first scheduled run of each UTC month also attaches the bundle to a versioned
+GitHub Release for durable snapshots.
+
+Code is MIT-licensed, but upstream data rights remain source-specific. Review
+[DATA_LICENSE.md](DATA_LICENSE.md) before redistribution and retain the supplied attribution and source
+fields when reusing observations.
 
 ## Forecasting
 
@@ -219,9 +238,10 @@ history merely to reduce repository size.
 ## Scheduled automation
 
 `update-data.yml` runs daily at 10:17 UTC and can be started manually. It uses only a standard GitHub
-runner, validates before staging, commits only changed canonical history/exports, never force-pushes,
-and uploads a seven-day diagnostic artifact. A failed run makes no commit, so the existing Pages site
-remains available. `deploy-pages.yml` separately checks and publishes `frontend/dist`.
+runner, validates before staging, commits changed canonical history, site exports, and the public dataset,
+never force-pushes, and uploads a seven-day diagnostic artifact. A failed run makes no commit, so the
+existing Pages site remains available. On the first scheduled UTC day of each month it creates or updates
+a versioned dataset release. `deploy-pages.yml` separately checks and publishes `frontend/dist`.
 
 ## GitHub Pages setup
 
@@ -269,9 +289,11 @@ memorypulse/
 ├── config/               # Source, product, and index configuration
 ├── data/                 # Canonical history and compact analytical exports
 ├── frontend/             # React/Vite site and generated public JSON
+│   └── public/datasets/  # Versioned public data package and machine catalog
 ├── pipeline/             # Python package, adapters, analytics, exporters, tests
 ├── scripts/              # Bootstrap, update, and verification entry points
 ├── DATA_SOURCES.md
+├── DATA_LICENSE.md
 ├── METHODOLOGY.md
 ├── PROGRESS.md
 ├── pyproject.toml
@@ -288,11 +310,11 @@ Add captures after the first GitHub Pages deployment:
 
 ## Portfolio copy
 
-**LinkedIn-ready:** Built MemoryPulse, a zero-cost, open-source market-intelligence pipeline and
-React research site that continuously monitors public memory pricing, semiconductor macro context,
-and explainably tagged news metadata. Designed canonical historical storage, ephemeral DuckDB/Polars
-analytics, a confidence-aware market index, rolling-origin statistical forecasts, and failure-safe
-GitHub Actions/Pages deployment—with no paid APIs or servers.
+**LinkedIn-ready:** Built MemoryPulse, a zero-cost, open-source memory-market analytics product with
+an executive decision brief on every validated run, interactive DDR5 trend/forecast/driver charts, and
+a reusable public dataset in CSV, NDJSON, and Parquet. Designed canonical historical storage, ephemeral
+DuckDB/Polars analytics, a confidence-aware market index, rolling-origin model selection, verifiable
+data releases, and failure-safe GitHub Actions/Pages deployment—with no paid APIs or servers.
 
 **Resume-ready:**
 

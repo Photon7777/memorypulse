@@ -1,0 +1,103 @@
+{
+  "$id": "https://photon7777.github.io/memorypulse/datasets/latest/schemas/source_runs.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Per-source retrieval health, freshness, and record counts.",
+  "properties": {
+    "completed_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "data_freshness_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "duration_seconds": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "failure_reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "optional_key_configured": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "records_received": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "records_rejected": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "records_written": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "response_status": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "run_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "started_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "status": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "run_id",
+    "source_id",
+    "started_at",
+    "completed_at",
+    "status",
+    "records_received",
+    "records_written",
+    "records_rejected",
+    "response_status",
+    "failure_reason",
+    "data_freshness_at",
+    "duration_seconds",
+    "optional_key_configured"
+  ],
+  "title": "MemoryPulse source runs row",
+  "type": "object"
+}

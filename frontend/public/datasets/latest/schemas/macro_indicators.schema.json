@@ -1,0 +1,75 @@
+{
+  "$id": "https://photon7777.github.io/memorypulse/datasets/latest/schemas/macro_indicators.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Official semiconductor employment, producer-price, and trade-context indicators.",
+  "properties": {
+    "collected_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "observation_date": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "observation_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "series_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "series_name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source_url": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "unit": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "value": {
+      "type": [
+        "number",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "observation_id",
+    "observation_date",
+    "collected_at",
+    "source_id",
+    "series_id",
+    "series_name",
+    "value",
+    "unit",
+    "source_url"
+  ],
+  "title": "MemoryPulse macro indicators row",
+  "type": "object"
+}

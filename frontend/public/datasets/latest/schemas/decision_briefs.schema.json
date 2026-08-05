@@ -1,0 +1,96 @@
+{
+  "$id": "https://photon7777.github.io/memorypulse/datasets/latest/schemas/decision_briefs.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Auditable conclusion and business-posture history for successful runs.",
+  "properties": {
+    "brief_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "budget_risk": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "conclusion": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "confidence": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "confidence_score": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "direction": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "generated_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "inventory_posture": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "methodology_version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "pressure_score": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "procurement_posture": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "regime": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "brief_id",
+    "generated_at",
+    "regime",
+    "direction",
+    "confidence",
+    "confidence_score",
+    "pressure_score",
+    "procurement_posture",
+    "inventory_posture",
+    "budget_risk",
+    "conclusion",
+    "methodology_version"
+  ],
+  "title": "MemoryPulse decision briefs row",
+  "type": "object"
+}

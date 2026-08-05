@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { PriceChart } from '../charts/PriceChart'
+import { ForecastFanChart } from '../charts/AnalyticsCharts'
 import { DataBoundary } from '../components/DataBoundary'
 import { MetricCard } from '../components/MetricCard'
 import { PageIntro } from '../components/PageIntro'
@@ -39,12 +39,7 @@ export function ForecastsPage() {
         {forecast ? (
           <>
             <div className="forecast-toolbar"><label>Series<select value={activeSeries} onChange={(event) => { setSelected(event.target.value); setSelectedTarget('') }}>{series.map((item) => <option key={item}>{item}</option>)}</select></label><div className="forecast-horizons" aria-label="Forecast horizon">{activeForecasts.map((item) => <button type="button" className={item.target_date === forecast.target_date ? 'active' : ''} aria-pressed={item.target_date === forecast.target_date} onClick={() => setSelectedTarget(item.target_date)} key={item.target_date}>{horizonLabel(item.target_date)}</button>)}</div><span>Created {formatDate(forecast.forecast_created_at, true)}</span></div>
-            <section className="forecast-hero">
-              <div><p className="eyebrow">Point forecast · {formatDate(forecast.target_date)}</p><strong>{formatNumber(forecast.point_forecast, 3)}</strong><p>Source-defined units</p></div>
-              <div className="interval-line"><span style={{ left: '12%' }}>{formatNumber(forecast.lower_bound, 3)}</span><i /><b style={{ left: '50%' }} /><span style={{ right: '12%' }}>{formatNumber(forecast.upper_bound, 3)}</span></div>
-              <p>95% residual-based uncertainty interval</p>
-            </section>
-            {history && <section className="chart-card forecast-history"><div className="section-heading"><div><p className="kicker">Training history</p><h2>Observed source series</h2></div><p>Historical values retain their original source basis; the forecast above is the next model target.</p></div><PriceChart series={[history]} normalized={false} /><p className="chart-summary">{history.source_label} · {history.basis}</p></section>}
+            <section className="chart-card forecast-history"><div className="section-heading"><div><p className="kicker">Selected forecast · {formatDate(forecast.target_date)}</p><h2>{formatNumber(forecast.point_forecast, 3)} <small>source-defined units</small></h2></div><p>95% interval {formatNumber(forecast.lower_bound, 3)}–{formatNumber(forecast.upper_bound, 3)}. The chart uses the latest complete forecast vintage.</p></div><ForecastFanChart history={history} forecasts={activeForecasts} />{history && <p className="chart-summary">{history.source_label} · {history.basis}</p>}</section>
             <div className="metric-grid metric-grid--three">
               <MetricCard eyebrow="Selected model" value={forecast.model_name.replaceAll('_', ' ')} detail={`Compared with a naive baseline · v${forecast.model_version}`} />
               <MetricCard eyebrow="Backtest MAE" value={formatNumber(forecast.backtest_mae, 3)} detail={forecast.backtest_mape == null ? 'MAPE unavailable where actual values are zero' : `MAPE ${formatNumber(forecast.backtest_mape, 1)}%`} tone="accent" />

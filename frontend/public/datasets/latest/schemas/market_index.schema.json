@@ -1,0 +1,89 @@
+{
+  "$id": "https://photon7777.github.io/memorypulse/datasets/latest/schemas/market_index.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Memory Pressure Index history and component scores.",
+  "properties": {
+    "calculated_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "confidence_score": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "macro_pressure_score": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "methodology_version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "news_pressure_score": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "observation_date": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "retail_momentum_score": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "spot_momentum_score": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "status_label": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "total_score": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "volatility_score": {
+      "type": [
+        "number",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "observation_date",
+    "calculated_at",
+    "total_score",
+    "status_label",
+    "confidence_score",
+    "spot_momentum_score",
+    "retail_momentum_score",
+    "volatility_score",
+    "news_pressure_score",
+    "macro_pressure_score",
+    "methodology_version"
+  ],
+  "title": "MemoryPulse market index row",
+  "type": "object"
+}

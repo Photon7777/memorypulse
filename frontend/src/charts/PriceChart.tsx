@@ -54,6 +54,7 @@ export function PriceChart({ series, normalized }: Props) {
       animation: false,
       backgroundColor: 'transparent',
       textStyle: { fontFamily: 'Inter, ui-sans-serif, system-ui', color: '#75817d' },
+      toolbox: { right: 16, feature: { saveAsImage: { name: 'memorypulse-price-chart', title: 'Download chart' } } },
       grid: { top: 72, right: 28, bottom: 74, left: 66, containLabel: false },
       legend: { type: 'scroll', top: 8, textStyle: { color: '#75817d' } },
       tooltip: {

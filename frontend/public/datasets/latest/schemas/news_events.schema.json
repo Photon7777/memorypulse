@@ -1,0 +1,126 @@
+{
+  "$id": "https://photon7777.github.io/memorypulse/datasets/latest/schemas/news_events.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Bounded market-news and official policy metadata; no article bodies.",
+  "properties": {
+    "article_url": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "collected_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "companies": {
+      "items": {
+        "type": "string"
+      },
+      "type": [
+        "array",
+        "null"
+      ]
+    },
+    "duplicate_group_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "event_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "event_tags": {
+      "items": {
+        "type": "string"
+      },
+      "type": [
+        "array",
+        "null"
+      ]
+    },
+    "manually_important": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "memory_types": {
+      "items": {
+        "type": "string"
+      },
+      "type": [
+        "array",
+        "null"
+      ]
+    },
+    "published_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "query_category": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "relevance_score": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "short_excerpt": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source_domain": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source_name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "title": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "event_id",
+    "published_at",
+    "collected_at",
+    "title",
+    "source_domain",
+    "source_name",
+    "article_url",
+    "query_category",
+    "companies",
+    "memory_types",
+    "event_tags",
+    "short_excerpt",
+    "relevance_score",
+    "duplicate_group_id",
+    "manually_important"
+  ],
+  "title": "MemoryPulse news events row",
+  "type": "object"
+}

@@ -70,6 +70,13 @@ not compatible units. Only the configured FRED semiconductor producer-price seri
 macro-pressure component. BLS employment and World Bank exports are displayed as separate business
 context signals with their own changes, dates, and units.
 
+The market-trend momentum matrix calculates 1-, 3-, 6-, and 12-observation percentage changes when
+enough comparable history exists. It displays one representative series per memory generation and
+horizon, preferring a generation-level series name and otherwise selecting the series with the most
+observations. The underlying series ID is exposed in the tooltip; incompatible series are not averaged.
+The Pressure Index history chart plots stored index vintages and their represented-weight confidence,
+so a score change can be distinguished from a coverage change.
+
 ## Memory Pressure Index
 
 Configured version 1.1 weights are:
@@ -146,6 +153,16 @@ Analytics page reports the exact point count and gap instead of labeling a small
 The procurement lab is a scenario calculation: purchase-now cost plus proportional annual carrying cost
 is compared with a wait cost after an explicit expected price move. It does not model supplier terms,
 lead-time risk, taxes, financing constraints, or negotiated prices and is not purchasing advice.
+
+## Public dataset release
+
+After successful validation, the pipeline materializes the canonical public tables as CSV or NDJSON and
+equivalent Zstandard Parquet. It derives JSON Schemas from the ephemeral DuckDB contracts, publishes row
+counts, date coverage, source IDs, byte sizes, and SHA-256 hashes in `catalog.json`, and bundles the same
+artifacts in a versioned ZIP. The release includes forecasts, index vintages, conclusion history, and
+source-run health so downstream users can reproduce both analytical results and their evidence state.
+No raw HTML, article bodies, API keys, or permission-gated DRAMeXchange observations are distributed.
+Third-party source rights remain separate from the repository's MIT code license.
 
 ## Causal-language limits
 

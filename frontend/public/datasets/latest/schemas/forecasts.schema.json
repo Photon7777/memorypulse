@@ -1,0 +1,110 @@
+{
+  "$id": "https://photon7777.github.io/memorypulse/datasets/latest/schemas/forecasts.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Versioned baseline forecasts with uncertainty and rolling-backtest metrics.",
+  "properties": {
+    "backtest_mae": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "backtest_mape": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "data_frequency": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "forecast_created_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "lower_bound": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "model_name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "model_version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "observations_used": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "point_forecast": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "series_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "target_date": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "training_end": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "training_start": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "upper_bound": {
+      "type": [
+        "number",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "forecast_created_at",
+    "target_date",
+    "series_id",
+    "model_name",
+    "model_version",
+    "point_forecast",
+    "lower_bound",
+    "upper_bound",
+    "training_start",
+    "training_end",
+    "backtest_mae",
+    "backtest_mape",
+    "observations_used",
+    "data_frequency"
+  ],
+  "title": "MemoryPulse forecasts row",
+  "type": "object"
+}
