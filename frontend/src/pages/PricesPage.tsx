@@ -44,6 +44,10 @@ export function PricesPage() {
   }), [available, hiddenSeries, range])
   const ddr5Series = useMemo(() => state.data?.series.find((item) => item.generation === 'DDR5'), [state.data])
   const latestDdr5 = ddr5Series?.points.at(-1)
+  const leadSeries = selected[0]
+  const leadStart = leadSeries?.points.at(0)?.price_per_gb
+  const leadEnd = leadSeries?.points.at(-1)?.price_per_gb
+  const leadChange = leadStart && leadEnd ? ((leadEnd / leadStart) - 1) * 100 : null
 
   useEffect(() => {
     const params = new URLSearchParams({ generation, source, normalized: String(normalized), range })
@@ -102,6 +106,7 @@ export function PricesPage() {
           </div>
           {available.length > 1 ? <div className="series-picker" aria-label="Displayed price series">{available.map((item) => <button type="button" className={!hiddenSeries.has(item.id) ? 'active' : ''} aria-pressed={!hiddenSeries.has(item.id)} onClick={() => toggleSeries(item.id)} key={item.id}><i />{item.label}</button>)}</div> : null}
           {selected.length ? <PriceChart series={selected} normalized={normalized} /> : <div className="empty-state"><strong>No compatible series</strong><p>Try another memory type or source. Missing observations are not interpolated.</p></div>}
+          {selected.length ? <p className="chart-takeaway"><strong>Takeaway</strong>{leadChange == null ? `${selected.length} compatible series are visible. Use normalization to compare direction when source units differ.` : `${leadSeries.label} is ${Math.abs(leadChange).toFixed(1)}% ${leadChange >= 0 ? 'higher' : 'lower'} across the selected window. Compare direction—not absolute height—between differently defined sources.`}</p> : null}
           <p className="chart-summary">Showing {selected.length} source-defined series. {state.data?.units_note}</p>
         </section>
         <section className="series-list" aria-label="Displayed series definitions">

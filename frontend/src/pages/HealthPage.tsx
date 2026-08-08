@@ -24,18 +24,24 @@ export function HealthPage() {
 
   return (
     <>
-      <PageIntro kicker="Data health" title="Freshness, failure, and missingness in full view" description="Core feeds, optional integrations, and permission-gated sources are reported separately. A source hold is not presented as a system failure." />
+      <PageIntro kicker="Data health" title="Know what is current—and what is not" description="See the latest state of every automatic source. Optional and permission-gated integrations stay separate from system health." />
       <DataBoundary loading={state.loading} error={state.error}>
         {state.data?.sources.length ? (
           <>
             <section className="health-summary" aria-label="Core source summary">
-              <article><span>Core feeds</span><strong>{activeSources.length}</strong><p>Sources expected to run automatically.</p></article>
-              <article><span>Healthy</span><strong>{successful}</strong><p>Latest attempt completed successfully.</p></article>
-              <article><span>Attention</span><strong>{degraded}</strong><p>Previous validated data remains available.</p></article>
+              <article><span>Automatic feeds</span><strong>{activeSources.length}</strong><p>Checked on each scheduled run.</p></article>
+              <article><span>Healthy now</span><strong>{successful}</strong><p>Latest collection completed.</p></article>
+              <article><span>Needs attention</span><strong>{degraded}</strong><p>Earlier validated data is preserved.</p></article>
             </section>
 
-            <div className="section-heading health-heading"><div><p className="kicker">Automatic collection</p><h2>Core sources</h2></div><p>Status is based on the latest attempt; the last successful retrieval is retained separately.</p></div>
-            <div className="health-table-wrap"><table className="health-table"><thead><tr><th>Source</th><th>Status</th><th>Last successful retrieval</th><th>Latest observation</th><th>Written / rejected</th><th>Current reason</th></tr></thead><tbody>
+            <div className="section-heading health-heading"><div><p className="kicker">Automatic collection</p><h2>Current source status</h2></div><p>A temporary source problem never removes previously validated observations.</p></div>
+            <section className="source-health-grid">{activeSources.map((source) => <article key={source.source_id}>
+              <header><span className={`health-status health-status--${source.status}`}><i />{source.status === 'success' ? 'Healthy' : 'Attention'}</span><small>{freshnessLabel(source.latest_retrieval)}</small></header>
+              <h3>{SOURCE_LABELS[source.source_id] ?? source.source_id.replaceAll('_', ' ')}</h3>
+              <p>{source.status === 'success' ? `Latest available observation: ${formatDate(source.latest_observation)}.` : `${source.reason || 'The latest collection attempt did not complete.'} Previous data remains live.`}</p>
+            </article>)}</section>
+
+            <details className="health-diagnostics disclosure-card"><summary><span>Open detailed source diagnostics</span><small>Attempts, observations, and rejected records</small></summary><div className="health-table-wrap"><table className="health-table"><thead><tr><th>Source</th><th>Status</th><th>Last successful retrieval</th><th>Latest observation</th><th>Written / rejected</th><th>Current reason</th></tr></thead><tbody>
               {activeSources.map((source) => <tr key={source.source_id}>
                 <td><strong>{SOURCE_LABELS[source.source_id] ?? source.source_id.replaceAll('_', ' ')}</strong></td>
                 <td><span className={`health-status health-status--${source.status}`}><i />{source.status}</span></td>
@@ -44,10 +50,9 @@ export function HealthPage() {
                 <td>{formatNumber(source.records_collected, 0)} / {formatNumber(source.records_rejected, 0)}</td>
                 <td>{source.reason || 'No current degradation reason'}</td>
               </tr>)}
-            </tbody></table></div>
+            </tbody></table></div></details>
 
-            <div className="section-heading health-heading"><div><p className="kicker">Not system failures</p><h2>Optional and permission-gated</h2></div><p>These integrations stay visible without lowering the core-source health count.</p></div>
-            <section className="held-source-grid">
+            <details className="held-sources disclosure-card"><summary><span>Optional and permission-gated sources</span><small>{heldSources.length} integrations · not counted as system failures</small></summary><section className="held-source-grid">
               {heldSources.map((source) => <article key={source.source_id}>
                 <span className="held-source-kind">{source.source_kind === 'optional' ? 'Optional integration' : 'Written permission required'}</span>
                 <h3>{SOURCE_LABELS[source.source_id] ?? source.source_id.replaceAll('_', ' ')}</h3>
@@ -58,10 +63,10 @@ export function HealthPage() {
                   ? <a href="https://bestbuyapis.github.io/api-documentation/" target="_blank" rel="noreferrer">Best Buy API setup</a>
                   : <a href="https://www.dramexchange.com/About/TermsOfUse" target="_blank" rel="noreferrer">Review current Terms of Use</a>}
               </article>)}
-            </section>
+            </section></details>
           </>
         ) : <div className="empty-state empty-state--large"><strong>No source runs recorded yet</strong><p>Run a production update to populate live health, or the offline update to validate the complete fixture path.</p></div>}
-        <div className="concept-warning"><strong>Failure behavior</strong><p>Scheduled updates validate all generated files before committing. If collection or quality checks fail, GitHub Pages continues serving the previous successful build.</p></div>
+        <div className="concept-warning"><strong>Built-in safety</strong><p>New files publish only after validation. If collection or quality checks fail, the previous successful site and dataset remain available.</p></div>
       </DataBoundary>
     </>
   )

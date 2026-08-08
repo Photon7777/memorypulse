@@ -24,6 +24,8 @@ export function ForecastsPage() {
   const forecast = activeForecasts.find((item) => item.target_date === selectedTarget) ?? activeForecasts[0]
   const history = prices.data?.series.find((item) => item.label === activeSeries)
   const diagnostic = analytics.data?.model_diagnostics.find((item) => item.series_id === activeSeries)
+  const latestActual = history?.points.at(-1)?.value
+  const forecastChange = latestActual && forecast ? ((forecast.point_forecast / latestActual) - 1) * 100 : null
 
   function horizonLabel(target: string): string {
     if (!history?.points.length) return formatDate(target)
@@ -39,7 +41,7 @@ export function ForecastsPage() {
         {forecast ? (
           <>
             <div className="forecast-toolbar"><label>Series<select value={activeSeries} onChange={(event) => { setSelected(event.target.value); setSelectedTarget('') }}>{series.map((item) => <option key={item}>{item}</option>)}</select></label><div className="forecast-horizons" aria-label="Forecast horizon">{activeForecasts.map((item) => <button type="button" className={item.target_date === forecast.target_date ? 'active' : ''} aria-pressed={item.target_date === forecast.target_date} onClick={() => setSelectedTarget(item.target_date)} key={item.target_date}>{horizonLabel(item.target_date)}</button>)}</div><span>Created {formatDate(forecast.forecast_created_at, true)}</span></div>
-            <section className="chart-card forecast-history"><div className="section-heading"><div><p className="kicker">Selected forecast · {formatDate(forecast.target_date)}</p><h2>{formatNumber(forecast.point_forecast, 3)} <small>source-defined units</small></h2></div><p>95% interval {formatNumber(forecast.lower_bound, 3)}–{formatNumber(forecast.upper_bound, 3)}. The chart uses the latest complete forecast vintage.</p></div><ForecastFanChart history={history} forecasts={activeForecasts} />{history && <p className="chart-summary">{history.source_label} · {history.basis}</p>}</section>
+            <section className="chart-card forecast-history"><div className="section-heading"><div><p className="kicker">Selected forecast · {formatDate(forecast.target_date)}</p><h2>{formatNumber(forecast.point_forecast, 3)} <small>source-defined units</small></h2></div><p>95% interval {formatNumber(forecast.lower_bound, 3)}–{formatNumber(forecast.upper_bound, 3)}. The chart uses the latest complete forecast vintage.</p></div><ForecastFanChart history={history} forecasts={activeForecasts} /><p className="chart-takeaway"><strong>Takeaway</strong>{forecastChange == null ? 'The model has published a direction, but no comparable latest value is available for a percentage change.' : `The selected estimate is ${Math.abs(forecastChange).toFixed(1)}% ${forecastChange >= 0 ? 'above' : 'below'} the latest observed value. Treat the full interval—not only the midpoint—as the decision range.`}</p>{history && <p className="chart-summary">{history.source_label} · {history.basis}</p>}</section>
             <div className="metric-grid metric-grid--three">
               <MetricCard eyebrow="Selected model" value={forecast.model_name.replaceAll('_', ' ')} detail={`Compared with a naive baseline · v${forecast.model_version}`} />
               <MetricCard eyebrow="Backtest MAE" value={formatNumber(forecast.backtest_mae, 3)} detail={forecast.backtest_mape == null ? 'MAPE unavailable where actual values are zero' : `MAPE ${formatNumber(forecast.backtest_mape, 1)}%`} tone="accent" />

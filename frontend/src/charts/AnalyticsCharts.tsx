@@ -51,7 +51,13 @@ function EChart({ option, label, className = 'analytics-chart' }: { option: ECha
   }, [])
 
   useEffect(() => {
-    chart.current?.setOption(option, true)
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    chart.current?.setOption({
+      ...option,
+      animation: !reducedMotion,
+      animationDuration: reducedMotion ? 0 : 760,
+      animationEasing: 'cubicOut',
+    }, true)
   }, [option])
 
   return <div className={className} ref={element} role="img" aria-label={label} />

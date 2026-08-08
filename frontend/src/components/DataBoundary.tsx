@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { LoadingSkeleton } from './LoadingSkeleton'
 
 interface Props {
   loading: boolean
@@ -8,7 +9,7 @@ interface Props {
 
 export function DataBoundary({ loading, error, children }: Props) {
   if (loading) {
-    return <div className="data-message" role="status"><span className="loading-mark" />Loading validated market data…</div>
+    return <LoadingSkeleton />
   }
   if (error) {
     return (

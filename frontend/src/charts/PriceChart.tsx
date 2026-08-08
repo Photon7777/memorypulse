@@ -51,7 +51,9 @@ export function PriceChart({ series, normalized }: Props) {
       }
     })
     return {
-      animation: false,
+      animation: !window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+      animationDuration: 760,
+      animationEasing: 'cubicOut' as const,
       backgroundColor: 'transparent',
       textStyle: { fontFamily: 'Inter, ui-sans-serif, system-ui', color: '#75817d' },
       toolbox: { right: 16, feature: { saveAsImage: { name: 'memorypulse-price-chart', title: 'Download chart' } } },

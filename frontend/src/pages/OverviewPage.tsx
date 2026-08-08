@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { ForecastFanChart } from '../charts/AnalyticsCharts'
+import { AnimatedMetric } from '../components/AnimatedMetric'
 import { DataBoundary } from '../components/DataBoundary'
 import { HashLink } from '../components/HashLink'
 import { useStaticData } from '../hooks/useStaticData'
@@ -20,6 +21,7 @@ export function OverviewPage() {
   const healthy = coreSources.filter((source) => source.status === 'success').length
   const ddr5Series = prices.data?.series.find((item) => item.generation === 'DDR5')
   const ddr5Forecasts = forecasts.data?.forecasts.filter((item) => item.series_id === ddr5Series?.label) ?? []
+  const priceObservationCount = prices.data?.series.reduce((total, series) => total + series.points.length, 0) ?? 0
 
   async function copyLinkedIn() {
     if (!brief.data) return
@@ -37,13 +39,15 @@ export function OverviewPage() {
     <DataBoundary loading={loading} error={error}>
       <section className="executive-hero">
         <div className="executive-hero__copy">
-          <p className="kicker"><span className="live-pip" />Public memory intelligence · refreshed daily</p>
-          <h1>A clear memory-market decision, backed by evidence.</h1>
-          <p>Track DDR5 pricing, pressure drivers, official business signals, and forecast uncertainty without hiding missing data or mixing incompatible units.</p>
+          <p className="kicker"><span className="live-pip" />Memory-market intelligence · updated daily</p>
+          <h1>Memory signals, turned into a clear decision.</h1>
+          <p>Understand where DDR5 prices and market pressure may be heading—using public evidence, transparent forecasts, and an open dataset.</p>
           <div className="hero-actions">
-            <HashLink className="button button--primary" to="/analytics">Explore market analytics</HashLink>
-            <HashLink className="button button--quiet" to="/data">Download the dataset</HashLink>
+            <HashLink className="button button--primary" to="/analytics">Explore the evidence</HashLink>
+            <HashLink className="button button--quiet" to="/data">Get the open dataset</HashLink>
+            <a className="button button--text" href="https://github.com/Photon7777/memorypulse" target="_blank" rel="noreferrer">View the build on GitHub ↗</a>
           </div>
+          <div className="hero-proof" aria-label="MemoryPulse product attributes"><span>Public evidence</span><span>Explainable models</span><span>Free open data</span></div>
         </div>
         <aside className="decision-card" aria-label="Latest business conclusion">
           <div className="decision-card__meta"><span>Latest conclusion</span><time>{formatDate(brief.data?.generated_at, true)}</time></div>
@@ -59,20 +63,27 @@ export function OverviewPage() {
       </section>
 
       <section className="executive-kpis" aria-label="Latest key indicators">
-        <article><span>Pressure</span><strong>{formatNumber(brief.data?.pressure_score, 1)}</strong><p>out of 100</p></article>
-        <article><span>DDR5 move</span><strong>{brief.data?.ddr5.recent_change_percent == null ? '—' : `${brief.data.ddr5.recent_change_percent >= 0 ? '+' : ''}${formatNumber(brief.data.ddr5.recent_change_percent, 1)}%`}</strong><p>latest comparable interval</p></article>
-        <article><span>Forecast signal</span><strong>{brief.data?.ddr5.forecast_change_percent == null ? '—' : `${brief.data.ddr5.forecast_change_percent >= 0 ? '+' : ''}${formatNumber(brief.data.ddr5.forecast_change_percent, 1)}%`}</strong><p>next model target</p></article>
+        <article><span>Market pressure</span><strong><AnimatedMetric value={brief.data?.pressure_score} decimals={1} /></strong><p>0–100 analytical index</p></article>
+        <article><span>Recent DDR5 move</span><strong><AnimatedMetric value={brief.data?.ddr5.recent_change_percent} decimals={1} prefix={(brief.data?.ddr5.recent_change_percent ?? 0) >= 0 ? '+' : ''} suffix="%" /></strong><p>latest comparable period</p></article>
+        <article><span>Next forecast</span><strong><AnimatedMetric value={brief.data?.ddr5.forecast_change_percent} decimals={1} prefix={(brief.data?.ddr5.forecast_change_percent ?? 0) >= 0 ? '+' : ''} suffix="%" /></strong><p>model-implied change</p></article>
         <article><span>Source health</span><strong>{healthy}/{coreSources.length}</strong><p>core feeds healthy</p></article>
+      </section>
+
+      <section className="credibility-strip" aria-label="Project credibility">
+        <span><strong>{formatNumber(priceObservationCount, 0)}</strong> chart-ready price points</span>
+        <span><strong>{coreSources.length}</strong> automated public feeds</span>
+        <span><strong>Daily</strong> validated refresh</span>
+        <span><strong>CSV + Parquet</strong> reusable downloads</span>
       </section>
 
       <section className="executive-analysis">
         <article className="chart-card executive-primary-chart">
-          <div className="section-heading compact-heading"><div><p className="kicker">Primary market view</p><h2>DDR5 history and forecast range</h2></div><p>The shaded band shows uncertainty—not a guaranteed price corridor.</p></div>
+          <div className="section-heading compact-heading"><div><p className="kicker">Primary market view</p><h2>Where DDR5 may move next</h2></div><p>Observed history, the current baseline forecast, and its uncertainty range.</p></div>
           <ForecastFanChart history={ddr5Series} forecasts={ddr5Forecasts} />
           <p className="chart-summary">{ddr5Series?.source_label} · {ddr5Series?.points.length ?? 0} genuine observations · {ddr5Series?.basis}</p>
         </article>
         <aside className="executive-drivers">
-          <div><p className="kicker">Why this conclusion</p><h2>Top drivers</h2></div>
+          <div><p className="kicker">Why this conclusion</p><h2>What is moving the signal</h2></div>
           {brief.data?.drivers.map((driver, index) => <article key={driver.key}>
             <span>{String(index + 1).padStart(2, '0')}</span>
             <div><strong>{driver.label}</strong><p>{driver.effect} signal</p></div>
@@ -83,15 +94,15 @@ export function OverviewPage() {
       </section>
 
       <section className="share-insight">
-        <div><p className="kicker">LinkedIn-ready</p><h2>Share the current evidence, not just a headline.</h2><p>Copy a concise update with the confidence and source link, or download a 1200×630 insight card.</p></div>
+        <div><p className="kicker">Share the research</p><h2>Turn the latest run into a credible update.</h2><p>Copy a concise evidence-based summary or download a polished 1200×630 insight card.</p></div>
         <div className="share-insight__actions">
           <button type="button" className="button button--primary" onClick={() => void copyLinkedIn()} disabled={!brief.data}>{copied ? 'LinkedIn copy ready' : 'Copy LinkedIn summary'}</button>
           <button type="button" className="button button--quiet" onClick={() => brief.data && downloadInsightCard(brief.data)} disabled={!brief.data}>Download insight card</button>
         </div>
       </section>
 
-      <details className="executive-details">
-        <summary>Run details, risks, and freshness</summary>
+      <details className="executive-details disclosure-card">
+        <summary><span>Evidence notes</span><small>Risks, freshness, and method</small></summary>
         <div className="executive-details__grid">
           <section><h3>Known risks</h3><ul>{brief.data?.risks.map((risk) => <li key={risk}>{risk}</li>)}</ul></section>
           <section><h3>Update record</h3><dl><div><dt>Latest observation</dt><dd>{formatDate(summary.data?.latest_observation)}</dd></div><div><dt>Pipeline run</dt><dd>{formatDate(summary.data?.last_pipeline_run, true)}</dd></div><div><dt>Confidence</dt><dd>{brief.data?.confidence} · {formatNumber((brief.data?.confidence_score ?? 0) * 100, 0)}% coverage</dd></div></dl></section>

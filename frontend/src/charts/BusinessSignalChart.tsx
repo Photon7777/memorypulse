@@ -12,7 +12,9 @@ export function BusinessSignalChart({ series }: { series: AnalyticsMacroSeries[]
   const element = useRef<HTMLDivElement>(null)
   const chart = useRef<EChartsType | null>(null)
   const option = useMemo(() => ({
-    animation: false,
+    animation: !window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+    animationDuration: 760,
+    animationEasing: 'cubicOut' as const,
     backgroundColor: 'transparent',
     textStyle: { fontFamily: 'Manrope, ui-sans-serif, system-ui', color: '#75817d' },
     toolbox: { right: 16, feature: { saveAsImage: { name: 'memorypulse-business-signals', title: 'Download chart' } } },

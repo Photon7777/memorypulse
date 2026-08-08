@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect, useState } from 'react'
 import { HashLink } from './components/HashLink'
+import { LoadingSkeleton } from './components/LoadingSkeleton'
 import { useStaticData } from './hooks/useStaticData'
 import { OverviewPage } from './pages/OverviewPage'
 import type { Manifest } from './types/data'
@@ -83,20 +84,19 @@ function App() {
       <header className="site-header">
         <HashLink className="brand" to="/" aria-label="MemoryPulse home"><span className="brand-mark"><i /><i /><i /></span><span>Memory<strong>Pulse</strong></span></HashLink>
         <nav aria-label="Primary navigation">{navigation.map(([path, label]) => <HashLink key={path} to={path} active={route === path}>{label}</HashLink>)}</nav>
-        <details className="header-more"><summary>About the data</summary><div><HashLink to="/prices">Price explorer</HashLink><HashLink to="/events">Event catalog</HashLink><HashLink to="/context">AI context</HashLink><HashLink to="/methodology">Methodology</HashLink><HashLink to="/health">Source health</HashLink></div></details>
+        <details className="header-more"><summary>More</summary><div><HashLink to="/prices">Price explorer</HashLink><HashLink to="/events">Event catalog</HashLink><HashLink to="/context">Why AI demand matters</HashLink><HashLink to="/methodology">How it works</HashLink><HashLink to="/health">Data health</HashLink><a href="https://github.com/Photon7777/memorypulse" target="_blank" rel="noreferrer">View on GitHub ↗</a></div></details>
       </header>
       <main id="main-content" tabIndex={-1}>
-        <Suspense fallback={<div className="data-message" role="status"><span className="loading-mark" />Loading research view…</div>}>
-          <RouteContent route={route} />
+        <Suspense fallback={<LoadingSkeleton compact />}>
+          <div className="route-stage" key={route}><RouteContent route={route} /></div>
         </Suspense>
       </main>
       <footer className="site-footer">
         <div><HashLink className="brand brand--footer" to="/"><span className="brand-mark"><i /><i /><i /></span><span>Memory<strong>Pulse</strong></span></HashLink><p>Open, explainable memory-market intelligence from public data.</p></div>
         <div><p className="eyebrow">Explore</p><HashLink to="/analytics">Market analytics</HashLink><HashLink to="/forecasts">Forecasts</HashLink><HashLink to="/explorer">Scenario lab</HashLink></div>
-        <div><p className="eyebrow">Open data</p><HashLink to="/data">Dataset catalog</HashLink><HashLink to="/methodology">Methodology</HashLink><HashLink to="/health">Source health</HashLink></div>
-        <div><p className="eyebrow">Attribution</p><span>Stanford · FRED · BLS</span><span>World Bank · GDELT</span><span>Federal Register</span></div>
-        <div><p className="eyebrow">Latest build</p><span>{manifest.error ? 'Manifest unavailable' : formatDate(manifest.data?.generated_at, true)}</span><span>Methodology v{manifest.data?.methodology_version ?? '1.1.0'}</span><a href="https://github.com/Photon7777/memorypulse">GitHub repository</a></div>
-        <p className="footer-disclaimer">MemoryPulse is an independent research project. Its index and forecasts are analytical estimates—not official benchmarks, investment advice, purchasing advice, or guarantees of future prices.</p>
+        <div><p className="eyebrow">Trust</p><HashLink to="/data">Open dataset</HashLink><HashLink to="/methodology">How it works</HashLink><HashLink to="/health">Data health</HashLink></div>
+        <div><p className="eyebrow">Project</p><a href="https://github.com/Photon7777/memorypulse">GitHub repository</a><span>Updated {manifest.error ? 'when data is available' : formatDate(manifest.data?.generated_at, true)}</span><span>Stanford · FRED · BLS · World Bank · GDELT · Federal Register</span></div>
+        <p className="footer-disclaimer">Independent analytical estimates from public evidence—not an official benchmark, investment recommendation, or purchasing guarantee.</p>
       </footer>
     </div>
   )

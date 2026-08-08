@@ -4,11 +4,13 @@ export function buildLinkedInCopy(brief: DecisionBrief, url: string): string {
   const ddr5 = brief.ddr5.recent_change_percent
   const movement = ddr5 == null ? 'DDR5 movement is not yet comparable.' : `Latest comparable DDR5 move: ${ddr5 >= 0 ? '+' : ''}${ddr5.toFixed(1)}%.`
   return [
-    `MemoryPulse update — ${brief.regime} conditions`,
+    `MemoryPulse market read — ${brief.regime} conditions`,
     '',
-    `${brief.conclusion} Pressure score: ${brief.pressure_score.toFixed(1)}/100 with ${brief.confidence.toLowerCase()} confidence. ${movement}`,
+    `${brief.conclusion}`,
     '',
-    `Explore the evidence, forecasts, and open dataset: ${url}`,
+    `Pressure score: ${brief.pressure_score.toFixed(1)}/100 · ${brief.confidence.toLowerCase()} confidence. ${movement}`,
+    '',
+    `Explore the interactive evidence, transparent forecasts, and free open dataset: ${url}`,
     '',
     '#DataAnalytics #Semiconductors #DDR5 #Forecasting #OpenData',
   ].join('\n')
