@@ -36,18 +36,18 @@
       "status": "warning"
     }
   },
-  "generated_at": "2026-08-08T10:53:51Z",
+  "generated_at": "2026-08-09T10:55:19Z",
   "production_data": true,
   "status": "pass",
   "table_counts": {
-    "decision_briefs": 8,
+    "decision_briefs": 9,
     "forecasts": 24,
     "macro_indicators": 542,
-    "market_index": 12,
+    "market_index": 13,
     "memory_prices": 703,
     "news_events": 143,
     "retail_products": 0,
-    "source_runs": 87,
+    "source_runs": 95,
     "spot_prices": 0
   }
 }
