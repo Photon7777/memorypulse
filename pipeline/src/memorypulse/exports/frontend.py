@@ -9,11 +9,15 @@ from typing import Any
 
 import duckdb
 
-from memorypulse.analysis.briefing import build_business_analytics, build_decision_brief
+from memorypulse.analysis.briefing import (
+    build_business_analytics,
+    build_decision_brief,
+    build_electronics_story,
+)
 from memorypulse.indicators.pressure import IndexResult, calculate_index, components_from_database
 from memorypulse.transformations.storage import atomic_write_text
 
-SCHEMA_VERSION = "1.2.0"
+SCHEMA_VERSION = "1.3.0"
 
 
 def _json_value(value: Any) -> Any:
@@ -250,6 +254,7 @@ def export_frontend(
     ]
     files = {
         "decision-brief.json": decision_brief,
+        "electronics-story.json": build_electronics_story(connection, decision_brief),
         "analytics.json": build_business_analytics(connection, index_result, weights),
         "market-summary.json": summary,
         "prices.json": _price_export(connection),
@@ -263,9 +268,11 @@ def export_frontend(
             "normalization": "Robust 10th–90th percentile scaling; values are clamped to 0–100.",
             "missing_data": "Available components are reweighted; confidence is represented configured weight.",
             "unit_rule": "Gb means gigabits and GB means gigabytes. Conversion is never inferred from ambiguous text.",
-            "forecasting": "Rolling-origin backtesting selects among naive, drift, Holt trend, and rolling-mean baselines.",
+            "forecasting": "Rolling-origin validation compares ten candidates, including ETS, Theta, autoregression, ARIMA, and a robust ensemble. Complex models must beat naive by at least 2% and remain stable.",
             "caveats": [
                 "Chip spot prices and retail module prices use different definitions.",
+                "Official device starting prices are not always like-for-like when memory, storage, and performance configurations change.",
+                "Device exposure outputs are transparent scenarios, not retail-price forecasts.",
                 "HBM estimates are labeled and are not presented as observed public transaction prices.",
                 "Associations and conceptual mechanisms do not establish causality.",
             ],

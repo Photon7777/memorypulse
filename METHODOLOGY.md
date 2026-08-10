@@ -117,16 +117,21 @@ The exported score is a triage aid, not a truth or sentiment score.
 
 ## Forecast selection and backtesting
 
-Forecasting requires at least 12 genuine observations at a consistent frequency. Candidate one-step
-models are naive last value, drift, three-observation rolling mean, and damped Holt trend. A rolling
-origin begins after at least six training observations; every later observation is predicted using only
-earlier data.
+Forecasting requires at least 12 genuine observations at a consistent frequency. Ten candidates compete:
+naive last value, drift, three-observation rolling mean, seasonal naive, damped Holt trend, additive
+damped ETS, Theta, autoregression, ARIMA(1,1,1), and a robust ensemble. Candidate-specific minimum
+history rules prevent advanced models from fitting unsuitable short samples. A rolling origin begins
+after at least six training observations; every later observation is predicted using only earlier data.
 
-- `MAE = mean(|actual − forecast|)` drives model selection.
-- `MAPE = mean(|actual − forecast| ÷ |actual|) × 100` is reported only when actual values are nonzero.
+- `MAE = mean(|actual − forecast|)` is the primary comparable error.
+- `sMAPE` and `MASE` provide scale-aware diagnostics; MAPE is retained only when actual values are nonzero.
+- Directional accuracy records whether each predicted move had the same sign as the observed move.
+- Stability is the share of eligible rolling windows that fit successfully.
 - The naive model is always evaluated.
-- A 95% interval starts with `point forecast ± 1.96 × standard deviation(backtest residuals)` and scales
-  by the square root of the 1-, 3-, or 6-month horizon, with the lower bound floored at zero.
+- A complex candidate must beat naive MAE by at least 2% and achieve at least 75% stability; otherwise
+  the simpler baseline remains selected.
+- A 95% interval uses the empirical absolute-residual quantile, a scale floor, and square-root horizon
+  expansion, with the lower bound floored at zero.
 
 Forecast rows preserve model/version, training dates, observations used, metrics, target date, and
 creation vintage. Forecasts are recalculated at most weekly unless manually forced. The accuracy view
@@ -147,7 +152,7 @@ not an LLM-generated recommendation. The current brief and its compact history a
 with methodology version 1.1.
 
 Baseline forecasting becomes eligible at 12 comparable observations. A future advanced multivariate or
-boosted model is gated until at least 60 comparable monthly DDR5 observations exist. Until then, the
+boosted model is gated until at least 48 comparable monthly DDR5 observations exist. Until then, the
 Analytics page reports the exact point count and gap instead of labeling a small sample as ML-ready.
 
 The procurement lab is a scenario calculation: purchase-now cost plus proportional annual carrying cost
@@ -160,7 +165,8 @@ After successful validation, the pipeline materializes the canonical public tabl
 equivalent Zstandard Parquet. It derives JSON Schemas from the ephemeral DuckDB contracts, publishes row
 counts, date coverage, source IDs, byte sizes, and SHA-256 hashes in `catalog.json`, and bundles the same
 artifacts in a versioned ZIP. The release includes forecasts, index vintages, conclusion history, and
-source-run health so downstream users can reproduce both analytical results and their evidence state.
+source-run health, official electronics price milestones, and explicit device exposure assumptions so
+downstream users can reproduce both analytical results and their evidence state.
 No raw HTML, article bodies, API keys, or permission-gated DRAMeXchange observations are distributed.
 Third-party source rights remain separate from the repository's MIT code license.
 

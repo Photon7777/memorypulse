@@ -2,7 +2,7 @@
 
 MemoryPulse is a continuously updated, open-source market-intelligence project that tracks public
 signals around AI infrastructure demand, HBM allocation, DRAM supply, semiconductor conditions,
-and consumer memory prices. It preserves historical facts, builds an ephemeral analytical database,
+consumer memory prices, and official electronics price milestones. It preserves historical facts, builds an ephemeral analytical database,
 publishes a transparent 0–100 Memory Pressure Index, produces an auditable business conclusion on
 every validated run, withholds forecasts until the history is sufficient, and serves an interactive
 React decision-support site through GitHub Pages.
@@ -36,6 +36,8 @@ flowchart LR
   D --> E["Polars normalization\nquality checks · views"]
   E --> F["Pressure Index\ntransparent baselines"]
   E --> G["Forecast selection\n1 · 3 · 6 month horizons\nrolling-origin backtests"]
+  C --> P["Official device milestones\nPlayStation · Xbox · Nintendo · MacBook"]
+  P --> H
   F --> Q["Executive decision brief\nposture · drivers · risks"]
   F --> H["Atomic static JSON"]
   G --> H
@@ -54,6 +56,7 @@ dataset release; no live database or application server is required.
 ## Technology
 
 - React 19, TypeScript strict mode, Vite, a dependency-free hash router, Apache ECharts
+- Three.js for the progressively enhanced spatial signal visual
 - Python 3.12, Polars, DuckDB, PyArrow, Requests, Beautiful Soup, Statsmodels, NumPy
 - Pytest, Ruff, ESLint, TypeScript checks, Vitest
 - GitHub Actions and GitHub Pages
@@ -68,6 +71,7 @@ dataset release; no live database or application server is required.
 | [World Bank Indicators API](https://api.worldbank.org/v2/country/WLD/indicator/TX.VAL.TECH.CD?format=json) | Global high-technology export context | None | Enabled |
 | [Federal Register API](https://www.federalregister.gov/developers/documentation/api/v1) | Official semiconductor policy and rule metadata | None | Enabled |
 | [GDELT DOC API](https://blog.gdeltproject.org/gdelt-doc-2-0-api-debuts/) | Article metadata and short excerpts | None | Enabled; failures are non-blocking |
+| Official manufacturer announcements | PlayStation, Xbox, Nintendo, and MacBook U.S. price milestones | None | Curated with source URLs and comparability labels |
 | [DRAMeXchange homepage](https://www.dramexchange.com/) | Public homepage spot/module tables only | None | Disabled pending owner terms/robots review |
 | [Best Buy Products API](https://bestbuyapis.github.io/api-documentation/) | Optional retail module observations | Optional key | Disabled automatically without a key |
 
@@ -184,11 +188,13 @@ confidence, procurement and inventory posture, budget-risk label, top explainabl
 and a plain-language conclusion. Briefs are also appended to `data/history/decision_briefs.csv`, so the
 website can show how conclusions changed over time instead of replacing the prior interpretation.
 
-The Analytics workspace organizes decision evidence into market-trend, pressure-driver, forecast/model,
+The landing experience tells a four-chapter story: observed device-price changes, the uncertain path
+from component costs to retail outcomes, governed forecasts, and an evidence-bounded conclusion. The
+Analytics workspace organizes decision evidence into market-trend, pressure-driver, forecast/model,
 and business-context views. It includes a DDR-generation momentum matrix, Pressure Index history,
 weighted contribution bars, an event/DDR5 overlay, forecast fan chart, and explicit takeaway beneath
 each visual. It compares forecast candidates and states whether the data volume is ready for baseline
-models or more advanced ML. Advanced multivariate ML remains disabled until at least 60 comparable
+models or more advanced ML. Advanced multivariate ML remains disabled until at least 48 comparable
 monthly DDR5 observations exist; the site reports the remaining evidence gap.
 
 Interactive tools include DDR-generation/source/date-range filters, per-series visibility controls,
@@ -202,7 +208,8 @@ release includes canonical CSV or NDJSON, equivalent Zstandard Parquet files, JS
 catalog, Schema.org metadata, SHA-256 checksums, and a complete ZIP. The catalog records row counts,
 date coverage, source IDs, artifact sizes, and content hashes. Scheduled updates rebuild the release only
 after validation; the first scheduled run of each UTC month also attaches the bundle to a versioned
-GitHub Release for durable snapshots.
+GitHub Release for durable snapshots. Version 1.1 adds official electronics price milestones and
+transparent device-category exposure assumptions so the published story can be independently reproduced.
 
 Code is MIT-licensed, but upstream data rights remain source-specific. Review
 [DATA_LICENSE.md](DATA_LICENSE.md) before redistribution and retain the supplied attribution and source
@@ -210,11 +217,13 @@ fields when reusing observations.
 
 ## Forecasting
 
-A series needs at least 12 genuine comparable observations. MemoryPulse evaluates naive last value,
-drift, three-period rolling mean, and damped Holt trend with rolling-origin backtests. The model with
-the lowest MAE is selected while MAPE is reported only when actual values are nonzero. Forecasts are
-published at 1-, 3-, and 6-month horizons; uncertainty expands with horizon using backtest residual
-variability. Forecast vintages remain in history for later accuracy checks.
+A series needs at least 12 genuine comparable observations. MemoryPulse evaluates ten candidates:
+naive last value, drift, three-period rolling mean, seasonal naive, damped Holt, additive damped ETS,
+Theta, autoregression, ARIMA(1,1,1), and a robust ensemble. Rolling-origin validation records MAE,
+sMAPE, MASE, directional accuracy, and stability. A complex candidate must beat naive by at least 2%
+and remain stable across at least 75% of eligible windows; otherwise the simpler baseline wins.
+Forecasts are published at 1-, 3-, and 6-month horizons with empirical residual intervals that widen
+with horizon. Forecast vintages remain in history for later accuracy checks.
 No synthetic history is generated, and insufficient series show: **“Collecting additional history
 before publishing a forecast.”**
 
@@ -310,11 +319,10 @@ Add captures after the first GitHub Pages deployment:
 
 ## Portfolio copy
 
-**LinkedIn-ready:** Built MemoryPulse, a zero-cost, open-source memory-market analytics product with
-an executive decision brief on every validated run, interactive DDR5 trend/forecast/driver charts, and
-a reusable public dataset in CSV, NDJSON, and Parquet. Designed canonical historical storage, ephemeral
-DuckDB/Polars analytics, a confidence-aware market index, rolling-origin model selection, verifiable
-data releases, and failure-safe GitHub Actions/Pages deployment—with no paid APIs or servers.
+**LinkedIn-ready:** Built MemoryPulse, a zero-cost, open-source market-intelligence product that connects
+memory-market pressure to official PlayStation, Xbox, Nintendo, and MacBook price milestones. It ships a
+3D evidence-led React experience, ten-model rolling-origin forecast selection, a deterministic conclusion
+on every validated run, and a reusable public dataset in CSV, NDJSON, and Parquet—with no paid APIs or servers.
 
 **Resume-ready:**
 
@@ -322,8 +330,8 @@ data releases, and failure-safe GitHub Actions/Pages deployment—with no paid A
   DuckDB analytical views, Polars normalization, and reproducible static JSON contracts.
 - Designed a transparent 0–100 market-pressure indicator with robust normalization, missing-component
   reweighting, confidence scoring, and deterministic evidence-safe insights.
-- Implemented rolling-origin model selection across naive, drift, rolling-mean, and Holt baselines,
-  preserving forecast vintages and uncertainty intervals for later accuracy evaluation.
+- Implemented rolling-origin governance across ten statistical candidates, including ETS, Theta,
+  autoregression, ARIMA, and an ensemble, with stability gates and empirical uncertainty intervals.
 - Built an accessible React/TypeScript/ECharts research experience and $0 GitHub Actions/Pages
   workflow that preserves the previous site when scheduled collection fails.
 

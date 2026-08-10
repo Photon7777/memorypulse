@@ -113,6 +113,67 @@ class RetailProductObservation(Contract):
 
 
 @dataclass(slots=True)
+class ElectronicsPriceObservation(Contract):
+    observation_id: str
+    observation_date: date
+    collected_at: datetime
+    category: str
+    manufacturer: str
+    product_family: str
+    model: str
+    configuration: str
+    price_type: str
+    price_usd: float
+    memory_gb: float | None
+    storage_gb: float | None
+    comparability: str
+    source_id: str
+    source_url: str
+    source_label: str
+    notes: str
+
+    def validate(self) -> None:
+        validate_observation_date(self.observation_date)
+        if self.price_usd <= 0:
+            raise ValidationError("electronics price must be positive")
+        if self.price_type not in {"launch_msrp", "official_msrp", "announced_msrp"}:
+            raise ValidationError(f"unsupported electronics price type: {self.price_type}")
+        if self.comparability not in {"like_for_like", "same_product_family", "starting_price_tier"}:
+            raise ValidationError(f"unsupported electronics comparability: {self.comparability}")
+
+
+@dataclass(slots=True)
+class DeviceExposureAssumption(Contract):
+    exposure_id: str
+    category: str
+    display_name: str
+    memory_storage_share_low: float
+    memory_storage_share_central: float
+    memory_storage_share_high: float
+    pass_through_low: float
+    pass_through_central: float
+    pass_through_high: float
+    basis: str
+    source_label: str
+
+    def validate(self) -> None:
+        shares = (
+            self.memory_storage_share_low,
+            self.memory_storage_share_central,
+            self.memory_storage_share_high,
+            self.pass_through_low,
+            self.pass_through_central,
+            self.pass_through_high,
+        )
+        if any(value < 0 or value > 1 for value in shares):
+            raise ValidationError("device exposure shares must be between zero and one")
+        if not self.memory_storage_share_low <= self.memory_storage_share_central <= self.memory_storage_share_high:
+            raise ValidationError("device component-share range is not ordered")
+        if not self.pass_through_low <= self.pass_through_central <= self.pass_through_high:
+            raise ValidationError("device pass-through range is not ordered")
+
+
+@dataclass(slots=True)
 class MacroIndicatorObservation(Contract):
     observation_id: str
     observation_date: date

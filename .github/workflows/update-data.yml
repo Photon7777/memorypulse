@@ -60,8 +60,9 @@ jobs:
             echo "Release $tag already exists."
             exit 0
           fi
+          bundle="$(jq -r '.bundle.path' frontend/public/datasets/latest/catalog.json)"
           gh release create "$tag" \
-            frontend/public/datasets/latest/memorypulse-dataset-v1.0.0.zip \
+            "frontend/public/datasets/latest/${bundle}" \
             frontend/public/datasets/latest/catalog.json \
             frontend/public/datasets/latest/checksums.sha256 \
             --title "MemoryPulse dataset ${month}" \

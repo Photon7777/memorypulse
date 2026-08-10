@@ -135,7 +135,19 @@ export interface ModelDiagnostic {
   observations: number
   selected_model: string
   advanced_ml_ready: boolean
-  candidates: Array<{ model: string; mae: number; mape: number | null; selected: boolean }>
+  selection_rule: string
+  candidates: Array<{
+    model: string
+    mae: number
+    mape: number | null
+    smape: number | null
+    mase: number | null
+    direction_accuracy: number | null
+    validation_points: number
+    stability: number
+    skill_vs_naive_percent: number | null
+    selected: boolean
+  }>
 }
 
 export interface AnalyticsData {
@@ -295,4 +307,79 @@ export interface DatasetCatalog {
   attribution_required: boolean
   bundle: { path: string; format: 'zip'; bytes: number; sha256: string }
   resources: DatasetResource[]
+}
+
+export interface ElectronicsMilestone {
+  observation_id: string
+  observation_date: string
+  category: string
+  manufacturer: string
+  product_family: string
+  model: string
+  configuration: string
+  price_type: 'launch_msrp' | 'official_msrp' | 'announced_msrp'
+  price_usd: number
+  memory_gb: number | null
+  storage_gb: number | null
+  comparability: 'like_for_like' | 'same_product_family' | 'starting_price_tier'
+  source_id: string
+  source_url: string
+  source_label: string
+  notes: string
+  change_from_first_percent: number
+}
+
+export interface ElectronicsProductSeries {
+  family: string
+  category: string
+  manufacturer: string
+  comparability: ElectronicsMilestone['comparability']
+  first_price: number
+  latest_price: number
+  change_percent: number
+  first_date: string
+  latest_date: string
+  points: ElectronicsMilestone[]
+}
+
+export interface DeviceExposureScenario {
+  exposure_id: string
+  category: string
+  display_name: string
+  memory_storage_share_low: number
+  memory_storage_share_central: number
+  memory_storage_share_high: number
+  pass_through_low: number
+  pass_through_central: number
+  pass_through_high: number
+  basis: string
+  source_label: string
+  signal_percent: number
+  modeled_product_effect_low: number
+  modeled_product_effect_central: number
+  modeled_product_effect_high: number
+}
+
+export interface ElectronicsStory {
+  headline: string
+  thesis: string
+  memory_signal_percent: number
+  product_series: ElectronicsProductSeries[]
+  milestones: ElectronicsMilestone[]
+  exposure_scenarios: DeviceExposureScenario[]
+  evidence: Array<{
+    kind: 'observed' | 'qualified'
+    label: string
+    value: number
+    unit: string
+    interpretation: string
+  }>
+  story: {
+    proves: string[]
+    suggests: string[]
+    uncertain: string[]
+    would_change_view: string[]
+  }
+  conclusion: string
+  disclaimer: string
 }

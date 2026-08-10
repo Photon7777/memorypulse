@@ -15,11 +15,25 @@ def test_rolling_origin_backtest_and_forecast_metadata() -> None:
     values = [10 + index * 0.25 for index in range(len(dates))]
     backtest = rolling_origin_backtest(values, "naive_last_value")
     assert backtest.mae > 0
+    assert backtest.smape is not None
+    assert backtest.validation_points > 0
+    assert backtest.stability == 1
     forecast = forecast_series("fixture", dates, values, date(2025, 3, 1))
     assert forecast is not None
     assert forecast.observations_used == len(values)
     assert forecast.lower_bound <= forecast.point_forecast <= forecast.upper_bound
     assert forecast.backtest_mae >= 0
+    assert forecast.model_version == "2.0.0"
+
+
+def test_complex_candidates_are_scored_without_hiding_naive_baseline() -> None:
+    values = [10 + index * 0.3 + (0.2 if index % 4 == 0 else 0) for index in range(30)]
+    naive = rolling_origin_backtest(values, "naive_last_value")
+    ensemble = rolling_origin_backtest(values, "robust_ensemble")
+    assert naive.validation_points > 0
+    assert ensemble.validation_points > 0
+    assert ensemble.smape is not None
+    assert 0 <= ensemble.stability <= 1
 
 
 def test_longer_horizon_expands_uncertainty() -> None:

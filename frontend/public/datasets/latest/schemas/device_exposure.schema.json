@@ -1,0 +1,89 @@
+{
+  "$id": "https://photon7777.github.io/memorypulse/datasets/latest/schemas/device_exposure.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Documented scenario ranges for memory-and-storage cost exposure by device category.",
+  "properties": {
+    "basis": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "category": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "display_name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "exposure_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "memory_storage_share_central": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "memory_storage_share_high": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "memory_storage_share_low": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "pass_through_central": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "pass_through_high": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "pass_through_low": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "source_label": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "exposure_id",
+    "category",
+    "display_name",
+    "memory_storage_share_low",
+    "memory_storage_share_central",
+    "memory_storage_share_high",
+    "pass_through_low",
+    "pass_through_central",
+    "pass_through_high",
+    "basis",
+    "source_label"
+  ],
+  "title": "MemoryPulse device exposure row",
+  "type": "object"
+}

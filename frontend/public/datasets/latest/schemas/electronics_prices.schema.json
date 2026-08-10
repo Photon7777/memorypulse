@@ -1,0 +1,131 @@
+{
+  "$id": "https://photon7777.github.io/memorypulse/datasets/latest/schemas/electronics_prices.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Official U.S. product-price milestones with configuration and comparability labels.",
+  "properties": {
+    "category": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "collected_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "comparability": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "configuration": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "manufacturer": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "memory_gb": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "model": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "notes": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "observation_date": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "observation_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "price_type": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "price_usd": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "product_family": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source_label": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source_url": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "storage_gb": {
+      "type": [
+        "number",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "observation_id",
+    "observation_date",
+    "collected_at",
+    "category",
+    "manufacturer",
+    "product_family",
+    "model",
+    "configuration",
+    "price_type",
+    "price_usd",
+    "memory_gb",
+    "storage_gb",
+    "comparability",
+    "source_id",
+    "source_url",
+    "source_label",
+    "notes"
+  ],
+  "title": "MemoryPulse electronics prices row",
+  "type": "object"
+}

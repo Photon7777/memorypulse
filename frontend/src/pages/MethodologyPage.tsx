@@ -4,6 +4,7 @@ import { useStaticData } from '../hooks/useStaticData'
 import type { MethodologyData } from '../types/data'
 
 const sourceNotes = [
+  ['Official device price milestones', 'Official U.S. manufacturer announcements for PlayStation, Xbox, Nintendo, and MacBook, with configuration and comparability labels preserved.'],
   ['Stanford memory-price data', 'Research-dataset reliability · checked daily for historical and monthly context with original attribution; estimated HBM points stay labeled.'],
   ['DRAMeXchange public homepage', 'Public-homepage reliability · optional daily spot and module tables only; disabled by default pending terms and robots review.'],
   ['FRED PCU3344133441', 'Official-statistics reliability · monthly broad semiconductor producer-price context, never described as a direct RAM price.'],
@@ -22,7 +23,7 @@ export function MethodologyPage() {
           <article><p className="eyebrow">Units matter</p><h2>Gb is not GB</h2><p>{state.data?.unit_rule}</p><div className="unit-comparison"><span><strong>16Gb</strong>chip density in gigabits</span><em>≠</em><span><strong>16GB</strong>module capacity in gigabytes</span></div><p>Price per GB is calculated only when capacity is explicit in GB, or when a source explicitly provides a USD/GB metric. Raw descriptions remain preserved.</p></article>
         </section>
         <section className="section-block"><div className="section-heading"><div><p className="kicker">Public source map</p><h2>What enters the pipeline</h2></div><p>Every adapter can degrade independently; previous validated data remains available.</p></div><div className="source-method-list">{sourceNotes.map(([name, note], index) => <article key={name}><span>{String(index + 1).padStart(2, '0')}</span><div><h3>{name}</h3><p>{note}</p></div></article>)}</div></section>
-        <section className="method-grid"><article><p className="eyebrow">Forecast selection</p><h2>Simple models earn publication</h2><p>{state.data?.forecasting}</p><p>Rolling-origin MAE selects the model, MAPE appears only when mathematically valid, and residual variability supplies an uncertainty interval. Insufficient history produces no forecast.</p></article><article><p className="eyebrow">Known limitations</p><h2>Definitions before conclusions</h2><ul className="plain-list">{state.data?.caveats.map((item) => <li key={item}>{item}</li>)}</ul></article></section>
+        <section className="method-grid"><article><p className="eyebrow">Forecast selection</p><h2>Complexity must outperform the baseline</h2><p>{state.data?.forecasting}</p><p>MAE, sMAPE, MASE, directional accuracy, and selection stability are recorded across rolling-origin windows. Empirical residuals produce horizon-aware intervals, and insufficient history produces no forecast.</p></article><article><p className="eyebrow">Known limitations</p><h2>Definitions before conclusions</h2><ul className="plain-list">{state.data?.caveats.map((item) => <li key={item}>{item}</li>)}</ul></article></section>
       </DataBoundary>
     </>
   )

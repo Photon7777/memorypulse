@@ -6,16 +6,16 @@
     "name": "MemoryPulse"
   },
   "dateModified": "2026-08-10",
-  "description": "Normalized memory prices, official business context, public event metadata, forecasts, index history, and auditable decision briefs.",
+  "description": "Normalized memory prices, official electronics price milestones, device-exposure assumptions, business context, forecasts, and auditable decision briefs.",
   "distribution": [
     {
       "@type": "DataDownload",
-      "contentUrl": "https://photon7777.github.io/memorypulse/datasets/latest/memorypulse-dataset-v1.0.0.zip",
+      "contentUrl": "https://photon7777.github.io/memorypulse/datasets/latest/memorypulse-dataset-v1.1.0.zip",
       "encodingFormat": "application/zip"
     }
   ],
   "license": "https://photon7777.github.io/memorypulse/datasets/latest/DATA_LICENSE.md",
   "name": "MemoryPulse Public Memory-Market Dataset",
   "url": "https://photon7777.github.io/memorypulse/#/data",
-  "version": "1.0.0"
+  "version": "1.1.0"
 }

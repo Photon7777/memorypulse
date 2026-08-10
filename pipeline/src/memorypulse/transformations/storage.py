@@ -11,6 +11,8 @@ from typing import Any
 
 from memorypulse.models import (
     DecisionBriefObservation,
+    DeviceExposureAssumption,
+    ElectronicsPriceObservation,
     ForecastObservation,
     MacroIndicatorObservation,
     MarketIndexObservation,
@@ -23,6 +25,8 @@ HISTORY_CONTRACTS = {
     "spot_prices.csv": PriceObservation,
     "memory_prices.csv": PriceObservation,
     "retail_products.csv": RetailProductObservation,
+    "electronics_prices.csv": ElectronicsPriceObservation,
+    "device_exposure.csv": DeviceExposureAssumption,
     "macro_indicators.csv": MacroIndicatorObservation,
     "forecasts.csv": ForecastObservation,
     "market_index.csv": MarketIndexObservation,

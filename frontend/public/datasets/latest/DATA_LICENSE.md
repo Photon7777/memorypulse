@@ -20,6 +20,10 @@ or rights associated with an upstream data source.
 
 - Stanford, FRED, BLS, World Bank, Federal Register, and GDELT records retain their source attribution.
   Their respective source terms continue to apply.
+- PlayStation, Xbox, Nintendo, and Apple price records are normalized factual milestones linked to
+  official manufacturer pages. Product names and trademarks remain their respective owners'.
+- Device-category component shares and pass-through ranges are clearly labeled MemoryPulse scenario
+  assumptions, not observed manufacturer costs or retail-price forecasts.
 - DRAMeXchange observations are excluded from public releases unless written permission is obtained.
 - Best Buy records remain optional and may be included only when collection and redistribution comply
   with the current API terms.

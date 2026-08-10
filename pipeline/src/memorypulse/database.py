@@ -23,6 +23,19 @@ CREATE TABLE retail_products (
  current_price DOUBLE, regular_price DOUBLE, price_per_gb DOUBLE, availability VARCHAR,
  product_url VARCHAR, parsing_confidence DOUBLE
 );
+CREATE TABLE electronics_prices (
+ observation_id VARCHAR PRIMARY KEY, observation_date DATE, collected_at TIMESTAMPTZ,
+ category VARCHAR, manufacturer VARCHAR, product_family VARCHAR, model VARCHAR,
+ configuration VARCHAR, price_type VARCHAR, price_usd DOUBLE, memory_gb DOUBLE,
+ storage_gb DOUBLE, comparability VARCHAR, source_id VARCHAR, source_url VARCHAR,
+ source_label VARCHAR, notes VARCHAR
+);
+CREATE TABLE device_exposure (
+ exposure_id VARCHAR PRIMARY KEY, category VARCHAR, display_name VARCHAR,
+ memory_storage_share_low DOUBLE, memory_storage_share_central DOUBLE,
+ memory_storage_share_high DOUBLE, pass_through_low DOUBLE,
+ pass_through_central DOUBLE, pass_through_high DOUBLE, basis VARCHAR, source_label VARCHAR
+);
 CREATE TABLE macro_indicators (
  observation_id VARCHAR PRIMARY KEY, observation_date DATE, collected_at TIMESTAMPTZ,
  source_id VARCHAR, series_id VARCHAR, series_name VARCHAR, value DOUBLE, unit VARCHAR,
@@ -118,6 +131,10 @@ CREATE VIEW forecast_accuracy AS
         m.price_value AS actual_value, abs(f.point_forecast - m.price_value) AS absolute_error
  FROM forecasts f LEFT JOIN memory_prices m
    ON f.target_date = m.observation_date AND f.series_id = m.product_type;
+CREATE VIEW electronics_price_changes AS
+ SELECT *, 100 * (price_usd / nullif(first_value(price_usd) OVER (
+   PARTITION BY product_family ORDER BY observation_date), 0) - 1) AS change_from_first_percent
+ FROM electronics_prices;
 CREATE VIEW market_pressure_components AS
  SELECT observation_date, total_score, confidence_score, component, score
  FROM market_index UNPIVOT(score FOR component IN (
@@ -130,6 +147,8 @@ FILE_TO_TABLE = {
     "spot_prices.csv": "spot_prices",
     "memory_prices.csv": "memory_prices",
     "retail_products.csv": "retail_products",
+    "electronics_prices.csv": "electronics_prices",
+    "device_exposure.csv": "device_exposure",
     "macro_indicators.csv": "macro_indicators",
     "forecasts.csv": "forecasts",
     "market_index.csv": "market_index",

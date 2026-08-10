@@ -13,7 +13,7 @@ import duckdb
 
 from memorypulse.transformations.storage import atomic_write_text
 
-DATASET_VERSION = "1.0.0"
+DATASET_VERSION = "1.1.0"
 
 PUBLIC_TABLES = {
     "memory_prices": {
@@ -31,6 +31,16 @@ PUBLIC_TABLES = {
         "description": "Optional normalized retail memory-product observations.",
         "date_column": "observation_date",
     },
+    "electronics_prices": {
+        "filename": "electronics_prices.csv",
+        "description": "Official U.S. product-price milestones with configuration and comparability labels.",
+        "date_column": "observation_date",
+    },
+    "device_exposure": {
+        "filename": "device_exposure.csv",
+        "description": "Documented scenario ranges for memory-and-storage cost exposure by device category.",
+        "date_column": "category",
+    },
     "macro_indicators": {
         "filename": "macro_indicators.csv",
         "description": "Official semiconductor employment, producer-price, and trade-context indicators.",
@@ -43,7 +53,7 @@ PUBLIC_TABLES = {
     },
     "forecasts": {
         "filename": "forecasts.csv",
-        "description": "Versioned baseline forecasts with uncertainty and rolling-backtest metrics.",
+        "description": "Versioned governed forecasts with empirical uncertainty and rolling-backtest metrics.",
         "date_column": "target_date",
     },
     "market_index": {
@@ -220,7 +230,7 @@ def build_public_dataset(
             "pipeline_run_id": pipeline_run_id,
             "production_data": production_data,
             "name": "MemoryPulse Public Memory-Market Dataset",
-            "description": "Normalized memory prices, official business context, public event metadata, forecasts, index history, and auditable decision briefs.",
+            "description": "Normalized memory prices, official electronics price milestones, device-exposure assumptions, business context, forecasts, and auditable decision briefs.",
             "publisher": "MemoryPulse",
             "homepage": "https://photon7777.github.io/memorypulse/#/data",
             "repository": "https://github.com/Photon7777/memorypulse",

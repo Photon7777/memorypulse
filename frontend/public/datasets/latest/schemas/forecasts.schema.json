@@ -2,7 +2,7 @@
   "$id": "https://photon7777.github.io/memorypulse/datasets/latest/schemas/forecasts.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
-  "description": "Versioned baseline forecasts with uncertainty and rolling-backtest metrics.",
+  "description": "Versioned governed forecasts with empirical uncertainty and rolling-backtest metrics.",
   "properties": {
     "backtest_mae": {
       "type": [

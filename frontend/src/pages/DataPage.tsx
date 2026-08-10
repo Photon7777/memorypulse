@@ -7,8 +7,8 @@ import type { DatasetCatalog, DatasetResource } from '../types/data'
 import { formatBytes, formatDate, formatNumber } from '../utils/format'
 
 type ResourceFormat = 'all' | 'csv' | 'ndjson' | 'parquet'
-const RESOURCE_ORDER = ['memory_prices', 'market_index', 'forecasts', 'news_events', 'macro_indicators', 'decision_briefs', 'source_runs', 'retail_products', 'spot_prices']
-const FEATURED_DATASETS = ['memory_prices', 'market_index', 'forecasts', 'news_events']
+const RESOURCE_ORDER = ['electronics_prices', 'memory_prices', 'market_index', 'forecasts', 'device_exposure', 'news_events', 'macro_indicators', 'decision_briefs', 'source_runs', 'retail_products', 'spot_prices']
+const FEATURED_DATASETS = ['electronics_prices', 'memory_prices', 'forecasts', 'device_exposure']
 
 function ResourceActions({ resource }: { resource: DatasetResource }) {
   return <div className="resource-actions"><a href={publicAssetUrl(`datasets/latest/${resource.path}`)} download>Download</a><a href={publicAssetUrl(`datasets/latest/${resource.schema_path}`)}>Schema</a></div>
@@ -43,17 +43,17 @@ export function DataPage() {
 
   return (
     <>
-      <PageIntro kicker="Open data" title="Use the evidence behind MemoryPulse" description="Download the price history, pressure index, forecasts, and market events behind the site—free, traceable, and ready for analysis." />
+      <PageIntro kicker="Open data" title="Use the evidence behind MemoryPulse" description="Download official electronics price milestones, memory history, forecasts, exposure scenarios, and market events—free, traceable, and ready for analysis." />
       <DataBoundary loading={catalog.loading} error={catalog.error}>
         <section className="dataset-hero">
-          <div><span className="dataset-version">Dataset v{catalog.data?.dataset_version}</span><h2>One download. Nine analysis-ready tables.</h2><p>Canonical history, analytical outputs, schemas, and checksums in a single versioned release.</p><div className="hero-actions"><a className="button button--primary" href={publicAssetUrl(`datasets/latest/${catalog.data?.bundle.path ?? ''}`)} download>Download everything · {formatBytes(catalog.data?.bundle.bytes)}</a><a className="button button--quiet" href={publicAssetUrl('datasets/latest/catalog.json')}>Open machine catalog</a></div></div>
+          <div><span className="dataset-version">Dataset v{catalog.data?.dataset_version}</span><h2>One download. Every analysis-ready table.</h2><p>Canonical history, official product-price milestones, scenario assumptions, analytical outputs, schemas, and checksums in a single versioned release.</p><div className="hero-actions"><a className="button button--primary" href={publicAssetUrl(`datasets/latest/${catalog.data?.bundle.path ?? ''}`)} download>Download everything · {formatBytes(catalog.data?.bundle.bytes)}</a><a className="button button--quiet" href={publicAssetUrl('datasets/latest/catalog.json')}>Open machine catalog</a></div></div>
           <dl><div><dt>Updated</dt><dd>{formatDate(catalog.data?.generated_at, true)}</dd></div><div><dt>Tables</dt><dd>{latestResources.length}</dd></div><div><dt>Rows</dt><dd>{formatNumber(totalRows, 0)}</dd></div><div><dt>Coverage</dt><dd>{formatDate(startDate)}–{formatDate(endDate)}</dd></div></dl>
         </section>
 
         <section className="dataset-trust-strip" aria-label="Dataset guarantees"><span><strong>Versioned</strong>Stable releases</span><span><strong>Traceable</strong>Sources and dates retained</span><span><strong>Verifiable</strong>SHA-256 checksums</span><span><strong>Open access</strong>No account or API key</span></section>
 
         <section className="section-block featured-datasets">
-          <div className="section-heading"><div><p className="kicker">Start here</p><h2>The four most useful tables</h2></div><p>Parquet is compact and ready for Python, R, DuckDB, notebooks, and BI tools.</p></div>
+          <div className="section-heading"><div><p className="kicker">Start here</p><h2>Four tables that reproduce the story</h2></div><p>Official device milestones, component history, model outputs, and explicit exposure assumptions—packaged as analysis-ready Parquet.</p></div>
           <div className="featured-resource-grid">{featuredResources.map((resource) => <article key={resource.id}>
             <div className="resource-card-head"><span>{resource.format}</span><b>{formatNumber(resource.rows, 0)} rows</b></div>
             <h3>{resource.title}</h3><p>{resource.description}</p><small>{formatBytes(resource.bytes)} · {resource.start_date ? `${formatDate(resource.start_date)}–${formatDate(resource.end_date)}` : 'Awaiting observations'}</small>

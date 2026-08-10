@@ -1,0 +1,7 @@
+exposure_id,category,display_name,memory_storage_share_low,memory_storage_share_central,memory_storage_share_high,pass_through_low,pass_through_central,pass_through_high,basis,source_label
+exposure_console,gaming_console,Gaming consoles,0.08,0.13,0.20,0.35,0.65,1.00,"Illustrative scenario range; console platform economics and manufacturer pricing can dominate component movement.",MemoryPulse scenario assumption
+exposure_consumer_laptop,consumer_laptop,Mainstream laptops,0.09,0.15,0.23,0.30,0.60,0.90,"Illustrative combined memory-and-storage share for scenario analysis; not a teardown estimate.",MemoryPulse scenario assumption
+exposure_professional_laptop,professional_laptop,Professional laptops,0.12,0.20,0.30,0.35,0.65,0.95,"Higher-capacity configurations create greater potential component exposure but also carry wider margins.",MemoryPulse scenario assumption
+exposure_gaming_pc,gaming_pc,Gaming desktops,0.11,0.19,0.31,0.45,0.75,1.00,"Configurable systems can transmit component prices faster than fixed-platform products.",MemoryPulse scenario assumption
+exposure_smartphone,smartphone,Premium smartphones,0.07,0.12,0.18,0.25,0.55,0.85,"Long supplier contracts and annual product cycles can delay component-price transmission.",MemoryPulse scenario assumption
+exposure_smart_home,smart_home,Smart-home devices,0.04,0.08,0.14,0.20,0.45,0.75,"Lower memory content limits direct exposure while logistics and other semiconductors remain relevant.",MemoryPulse scenario assumption

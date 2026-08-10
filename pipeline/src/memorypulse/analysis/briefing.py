@@ -195,7 +195,7 @@ def build_decision_brief(
             "forecast_change_percent": forecast_change,
             "forecast": forecast,
         },
-        "method": "Deterministic rules over validated index components and the best rolling-backtest forecast.",
+        "method": "Deterministic rules over validated index components and a stability-gated rolling-origin forecast selected against a naive baseline.",
         "disclaimer": "Analytical decision support only—not purchasing, investment, or inventory-management advice.",
     }
 
@@ -252,20 +252,169 @@ def _model_diagnostics(connection: duckdb.DuckDBPyConnection) -> list[dict[str, 
         if len(values) < 12:
             continue
         results = [rolling_origin_backtest(values, name) for name in MODELS]
-        selected = min(results, key=lambda result: (result.mae, result.name != "naive_last_value")).name
+        eligible = [result for result in results if result.mae != float("inf") and result.stability >= 0.75]
+        if not eligible:
+            continue
+        naive = next(result for result in results if result.name == "naive_last_value")
+        best = min(eligible, key=lambda result: (result.mae, result.name != "naive_last_value"))
+        selected = best.name if best.name == "naive_last_value" or best.mae <= naive.mae * 0.98 else naive.name
         output.append(
             {
                 "series_id": series_id,
                 "observations": len(values),
                 "selected_model": selected,
-                "advanced_ml_ready": len(values) >= 60,
+                "advanced_ml_ready": len(values) >= 48,
+                "selection_rule": "Lowest stable rolling-origin MAE; complex models must beat naive by at least 2%.",
                 "candidates": [
-                    {"model": result.name, "mae": result.mae, "mape": result.mape, "selected": result.name == selected}
+                    {
+                        "model": result.name,
+                        "mae": result.mae,
+                        "mape": result.mape,
+                        "smape": result.smape,
+                        "mase": result.mase,
+                        "direction_accuracy": result.direction_accuracy,
+                        "validation_points": result.validation_points,
+                        "stability": result.stability,
+                        "skill_vs_naive_percent": (
+                            100 * (1 - result.mae / naive.mae)
+                            if naive.mae and naive.mae != float("inf") and result.mae != float("inf")
+                            else None
+                        ),
+                        "selected": result.name == selected,
+                    }
                     for result in sorted(results, key=lambda item: item.mae)
                 ],
             }
         )
     return output
+
+
+def build_electronics_story(
+    connection: duckdb.DuckDBPyConnection,
+    decision_brief: dict[str, Any],
+) -> dict[str, Any]:
+    milestones = _rows(
+        connection,
+        """SELECT observation_id, observation_date, category, manufacturer, product_family,
+        model, configuration, price_type, price_usd, memory_gb, storage_gb, comparability,
+        source_id, source_url, source_label, notes, change_from_first_percent
+        FROM electronics_price_changes ORDER BY observation_date, product_family""",
+    )
+    grouped: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for item in milestones:
+        grouped[str(item["product_family"])].append(item)
+    series = []
+    for family, points in grouped.items():
+        first, latest = points[0], points[-1]
+        series.append(
+            {
+                "family": family,
+                "category": latest["category"],
+                "manufacturer": latest["manufacturer"],
+                "comparability": latest["comparability"],
+                "first_price": first["price_usd"],
+                "latest_price": latest["price_usd"],
+                "change_percent": 100 * (float(latest["price_usd"]) / float(first["price_usd"]) - 1),
+                "first_date": first["observation_date"],
+                "latest_date": latest["observation_date"],
+                "points": points,
+            }
+        )
+    series.sort(key=lambda item: abs(float(item["change_percent"])), reverse=True)
+
+    signal = decision_brief.get("ddr5", {}).get("forecast_change_percent")
+    if signal is None or abs(float(signal)) < 0.01:
+        signal = decision_brief.get("ddr5", {}).get("recent_change_percent")
+    signal = float(signal or 0)
+    exposures = _rows(connection, "SELECT * FROM device_exposure ORDER BY memory_storage_share_central DESC")
+    scenarios = []
+    for item in exposures:
+        scenarios.append(
+            {
+                **item,
+                "signal_percent": signal,
+                "modeled_product_effect_low": signal * float(item["memory_storage_share_low"]) * float(item["pass_through_low"]),
+                "modeled_product_effect_central": signal * float(item["memory_storage_share_central"]) * float(item["pass_through_central"]),
+                "modeled_product_effect_high": signal * float(item["memory_storage_share_high"]) * float(item["pass_through_high"]),
+            }
+        )
+
+    family_lookup = {item["family"]: item for item in series}
+    ps5_change = float(family_lookup.get("PlayStation 5 standard", {}).get("change_percent", 0))
+    xbox_change = float(family_lookup.get("Xbox Series X", {}).get("change_percent", 0))
+    switch_change = float(family_lookup.get("Nintendo Switch 2", {}).get("change_percent", 0))
+    air_change = float(family_lookup.get("MacBook Air entry tier", {}).get("change_percent", 0))
+    pro_change = float(family_lookup.get("MacBook Pro entry tier", {}).get("change_percent", 0))
+    return {
+        "headline": "The component squeeze is reaching finished electronics—but not in the same way.",
+        "thesis": (
+            f"Official U.S. milestones put PS5 and Xbox Series X prices about {ps5_change:.0f}% and "
+            f"{xbox_change:.0f}% above launch. Nintendo has announced a {switch_change:.0f}% Switch 2 "
+            "increase. MacBook starting tiers also moved, but specification changes make causal comparisons weaker."
+        ),
+        "memory_signal_percent": signal,
+        "product_series": series,
+        "milestones": milestones,
+        "exposure_scenarios": scenarios,
+        "evidence": [
+            {
+                "kind": "observed",
+                "label": "PS5 standard",
+                "value": ps5_change,
+                "unit": "% from launch MSRP",
+                "interpretation": "An official same-family console price path; memory is one possible contributor among several.",
+            },
+            {
+                "kind": "observed",
+                "label": "Xbox Series X",
+                "value": xbox_change,
+                "unit": "% from launch ERP",
+                "interpretation": "Microsoft explicitly cited higher console memory and storage costs in its 2026 update.",
+            },
+            {
+                "kind": "qualified",
+                "label": "MacBook Air entry tier",
+                "value": air_change,
+                "unit": "% since 2020",
+                "interpretation": "Starting price increased, while memory, storage, and processor capability also changed materially.",
+            },
+            {
+                "kind": "qualified",
+                "label": "MacBook Pro entry tier",
+                "value": pro_change,
+                "unit": "% since 2020",
+                "interpretation": "A product-tier comparison—not a like-for-like price index.",
+            },
+        ],
+        "story": {
+            "proves": [
+                "Major console makers have published substantial U.S. list-price increases.",
+                "The latest public DDR5 series and official semiconductor indicators show measurable component-market movement.",
+                "Product pricing differs materially by configuration and commercial model.",
+            ],
+            "suggests": [
+                "Memory-intensive and lower-margin devices can have greater exposure when component pressure persists.",
+                "Configurable PCs may transmit component changes faster than fixed-platform products.",
+                "Manufacturers may respond through price, configuration, promotions, margins, or launch timing.",
+            ],
+            "uncertain": [
+                "Public evidence does not isolate memory as the sole cause of any finished-product price change.",
+                "Supplier contracts, tariffs, exchange rates, logistics, and product redesign are not fully observable.",
+                "MacBook generations are not directly comparable without quality adjustment.",
+            ],
+            "would_change_view": [
+                "A sustained reversal in observed DDR5 prices and producer-cost pressure.",
+                "Official price reductions or higher-capacity configurations at unchanged prices.",
+                "Forecast underperformance versus naive baselines over new observed vintages.",
+            ],
+        },
+        "conclusion": (
+            "Console price escalation is directly observable; laptop pricing is a configuration-adjusted story. "
+            "Memory pressure is a credible cost channel, not a complete causal explanation. The most defensible "
+            "forward view is therefore a range of product-cost exposure rather than a promised retail-price forecast."
+        ),
+        "disclaimer": "Official price milestones and transparent scenarios; not a causal estimate or retail-price guarantee.",
+    }
 
 
 def _pressure_history(connection: duckdb.DuckDBPyConnection) -> list[dict[str, Any]]:
@@ -370,8 +519,8 @@ def build_business_analytics(
         "model_readiness": {
             "ddr5_monthly_points": readiness_points,
             "baseline_models_ready": readiness_points >= 12,
-            "advanced_ml_ready": readiness_points >= 60,
-            "points_until_advanced_ml": max(0, 60 - readiness_points),
-            "explanation": "Transparent baselines are used now; boosted multivariate models remain gated until at least 60 comparable monthly observations exist.",
+            "advanced_ml_ready": readiness_points >= 48,
+            "points_until_advanced_ml": max(0, 48 - readiness_points),
+            "explanation": "Ten transparent time-series candidates compete now. Multivariate boosted models remain gated until at least 48 comparable monthly observations exist.",
         },
     }

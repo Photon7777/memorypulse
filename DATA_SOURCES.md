@@ -8,6 +8,22 @@ Eligible normalized records are also packaged under `frontend/public/datasets/la
 text, Parquet, schemas, checksums, and a ZIP. Distribution never overrides upstream rights: users must
 review [DATA_LICENSE.md](DATA_LICENSE.md) and the source-specific notes below before redistribution.
 
+## Official electronics price milestones
+
+- **Sources:** Official U.S. announcements and product pages from PlayStation, Xbox, Nintendo, and Apple.
+- **Collected:** Announcement date, manufacturer, product family, configuration, U.S. starting price,
+  memory/storage when explicitly stated, source URL, notes, and a comparability label.
+- **Frequency:** Curated when an official manufacturer announces a material launch or price revision.
+- **Authentication:** None.
+- **Reliability:** First-party manufacturer statements for the stated price and configuration.
+- **Caveats:** A starting price is not a quality-adjusted price index. Console same-family paths are
+  generally more comparable; MacBook entry tiers change memory, storage, processors, and capability.
+  The table therefore labels observations as like-for-like, same-family, or starting-tier comparisons.
+- **Redistribution:** MemoryPulse distributes normalized factual milestones and source links, not copies
+  of announcement pages or product photography. Manufacturer terms and marks remain their owners'.
+- **Failure behavior:** This curated table is independent of scheduled network collection. Contract and
+  date validation must pass before it enters the public bundle.
+
 ## Stanford Memory Price Data
 
 - **URL:** <https://dam.stanford.edu/assets/memory-prices/memory-prices.csv>
