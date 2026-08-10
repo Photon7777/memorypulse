@@ -174,6 +174,41 @@ class DeviceExposureAssumption(Contract):
 
 
 @dataclass(slots=True)
+class IndustryOutlookObservation(Contract):
+    outlook_id: str
+    published_at: date
+    collected_at: datetime
+    horizon_end: date
+    segment: str
+    metric: str
+    direction: str
+    central_estimate: float | None
+    lower_estimate: float | None
+    upper_estimate: float | None
+    unit: str
+    summary: str
+    source_id: str
+    source_url: str
+    source_label: str
+    notes: str
+
+    def validate(self) -> None:
+        validate_observation_date(self.published_at)
+        if self.horizon_end < self.published_at:
+            raise ValidationError("industry outlook horizon cannot precede publication")
+        if self.direction not in {"upward", "easing", "mixed"}:
+            raise ValidationError(f"unsupported industry outlook direction: {self.direction}")
+        estimates = (self.lower_estimate, self.central_estimate, self.upper_estimate)
+        present = [value for value in estimates if value is not None]
+        if len(present) not in {0, 3}:
+            raise ValidationError("industry outlook estimates must be fully specified or qualitative")
+        if len(present) == 3 and not present[0] <= present[1] <= present[2]:
+            raise ValidationError("industry outlook estimate range is not ordered")
+        if not self.summary or not self.source_url.startswith("https://"):
+            raise ValidationError("industry outlook requires a summary and HTTPS source")
+
+
+@dataclass(slots=True)
 class MacroIndicatorObservation(Contract):
     observation_id: str
     observation_date: date

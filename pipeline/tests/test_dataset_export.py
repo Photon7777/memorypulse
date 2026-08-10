@@ -26,11 +26,12 @@ def test_public_dataset_has_catalog_schemas_bundle_and_checksums(tmp_path) -> No
     )
     connection.close()
 
-    assert catalog["dataset_version"] == "1.1.0"
-    assert len(catalog["resources"]) == 22
+    assert catalog["dataset_version"] == "1.2.0"
+    assert len(catalog["resources"]) == 24
     assert (output / catalog["bundle"]["path"]).exists()
     assert (output / "parquet/memory_prices.parquet").exists()
     assert (output / "parquet/electronics_prices.parquet").exists()
+    assert (output / "parquet/industry_outlooks.parquet").exists()
     schema = json.loads((output / "schemas/memory_prices.schema.json").read_text())
     assert "observation_id" in schema["properties"]
     assert validate_public_dataset(output) == []

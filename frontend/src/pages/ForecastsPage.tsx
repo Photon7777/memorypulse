@@ -7,11 +7,19 @@ import { useStaticData } from '../hooks/useStaticData'
 import type { AnalyticsData, ForecastData, PricesData } from '../types/data'
 import { formatDate, formatNumber } from '../utils/format'
 
+const SERIES_PRIORITY = ['DDR5', 'HBM', 'DDR4', 'NAND', 'DDR3']
+
+function seriesPriority(series: string): number {
+  const index = SERIES_PRIORITY.findIndex((generation) => series.toUpperCase().startsWith(generation))
+  return index === -1 ? SERIES_PRIORITY.length : index
+}
+
 export function ForecastsPage() {
   const state = useStaticData<ForecastData>('forecast.json')
   const prices = useStaticData<PricesData>('prices.json')
   const analytics = useStaticData<AnalyticsData>('analytics.json')
   const series = [...new Set(state.data?.forecasts.map((forecast) => forecast.series_id) ?? [])]
+    .sort((left, right) => seriesPriority(left) - seriesPriority(right) || left.localeCompare(right))
   const [selected, setSelected] = useState<string>('')
   const [selectedTarget, setSelectedTarget] = useState<string>('')
   const activeSeries = selected || series[0] || ''
@@ -26,6 +34,14 @@ export function ForecastsPage() {
   const diagnostic = analytics.data?.model_diagnostics.find((item) => item.series_id === activeSeries)
   const latestActual = history?.points.at(-1)?.value
   const forecastChange = latestActual && forecast ? ((forecast.point_forecast / latestActual) - 1) * 100 : null
+  const outlooks = state.data?.industry_outlooks ?? []
+  const combinedOutlook = outlooks.find((item) => item.metric === 'combined_component_price_change')
+  const pcOutlook = outlooks.find((item) => item.segment === 'Personal computers')
+  const smartphoneOutlook = outlooks.find((item) => item.segment === 'Smartphones')
+  const dramOutlook = outlooks.find((item) => item.segment === 'DRAM')
+  const nandOutlook = outlooks.find((item) => item.segment === 'NAND Flash')
+  const hbmOutlook = outlooks.find((item) => item.segment === 'HBM')
+  const flatBaseline = forecast?.model_name === 'naive_last_value'
 
   function horizonLabel(target: string): string {
     if (!history?.points.length) return formatDate(target)
@@ -36,14 +52,41 @@ export function ForecastsPage() {
   }
   return (
     <>
-      <PageIntro kicker="Governed model selection" title="Forecasts that make complexity earn its place" description="Ten model candidates compete on unseen historical windows. Every published estimate retains its winner, training window, error, stability, and uncertainty interval." />
+      <PageIntro kicker="Two horizons · one honest view" title="The market outlook is upward. The short-term model remains cautious." description="Expert research describes the structural 2026–2027 market direction; observed-series models answer a narrower 1–6 month question. MemoryPulse keeps those evidence types separate instead of forcing one to imitate the other." />
       <DataBoundary loading={state.loading || prices.loading || analytics.loading} error={state.error || prices.error || analytics.error}>
+        <section className="industry-outlook-hero">
+          <div className="industry-outlook-hero__copy">
+            <p className="kicker">Structural industry outlook · through 2027</p>
+            <span className="outlook-direction"><i />Upward DRAM pressure</span>
+            <h2>DRAM is not expected to flatline.</h2>
+            <p>{dramOutlook?.summary ?? 'The latest sourced industry outlook has not been loaded.'} {nandOutlook ? `NAND is different: ${nandOutlook.summary.toLowerCase()}` : ''}</p>
+            <div className="outlook-source-links">
+              {dramOutlook && <a href={dramOutlook.source_url} target="_blank" rel="noreferrer">TrendForce DRAM outlook ↗</a>}
+              {combinedOutlook && <a href={combinedOutlook.source_url} target="_blank" rel="noreferrer">Gartner device-cost outlook ↗</a>}
+            </div>
+          </div>
+          <div className="outlook-index-visual" role="img" aria-label="Gartner expert estimate showing a combined DRAM and SSD price index rising from 100 in 2025 to 230 by the end of 2026">
+            <header><span>Expert component-cost index</span><b>2025 = 100</b></header>
+            <div><label>2025 baseline</label><i><b style={{ width: '43.5%' }} /></i><strong>100</strong></div>
+            <div><label>End-2026 estimate</label><i><b style={{ width: '100%' }} /></i><strong>{combinedOutlook?.central_estimate == null ? 'n/a' : formatNumber(100 + combinedOutlook.central_estimate, 0)}</strong></div>
+            <small>Gartner combined DRAM + SSD estimate. This is not a DDR5 $/GB series forecast.</small>
+          </div>
+        </section>
+
+        <section className="outlook-evidence-grid" aria-label="Industry outlook evidence">
+          <article><span>DRAM · 2027</span><strong>↑ Upward</strong><p>{dramOutlook?.summary}</p><small>Published {formatDate(dramOutlook?.published_at)} · {dramOutlook?.source_label}</small></article>
+          <article><span>HBM · 2027</span><strong>↑ Pricing power</strong><p>{hbmOutlook?.summary}</p><small>Published {formatDate(hbmOutlook?.published_at)} · {hbmOutlook?.source_label}</small></article>
+          <article className="outlook-evidence-grid__mixed"><span>NAND · 2H27</span><strong>↘ Easing later</strong><p>{nandOutlook?.summary}</p><small>Published {formatDate(nandOutlook?.published_at)} · {nandOutlook?.source_label}</small></article>
+          <article><span>Finished devices · 2026</span><strong>PC +{formatNumber(pcOutlook?.central_estimate, 0)}% · Phone +{formatNumber(smartphoneOutlook?.central_estimate, 0)}%</strong><p>Gartner’s estimated retail-price effects from higher memory costs versus 2025.</p><small>Published {formatDate(pcOutlook?.published_at)} · Gartner</small></article>
+        </section>
+
+        <div className="forecast-scope-divider"><span>Observed-series model · 1–6 months</span><div><h2>Now zoom into a specific public price series.</h2><p>This model is descriptive and backtested. A flat midpoint means no trend model beat the naive baseline on that series—not that industry experts expect the whole market to remain flat.</p></div></div>
         {forecast ? (
           <>
             <div className="forecast-toolbar"><label>Series<select value={activeSeries} onChange={(event) => { setSelected(event.target.value); setSelectedTarget('') }}>{series.map((item) => <option key={item}>{item}</option>)}</select></label><div className="forecast-horizons" aria-label="Forecast horizon">{activeForecasts.map((item) => <button type="button" className={item.target_date === forecast.target_date ? 'active' : ''} aria-pressed={item.target_date === forecast.target_date} onClick={() => setSelectedTarget(item.target_date)} key={item.target_date}>{horizonLabel(item.target_date)}</button>)}</div><span>Created {formatDate(forecast.forecast_created_at, true)}</span></div>
-            <section className="chart-card forecast-history"><div className="section-heading"><div><p className="kicker">Selected forecast · {formatDate(forecast.target_date)}</p><h2>{formatNumber(forecast.point_forecast, 3)} <small>source-defined units</small></h2></div><p>95% interval {formatNumber(forecast.lower_bound, 3)}–{formatNumber(forecast.upper_bound, 3)}. The chart uses the latest complete forecast vintage.</p></div><ForecastFanChart history={history} forecasts={activeForecasts} /><p className="chart-takeaway"><strong>Takeaway</strong>{forecastChange == null ? 'The model has published a direction, but no comparable latest value is available for a percentage change.' : `The selected estimate is ${Math.abs(forecastChange).toFixed(1)}% ${forecastChange >= 0 ? 'above' : 'below'} the latest observed value. Treat the full interval—not only the midpoint—as the decision range.`}</p>{history && <p className="chart-summary">{history.source_label} · {history.basis}</p>}</section>
+            <section className="chart-card forecast-history"><div className="section-heading"><div><p className="kicker">Selected short-horizon forecast · {formatDate(forecast.target_date)}</p><h2>{formatNumber(forecast.point_forecast, 3)} <small>source-defined units</small></h2></div><p>95% interval {formatNumber(forecast.lower_bound, 3)}–{formatNumber(forecast.upper_bound, 3)}. The chart uses the latest complete forecast vintage.</p></div><ForecastFanChart history={history} forecasts={activeForecasts} /><p className="chart-takeaway"><strong>Takeaway</strong>{flatBaseline ? `The midpoint stays flat because no trend model beat the naive baseline for ${activeSeries}. This is a local statistical baseline—not the 2026–2027 industry outlook shown above.` : forecastChange == null ? 'The model has published a direction, but no comparable latest value is available for a percentage change.' : `The selected estimate is ${Math.abs(forecastChange).toFixed(1)}% ${forecastChange >= 0 ? 'above' : 'below'} the latest observed value. Treat the full interval—not only the midpoint—as the decision range.`}</p>{history && <p className="chart-summary">{history.source_label} · {history.basis}</p>}</section>
             <div className="metric-grid metric-grid--three">
-              <MetricCard eyebrow="Selected model" value={forecast.model_name.replaceAll('_', ' ')} detail={`Compared with a naive baseline · v${forecast.model_version}`} />
+              <MetricCard eyebrow="Selected short-horizon model" value={forecast.model_name.replaceAll('_', ' ')} detail={`${flatBaseline ? 'No upward model earned selection' : 'Beat the governed baseline'} · v${forecast.model_version}`} />
               <MetricCard eyebrow="Backtest MAE" value={formatNumber(forecast.backtest_mae, 3)} detail={forecast.backtest_mape == null ? 'MAPE unavailable where actual values are zero' : `MAPE ${formatNumber(forecast.backtest_mape, 1)}%`} tone="accent" />
               <MetricCard eyebrow="Training window" value={`${forecast.observations_used} points`} detail={`${formatDate(forecast.training_start)} to ${formatDate(forecast.training_end)}`} />
             </div>

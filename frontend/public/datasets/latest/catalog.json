@@ -1,18 +1,18 @@
 {
   "attribution_required": true,
   "bundle": {
-    "bytes": 167882,
+    "bytes": 172567,
     "format": "zip",
-    "path": "memorypulse-dataset-v1.1.0.zip",
-    "sha256": "b84821622672cb818fa3f163883da0ab0f4f1362c9588f4e67acb7e6ec3e7e7e"
+    "path": "memorypulse-dataset-v1.2.0.zip",
+    "sha256": "f411f4c4afd23dbf9349ac8bf80373696a92870417d519ca3f0df26245d104f8"
   },
-  "dataset_version": "1.1.0",
+  "dataset_version": "1.2.0",
   "description": "Normalized memory prices, official electronics price milestones, device-exposure assumptions, business context, forecasts, and auditable decision briefs.",
-  "generated_at": "2026-08-10T21:52:24Z",
+  "generated_at": "2026-08-10T22:09:23Z",
   "homepage": "https://photon7777.github.io/memorypulse/#/data",
   "license": "Source-specific; see DATA_LICENSE.md",
   "name": "MemoryPulse Public Memory-Market Dataset",
-  "pipeline_run_id": "pipeline_1a102212183020b40bb7",
+  "pipeline_run_id": "export_31c422bc1387c028c121",
   "production_data": true,
   "publisher": "MemoryPulse",
   "repository": "https://github.com/Photon7777/memorypulse",
@@ -146,6 +146,42 @@
       "source_ids": [],
       "start_date": "2024-08-01",
       "title": "Forecasts"
+    },
+    {
+      "bytes": 3013,
+      "dataset": "industry_outlooks",
+      "description": "Sourced analyst outlooks with explicit horizons, metrics, numeric ranges where published, and qualitative direction elsewhere.",
+      "end_date": "2026-08-04",
+      "format": "csv",
+      "id": "industry_outlooks-csv",
+      "path": "csv/industry_outlooks.csv",
+      "rows": 6,
+      "schema_path": "schemas/industry_outlooks.schema.json",
+      "sha256": "383ca5f451e82b09ec1d76f018a820ba7661e4f74fc9f8be2a5a0d44c9c75909",
+      "source_ids": [
+        "gartner_memory_outlook",
+        "trendforce_memory_outlook"
+      ],
+      "start_date": "2026-02-26",
+      "title": "Industry Outlooks"
+    },
+    {
+      "bytes": 5004,
+      "dataset": "industry_outlooks",
+      "description": "Sourced analyst outlooks with explicit horizons, metrics, numeric ranges where published, and qualitative direction elsewhere.",
+      "end_date": "2026-08-04",
+      "format": "parquet",
+      "id": "industry_outlooks-parquet",
+      "path": "parquet/industry_outlooks.parquet",
+      "rows": 6,
+      "schema_path": "schemas/industry_outlooks.schema.json",
+      "sha256": "080dc1af53792501af49b759b8d6ca7a25dfb94cc48372b5278f52025c88192f",
+      "source_ids": [
+        "gartner_memory_outlook",
+        "trendforce_memory_outlook"
+      ],
+      "start_date": "2026-02-26",
+      "title": "Industry Outlooks"
     },
     {
       "bytes": 136470,

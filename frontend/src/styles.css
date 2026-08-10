@@ -726,3 +726,60 @@ select { min-width: 170px; padding: .65rem .75rem; border: 1px solid var(--line)
   .story-chapter--dark { border: 1px solid #28423d; }
   .model-governance-card, .decision-banner { background: #06100f; }
 }
+
+/* v1.5 forecast scope: sourced structural outlook + governed local projection */
+.industry-outlook-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(400px, .9fr);
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: center;
+  padding: clamp(2rem, 5vw, 5rem);
+  border: 1px solid #2b4a44;
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 88% 12%, rgba(100,184,169,.16), transparent 38%),
+    #071210;
+  color: #edf2e9;
+  box-shadow: 0 28px 90px rgba(5,18,16,.2);
+}
+.industry-outlook-hero__copy h2 { max-width: 780px; margin: 1.2rem 0; font: 500 clamp(3rem, 5.5vw, 6rem)/.94 Newsreader, Georgia, serif; text-wrap: balance; }
+.industry-outlook-hero__copy > p:last-of-type { max-width: 750px; color: #96a8a3; font-size: .82rem; }
+.outlook-direction { display: inline-flex; align-items: center; gap: .55rem; color: #d8ff4f; font: .6rem 'DM Mono'; text-transform: uppercase; letter-spacing: .07em; }
+.outlook-direction i { width: 7px; height: 7px; border-radius: 50%; background: currentColor; box-shadow: 0 0 0 5px rgba(216,255,79,.09); }
+.outlook-source-links { display: flex; flex-wrap: wrap; gap: .7rem 1.2rem; margin-top: 2rem; }
+.outlook-source-links a { color: #d8ff4f; font-size: .68rem; text-decoration: none; }
+.outlook-index-visual { padding: clamp(1.4rem, 3vw, 2.4rem); border: 1px solid #36554e; border-radius: 12px; background: rgba(16,38,34,.7); }
+.outlook-index-visual header { display: flex; justify-content: space-between; gap: 1rem; margin-bottom: 2.3rem; color: #849a94; font: .56rem 'DM Mono'; text-transform: uppercase; }
+.outlook-index-visual header b { color: #b7c7c2; font-weight: 500; }
+.outlook-index-visual > div { display: grid; grid-template-columns: 115px 1fr 48px; gap: .8rem; align-items: center; margin: 1rem 0; }
+.outlook-index-visual label { color: #a8b8b3; font-size: .66rem; }
+.outlook-index-visual i { display: block; height: 26px; background: #132a26; overflow: hidden; }
+.outlook-index-visual i b { display: block; height: 100%; background: linear-gradient(90deg, #2d796d, #d8ff4f); }
+.outlook-index-visual strong { color: #edf2e9; font-size: 1rem; text-align: right; }
+.outlook-index-visual small { display: block; margin-top: 1.8rem; color: #77908a; font: .55rem/1.55 'DM Mono'; }
+.outlook-evidence-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; margin-top: 1rem; border: 1px solid var(--line); background: var(--line); }
+.outlook-evidence-grid article { min-height: 250px; padding: 1.4rem; background: var(--surface); }
+.outlook-evidence-grid article > span, .outlook-evidence-grid small { color: var(--muted); font: .55rem 'DM Mono'; text-transform: uppercase; }
+.outlook-evidence-grid strong { display: block; margin: 2.3rem 0 .8rem; color: var(--teal); font-size: clamp(1.4rem, 2vw, 2rem); letter-spacing: -.05em; }
+.outlook-evidence-grid p { color: var(--muted); font-size: .69rem; }
+.outlook-evidence-grid small { display: block; margin-top: 1.5rem; line-height: 1.5; }
+.outlook-evidence-grid__mixed strong { color: var(--warning); }
+.forecast-scope-divider { display: grid; grid-template-columns: minmax(220px, .35fr) minmax(0, 1fr); gap: 3rem; align-items: start; margin: clamp(4rem, 8vw, 8rem) 0 2rem; padding-top: 2rem; border-top: 1px solid var(--line); }
+.forecast-scope-divider > span { color: var(--teal); font: .6rem 'DM Mono'; text-transform: uppercase; }
+.forecast-scope-divider h2 { margin-bottom: .7rem; font: 500 clamp(2rem, 3.6vw, 4rem)/1 Newsreader, Georgia, serif; }
+.forecast-scope-divider p { max-width: 820px; color: var(--muted); font-size: .76rem; }
+
+@media (max-width: 1100px) {
+  .industry-outlook-hero { grid-template-columns: 1fr; }
+  .outlook-index-visual { max-width: 720px; }
+  .outlook-evidence-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 720px) {
+  .industry-outlook-hero { margin-inline: -1rem; padding: 2rem 1rem; border-radius: 0; }
+  .industry-outlook-hero__copy h2 { font-size: clamp(3rem, 14vw, 4.7rem); }
+  .outlook-index-visual > div { grid-template-columns: 86px 1fr 42px; }
+  .outlook-evidence-grid { grid-template-columns: 1fr; }
+  .outlook-evidence-grid article { min-height: 210px; }
+  .forecast-scope-divider { grid-template-columns: 1fr; gap: 1rem; }
+}

@@ -225,8 +225,28 @@ export interface Forecast {
 export interface ForecastData {
   forecasts: Forecast[]
   historical_accuracy: Array<Record<string, string | number | null>>
+  industry_outlooks: IndustryOutlook[]
   empty_message: string
   disclaimer: string
+}
+
+export interface IndustryOutlook {
+  outlook_id: string
+  published_at: string
+  collected_at: string
+  horizon_end: string
+  segment: string
+  metric: string
+  direction: 'upward' | 'easing' | 'mixed'
+  central_estimate: number | null
+  lower_estimate: number | null
+  upper_estimate: number | null
+  unit: string
+  summary: string
+  source_id: string
+  source_url: string
+  source_label: string
+  notes: string
 }
 
 export interface SourceHealth {

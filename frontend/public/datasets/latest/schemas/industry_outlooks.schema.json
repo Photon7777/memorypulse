@@ -1,0 +1,124 @@
+{
+  "$id": "https://photon7777.github.io/memorypulse/datasets/latest/schemas/industry_outlooks.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Sourced analyst outlooks with explicit horizons, metrics, numeric ranges where published, and qualitative direction elsewhere.",
+  "properties": {
+    "central_estimate": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "collected_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "direction": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "horizon_end": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "lower_estimate": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "metric": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "notes": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "outlook_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "published_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "segment": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source_label": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source_url": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "summary": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "unit": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "upper_estimate": {
+      "type": [
+        "number",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "outlook_id",
+    "published_at",
+    "collected_at",
+    "horizon_end",
+    "segment",
+    "metric",
+    "direction",
+    "central_estimate",
+    "lower_estimate",
+    "upper_estimate",
+    "unit",
+    "summary",
+    "source_id",
+    "source_url",
+    "source_label",
+    "notes"
+  ],
+  "title": "MemoryPulse industry outlooks row",
+  "type": "object"
+}

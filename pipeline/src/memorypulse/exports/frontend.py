@@ -17,7 +17,7 @@ from memorypulse.analysis.briefing import (
 from memorypulse.indicators.pressure import IndexResult, calculate_index, components_from_database
 from memorypulse.transformations.storage import atomic_write_text
 
-SCHEMA_VERSION = "1.3.0"
+SCHEMA_VERSION = "1.4.0"
 
 
 def _json_value(value: Any) -> Any:
@@ -155,11 +155,17 @@ def _news_export(connection: duckdb.DuckDBPyConnection) -> dict[str, Any]:
 def _forecast_export(connection: duckdb.DuckDBPyConnection) -> dict[str, Any]:
     forecasts = _rows(connection, "SELECT * FROM forecasts ORDER BY forecast_created_at DESC, series_id, target_date")
     accuracy = _rows(connection, "SELECT * FROM forecast_accuracy WHERE actual_value IS NOT NULL ORDER BY target_date")
+    outlooks = _rows(
+        connection,
+        """SELECT * FROM industry_outlooks
+        ORDER BY published_at DESC, segment, metric""",
+    )
     return {
         "forecasts": forecasts,
         "historical_accuracy": accuracy,
+        "industry_outlooks": outlooks,
         "empty_message": "Collecting additional history before publishing a forecast.",
-        "disclaimer": "Forecasts are statistical estimates with uncertainty, not guarantees of future prices.",
+        "disclaimer": "Short-horizon forecasts are statistical estimates; industry outlooks are attributed external views. Neither is a guarantee of future prices.",
     }
 
 

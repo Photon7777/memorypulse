@@ -13,7 +13,7 @@ import duckdb
 
 from memorypulse.transformations.storage import atomic_write_text
 
-DATASET_VERSION = "1.1.0"
+DATASET_VERSION = "1.2.0"
 
 PUBLIC_TABLES = {
     "memory_prices": {
@@ -40,6 +40,11 @@ PUBLIC_TABLES = {
         "filename": "device_exposure.csv",
         "description": "Documented scenario ranges for memory-and-storage cost exposure by device category.",
         "date_column": "category",
+    },
+    "industry_outlooks": {
+        "filename": "industry_outlooks.csv",
+        "description": "Sourced analyst outlooks with explicit horizons, metrics, numeric ranges where published, and qualitative direction elsewhere.",
+        "date_column": "published_at",
     },
     "macro_indicators": {
         "filename": "macro_indicators.csv",

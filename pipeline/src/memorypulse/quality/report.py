@@ -21,6 +21,7 @@ def build_quality_report(
         "retail_products",
         "electronics_prices",
         "device_exposure",
+        "industry_outlooks",
         "macro_indicators",
         "news_events",
         "source_runs",

@@ -1,6 +1,6 @@
 # MemoryPulse methodology
 
-Version: **1.1.0**
+Version: **1.2.0**
 
 > MemoryPulse is an independent research project. Its Memory Pressure Index and forecasts are
 > analytical estimates, not official industry benchmarks, investment advice, purchasing advice, or
@@ -136,6 +136,18 @@ after at least six training observations; every later observation is predicted u
 Forecast rows preserve model/version, training dates, observations used, metrics, target date, and
 creation vintage. Forecasts are recalculated at most weekly unless manually forced. The accuracy view
 joins matured forecast targets to subsequently observed compatible values.
+
+### Statistical forecasts versus industry outlooks
+
+The 1-, 3-, and 6-month curves are series-specific statistical forecasts. A flat naive midpoint means
+that no eligible trend model beat the last-value baseline on unseen windows for that exact public
+series. It does not represent analyst consensus for the whole DRAM market.
+
+Longer-horizon industry outlooks are stored separately with publisher, publication date, horizon,
+segment, metric, direction, source URL, and numeric ranges only when the publisher supplied them.
+MemoryPulse never converts a qualitative view into an invented percentage or applies a combined
+DRAM-and-SSD estimate directly to DDR5 $/GB. The interface juxtaposes these evidence layers while
+preserving their different definitions.
 
 ## Business conclusion and ML readiness
 

@@ -33,7 +33,7 @@ def test_export_contracts_are_valid(tmp_path) -> None:
     manifest = json.loads((data_dir / "manifest.json").read_text())
     assert manifest["production_data"] is True
     assert manifest["fixture_data"] is False
-    assert manifest["schema_version"] == "1.3.0"
+    assert manifest["schema_version"] == "1.4.0"
     brief = json.loads((data_dir / "decision-brief.json").read_text())
     assert brief["regime"] == "Watch"
     assert brief["conclusion"]
@@ -42,6 +42,8 @@ def test_export_contracts_are_valid(tmp_path) -> None:
     assert analytics["model_readiness"]["advanced_ml_ready"] is False
     story = json.loads((data_dir / "electronics-story.json").read_text())
     assert story["story"]["proves"]
+    forecast = json.loads((data_dir / "forecast.json").read_text())
+    assert "industry_outlooks" in forecast
 
 
 def test_fixture_publication_guard_is_detected(tmp_path) -> None:

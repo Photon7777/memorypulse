@@ -5,6 +5,7 @@ import type { MethodologyData } from '../types/data'
 
 const sourceNotes = [
   ['Official device price milestones', 'Official U.S. manufacturer announcements for PlayStation, Xbox, Nintendo, and MacBook, with configuration and comparability labels preserved.'],
+  ['Attributed industry outlooks', 'Public TrendForce and Gartner research announcements, stored separately from statistical forecasts with their original segment, metric, horizon, and source link.'],
   ['Stanford memory-price data', 'Research-dataset reliability · checked daily for historical and monthly context with original attribution; estimated HBM points stay labeled.'],
   ['DRAMeXchange public homepage', 'Public-homepage reliability · optional daily spot and module tables only; disabled by default pending terms and robots review.'],
   ['FRED PCU3344133441', 'Official-statistics reliability · monthly broad semiconductor producer-price context, never described as a direct RAM price.'],

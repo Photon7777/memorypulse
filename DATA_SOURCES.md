@@ -24,6 +24,20 @@ review [DATA_LICENSE.md](DATA_LICENSE.md) and the source-specific notes below be
 - **Failure behavior:** This curated table is independent of scheduled network collection. Contract and
   date validation must pass before it enters the public bundle.
 
+## Attributed industry outlooks
+
+- **Sources:** Public research announcements from TrendForce and Gartner.
+- **Collected:** Publication date, stated horizon, market segment, metric, qualitative direction,
+  numeric estimate only when publicly supplied, source URL, and a definition-preserving note.
+- **Frequency:** Curated when a material public outlook changes the 2026–2027 market view.
+- **Reliability:** Attributed expert outlook, not an observed transaction series.
+- **Caveats:** Market revenue, contract prices, retail prices, and $/GB are different metrics. MemoryPulse
+  never silently converts between them or forces the statistical forecast to match an analyst view.
+- **Redistribution:** Only short paraphrases, numerical facts, and source links are distributed; the
+  publisher's full research and terms remain at the linked source.
+- **Failure behavior:** Numeric fields stay empty for qualitative outlooks. A missing range is not filled
+  with a MemoryPulse estimate.
+
 ## Stanford Memory Price Data
 
 - **URL:** <https://dam.stanford.edu/assets/memory-prices/memory-prices.csv>

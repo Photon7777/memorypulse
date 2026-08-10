@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import date, datetime, timezone
 
-from memorypulse.models import PriceObservation, stable_id
+from memorypulse.models import IndustryOutlookObservation, PriceObservation, stable_id
 from memorypulse.transformations.normalize import (
     deduplicate_prices,
     flag_outliers,
@@ -86,3 +86,26 @@ def test_sudden_values_are_flagged_not_deleted() -> None:
     flags = flag_outliers(values)
     assert len(flags) == len(values)
     assert flags[-1] is True
+
+
+def test_industry_outlook_preserves_qualitative_direction_without_invented_range() -> None:
+    outlook = IndustryOutlookObservation(
+        outlook_id="outlook_fixture",
+        published_at=date(2026, 7, 30),
+        collected_at=datetime(2026, 8, 10, tzinfo=timezone.utc),
+        horizon_end=date(2027, 12, 31),
+        segment="DRAM",
+        metric="contract_price_direction",
+        direction="upward",
+        central_estimate=None,
+        lower_estimate=None,
+        upper_estimate=None,
+        unit="qualitative direction",
+        summary="Supply remains constrained.",
+        source_id="fixture",
+        source_url="https://example.test/outlook",
+        source_label="Fixture",
+        notes="No numeric estimate supplied.",
+    )
+    outlook.validate()
+    assert outlook.central_estimate is None

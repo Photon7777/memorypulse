@@ -24,6 +24,8 @@ or rights associated with an upstream data source.
   official manufacturer pages. Product names and trademarks remain their respective owners'.
 - Device-category component shares and pass-through ranges are clearly labeled MemoryPulse scenario
   assumptions, not observed manufacturer costs or retail-price forecasts.
+- TrendForce and Gartner outlook records contain short attributed paraphrases and public numeric facts.
+  They remain external views and are not relicensed as MemoryPulse forecasts.
 - DRAMeXchange observations are excluded from public releases unless written permission is obtained.
 - Best Buy records remain optional and may be included only when collection and redistribution comply
   with the current API terms.

@@ -36,6 +36,12 @@ CREATE TABLE device_exposure (
  memory_storage_share_high DOUBLE, pass_through_low DOUBLE,
  pass_through_central DOUBLE, pass_through_high DOUBLE, basis VARCHAR, source_label VARCHAR
 );
+CREATE TABLE industry_outlooks (
+ outlook_id VARCHAR PRIMARY KEY, published_at DATE, collected_at TIMESTAMPTZ,
+ horizon_end DATE, segment VARCHAR, metric VARCHAR, direction VARCHAR,
+ central_estimate DOUBLE, lower_estimate DOUBLE, upper_estimate DOUBLE, unit VARCHAR,
+ summary VARCHAR, source_id VARCHAR, source_url VARCHAR, source_label VARCHAR, notes VARCHAR
+);
 CREATE TABLE macro_indicators (
  observation_id VARCHAR PRIMARY KEY, observation_date DATE, collected_at TIMESTAMPTZ,
  source_id VARCHAR, series_id VARCHAR, series_name VARCHAR, value DOUBLE, unit VARCHAR,
@@ -149,6 +155,7 @@ FILE_TO_TABLE = {
     "retail_products.csv": "retail_products",
     "electronics_prices.csv": "electronics_prices",
     "device_exposure.csv": "device_exposure",
+    "industry_outlooks.csv": "industry_outlooks",
     "macro_indicators.csv": "macro_indicators",
     "forecasts.csv": "forecasts",
     "market_index.csv": "market_index",

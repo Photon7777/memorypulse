@@ -36,7 +36,7 @@
       "status": "warning"
     }
   },
-  "generated_at": "2026-08-10T21:52:25Z",
+  "generated_at": "2026-08-10T22:09:23Z",
   "production_data": true,
   "status": "pass",
   "table_counts": {
@@ -44,6 +44,7 @@
     "device_exposure": 6,
     "electronics_prices": 17,
     "forecasts": 42,
+    "industry_outlooks": 6,
     "macro_indicators": 542,
     "market_index": 15,
     "memory_prices": 703,

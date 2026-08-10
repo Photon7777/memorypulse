@@ -36,6 +36,7 @@ flowchart LR
   D --> E["Polars normalization\nquality checks · views"]
   E --> F["Pressure Index\ntransparent baselines"]
   E --> G["Forecast selection\n1 · 3 · 6 month horizons\nrolling-origin backtests"]
+  O["Attributed industry outlooks\nmetric · horizon · source"] --> H
   C --> P["Official device milestones\nPlayStation · Xbox · Nintendo · MacBook"]
   P --> H
   F --> Q["Executive decision brief\nposture · drivers · risks"]
@@ -72,6 +73,7 @@ dataset release; no live database or application server is required.
 | [Federal Register API](https://www.federalregister.gov/developers/documentation/api/v1) | Official semiconductor policy and rule metadata | None | Enabled |
 | [GDELT DOC API](https://blog.gdeltproject.org/gdelt-doc-2-0-api-debuts/) | Article metadata and short excerpts | None | Enabled; failures are non-blocking |
 | Official manufacturer announcements | PlayStation, Xbox, Nintendo, and MacBook U.S. price milestones | None | Curated with source URLs and comparability labels |
+| [TrendForce](https://www.trendforce.com/presscenter/news/20260730-13158.html) and [Gartner](https://www.gartner.com/en/newsroom/press-releases/2026-02-26-gartner-says-surging-memory-costs-will-reduce-global-pc-and-smartphone-shipments-in-2026) | Attributed 2026–2027 industry and device-price outlooks | None | Curated; never blended silently into observed-series forecasts |
 | [DRAMeXchange homepage](https://www.dramexchange.com/) | Public homepage spot/module tables only | None | Disabled pending owner terms/robots review |
 | [Best Buy Products API](https://bestbuyapis.github.io/api-documentation/) | Optional retail module observations | Optional key | Disabled automatically without a key |
 
@@ -208,8 +210,9 @@ release includes canonical CSV or NDJSON, equivalent Zstandard Parquet files, JS
 catalog, Schema.org metadata, SHA-256 checksums, and a complete ZIP. The catalog records row counts,
 date coverage, source IDs, artifact sizes, and content hashes. Scheduled updates rebuild the release only
 after validation; the first scheduled run of each UTC month also attaches the bundle to a versioned
-GitHub Release for durable snapshots. Version 1.1 adds official electronics price milestones and
-transparent device-category exposure assumptions so the published story can be independently reproduced.
+GitHub Release for durable snapshots. Version 1.2 includes official electronics price milestones,
+transparent device-category exposure assumptions, and sourced expert outlooks so the published story
+and the distinction between statistical forecasts and industry expectations can be reproduced.
 
 Code is MIT-licensed, but upstream data rights remain source-specific. Review
 [DATA_LICENSE.md](DATA_LICENSE.md) before redistribution and retain the supplied attribution and source
@@ -226,6 +229,11 @@ Forecasts are published at 1-, 3-, and 6-month horizons with empirical residual 
 with horizon. Forecast vintages remain in history for later accuracy checks.
 No synthetic history is generated, and insufficient series show: **“Collecting additional history
 before publishing a forecast.”**
+
+The Forecast workspace separately presents attributed longer-horizon industry outlooks. Those records
+retain their original segment and metric: for example, a combined DRAM-and-SSD estimate is not applied
+as if it were a DDR5 $/GB forecast. A flat statistical baseline therefore remains visible alongside—not
+instead of—the sourced structural view.
 
 ## Data-quality and growth controls
 
