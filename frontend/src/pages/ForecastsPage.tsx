@@ -49,6 +49,7 @@ export function ForecastsPage() {
   const structural = (state.data?.structural_forecasts ?? []).filter((item) => item.forecast_created_at === latestStructuralVintage)
   const structuralBase = structural.filter((item) => item.scenario === 'base').sort((left, right) => left.target_date.localeCompare(right.target_date))
   const structuralEnd = structuralBase.at(-1)
+  const evidence = state.data?.evidence_readiness
 
   function horizonLabel(target: string): string {
     if (!history?.points.length) return formatDate(target)
@@ -86,6 +87,26 @@ export function ForecastsPage() {
           <article className="outlook-evidence-grid__mixed"><span>NAND · 2H27</span><strong>↘ Easing later</strong><p>{nandOutlook?.summary}</p><small>Published {formatDate(nandOutlook?.published_at)} · {nandOutlook?.source_label}</small></article>
           <article><span>Finished devices · 2026</span><strong>PC +{formatNumber(pcOutlook?.central_estimate, 0)}% · Phone +{formatNumber(smartphoneOutlook?.central_estimate, 0)}%</strong><p>Gartner’s estimated retail-price effects from higher memory costs versus 2025.</p><small>Published {formatDate(pcOutlook?.published_at)} · Gartner</small></article>
         </section>
+
+        {evidence ? <section className="forecast-evidence-readiness" aria-label="DDR5 evidence readiness">
+          <div className="forecast-evidence-readiness__intro">
+            <div><p className="kicker">Evidence readiness · independently scored</p><h2>{evidence.label}</h2><p>{evidence.explanation}</p></div>
+            <div className="evidence-score"><span>Evidence score</span><strong>{formatNumber(evidence.score, 1)}</strong><small>/ 100</small></div>
+          </div>
+          <div className="evidence-readiness-grid">
+            {[
+              ['Comparable DDR5 history', evidence.ddr5_months, evidence.thresholds.ddr5_months, 'monthly observations'],
+              ['Independent direct sources', evidence.direct_sources, evidence.thresholds.direct_sources, 'price sources'],
+              ['Stable retail panel', evidence.retail_products, evidence.thresholds.retail_products, 'products'],
+              ['Official driver families', evidence.driver_family_count, evidence.thresholds.driver_families, 'driver groups'],
+            ].map(([label, value, target, unit]) => <article key={String(label)}>
+              <span>{label}</span><strong>{value}<small> / {target}</small></strong>
+              <i><b style={{ width: `${Math.min(100, Number(value) / Number(target) * 100)}%` }} /></i>
+              <p>{unit}</p>
+            </article>)}
+          </div>
+          {evidence.blockers.length ? <div className="evidence-blockers"><strong>What still blocks a governed long-range statistical model</strong><ul>{evidence.blockers.map((item) => <li key={item}>{item}</li>)}</ul></div> : <div className="evidence-blockers evidence-blockers--ready"><strong>Long-range statistical model gate passed</strong><p>The next run can compare multivariate candidates against the scenario baseline.</p></div>}
+        </section> : null}
 
         {structural.length ? <section className="structural-forecast-section">
           <div className="section-heading"><div><p className="kicker">Market-informed model · 12–24 months</p><h2>A longer path built from drivers—not a repeated last value.</h2></div><p>The structural model combines clipped DDR5 momentum, official semiconductor producer prices, and attributed research. It publishes easing, base, and tight-supply cases so uncertainty remains visible.</p></div>

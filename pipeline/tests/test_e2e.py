@@ -22,7 +22,7 @@ def test_offline_pipeline_and_react_build(tmp_path) -> None:
     assert decision["history"][0]["conclusion"] == decision["conclusion"]
     catalog = json.loads((tmp_path / "offline/frontend/public/datasets/latest/catalog.json").read_text())
     assert catalog["production_data"] is False
-    assert (tmp_path / "offline/frontend/public/datasets/latest/memorypulse-dataset-v1.3.0.zip").exists()
+    assert (tmp_path / "offline/frontend/public/datasets/latest/memorypulse-dataset-v1.4.0.zip").exists()
     if not shutil.which("npm") or not (root / "frontend/node_modules").exists():
         pytest.skip("frontend dependencies are not installed")
     subprocess.run(["npm", "run", "build"], cwd=root / "frontend", check=True)

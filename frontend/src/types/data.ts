@@ -183,6 +183,33 @@ export interface AnalyticsData {
     points_until_advanced_ml: number
     explanation: string
   }
+  evidence_readiness: EvidenceReadiness
+}
+
+export interface EvidenceReadiness {
+  score: number
+  status: 'scenario_only' | 'panel_building' | 'statistical_ready'
+  label: string
+  ddr5_months: number
+  history_start: string | null
+  history_end: string | null
+  direct_series: number
+  direct_sources: number
+  retail_products: number
+  retail_months: number
+  driver_families: string[]
+  driver_family_count: number
+  short_term_ready: boolean
+  panel_ready: boolean
+  long_range_statistical_ready: boolean
+  thresholds: {
+    ddr5_months: number
+    direct_sources: number
+    retail_products: number
+    driver_families: number
+  }
+  blockers: string[]
+  explanation: string
 }
 
 export interface NewsEvent {
@@ -227,6 +254,7 @@ export interface Forecast {
 export interface ForecastData {
   forecasts: Forecast[]
   structural_forecasts: StructuralForecast[]
+  evidence_readiness: EvidenceReadiness
   historical_accuracy: Array<Record<string, string | number | null>>
   industry_outlooks: IndustryOutlook[]
   empty_message: string

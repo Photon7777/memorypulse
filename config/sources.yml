@@ -23,6 +23,15 @@ sources:
       - id: IPG3344S
         name: U.S. industrial production for computer and electronic product manufacturing
         unit: index
+      - id: PCU33443344
+        name: Semiconductor and other electronic component manufacturing producer price index
+        unit: index
+      - id: IZ3344
+        name: U.S. import price index for semiconductor and other electronic component manufacturing
+        unit: index
+      - id: CAPUTLG3344S
+        name: U.S. semiconductor and electronic-component manufacturing capacity utilization
+        unit: percent
     frequency: monthly
     reliability: official_statistics
   bls_semiconductor_employment:
@@ -53,14 +62,46 @@ sources:
     reliability: aggregated_news_metadata
     max_records: 50
   bestbuy_memory_products:
-    enabled: true
+    enabled: false
+    disabled_reason: Public historical archiving is disabled because the API terms limit content caching to 72 hours; written permission would be required.
     requires_env: BESTBUY_API_KEY
     url: https://api.bestbuy.com/v1/products
     frequency: daily
     reliability: optional_retail_api
+  keepa_ddr5_panel:
+    enabled: true
+    requires_env: KEEPA_API_KEY
+    url: https://api.keepa.com/product
+    source_url: https://keepa.com/#!api
+    domain: 1
+    price_history_index: 1
+    history_days: 2200
+    max_products: 50
+    frequency: monthly
+    reliability: licensed_retail_history
+  census_memory_imports:
+    enabled: true
+    requires_env: CENSUS_API_KEY
+    url: https://api.census.gov/data/timeseries/intltrade/imports/hsimport
+    source_url: https://api.census.gov/data/timeseries/intltrade/imports/hsimport.html
+    direction: imports
+    commodity_code: "854232"
+    start_month: 2010-01
+    frequency: monthly
+    reliability: official_statistics
+  census_memory_exports:
+    enabled: true
+    requires_env: CENSUS_API_KEY
+    url: https://api.census.gov/data/timeseries/intltrade/exports/hsexport
+    source_url: https://api.census.gov/data/timeseries/intltrade/exports/hsexport.html
+    direction: exports
+    commodity_code: "854232"
+    start_month: 2010-01
+    frequency: monthly
+    reliability: official_statistics
   sec_memory_supplier_fundamentals:
-    enabled: false
-    disabled_reason: Optional SEC Company Facts integration requires an owner-approved contact identity for compliant automated access.
+    enabled: true
+    requires_env: SEC_CONTACT_EMAIL
     url: https://data.sec.gov/api/xbrl/companyfacts/CIK0000723125.json
     company: Micron Technology
     ticker: MU

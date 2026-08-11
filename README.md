@@ -7,9 +7,10 @@ publishes a transparent 0–100 Memory Pressure Index, produces an auditable bus
 every validated run, withholds forecasts until the history is sufficient, and serves an interactive
 React decision-support site through GitHub Pages.
 
-It is designed to operate for **$0**: no continuously running server, paid database, paid API, API-key
-requirement, or paid LLM. Its language describes association and market context—not unsupported
-causality.
+Its core is designed to operate for **$0**: no continuously running server, paid database, paid API,
+API-key requirement, or paid LLM. Optional Census, SEC, and licensed Keepa integrations can expand the
+evidence without becoming core dependencies. Its language describes association and market context—not
+unsupported causality.
 
 > **Disclaimer:** MemoryPulse is an independent research project. Its Memory Pressure Index and
 > forecasts are analytical estimates, not official industry benchmarks, investment advice,
@@ -30,7 +31,7 @@ missingness, and uncertainty visible.
 ```mermaid
 flowchart LR
   A["Public sources\nStanford · FRED · BLS · World Bank\nFederal Register · GDELT"] --> B["Source adapters\ntimeouts · retries · validation"]
-  K["Optional Best Buy key"] -.-> B
+  K["Optional evidence\nCensus trade · SEC filings\nlicensed Keepa panel"] -.-> B
   B --> C["Canonical history\nCSV · NDJSON"]
   C --> D["Ephemeral DuckDB"]
   D --> E["Polars normalization\nquality checks · views"]
@@ -69,8 +70,10 @@ dataset release; no live database or application server is required.
 | Source | Role | Authentication | Default behavior |
 |---|---|---:|---|
 | [Stanford Memory Price Data](https://dam.stanford.edu/assets/memory-prices/memory-prices.csv) | Historical/monthly price context, including source attribution | None | Enabled |
-| [FRED](https://fred.stlouisfed.org/series/PCU3344133441) | Semiconductor producer prices, computer-device CPI, and electronics production | None | Enabled |
+| [FRED](https://fred.stlouisfed.org/series/PCU3344133441) | Semiconductor producer/import prices, capacity utilization, computer CPI, and electronics production | None | Enabled |
+| [Census International Trade API](https://www.census.gov/data/developers/data-sets/international-trade.html) | Monthly HS 854232 memory integrated-circuit imports and exports | Free API key | Adapter included; disabled without key |
 | [SEC Company Facts](https://www.sec.gov/search-filings/edgar-application-programming-interfaces) | Optional supplier inventory, capital expenditure, and revenue | Approved automated-access identity | Adapter included; disabled without owner-approved identity |
+| [Keepa Data Access](https://keepa.com/#!api) | Licensed multi-product DDR5 historical price panel | Subscription, ASIN panel, and export-rights acknowledgement | Permission-gated |
 | [BLS Public Data API](https://www.bls.gov/developers/home.htm) | U.S. semiconductor manufacturing employment | None | Enabled |
 | [World Bank Indicators API](https://api.worldbank.org/v2/country/WLD/indicator/TX.VAL.TECH.CD?format=json) | Global high-technology export context | None | Enabled |
 | [Federal Register API](https://www.federalregister.gov/developers/documentation/api/v1) | Official semiconductor policy and rule metadata | None | Enabled |
@@ -78,7 +81,7 @@ dataset release; no live database or application server is required.
 | Official manufacturer announcements | PlayStation, Xbox, Nintendo, and MacBook U.S. price milestones | None | Curated with source URLs and comparability labels |
 | [TrendForce](https://www.trendforce.com/presscenter/news/20260730-13158.html) and [Gartner](https://www.gartner.com/en/newsroom/press-releases/2026-02-26-gartner-says-surging-memory-costs-will-reduce-global-pc-and-smartphone-shipments-in-2026) | Attributed 2026–2027 industry and device-price outlooks | None | Curated; never blended silently into observed-series forecasts |
 | [DRAMeXchange homepage](https://www.dramexchange.com/) | Public homepage spot/module tables only | None | Disabled pending owner terms/robots review |
-| [Best Buy Products API](https://bestbuyapis.github.io/api-documentation/) | Optional retail module observations | Optional key | Disabled automatically without a key |
+| [Best Buy Products API](https://developers.bestbuy.com/legal) | Current retail product content | Key plus written archival permission | Historical public archiving disabled under the current 72-hour caching limit |
 
 See [DATA_SOURCES.md](DATA_SOURCES.md) for collection, caveat, redistribution, and failure details.
 
@@ -280,18 +283,15 @@ The Vite base path is derived from `GITHUB_REPOSITORY` during Actions builds; lo
 
 No local code can change the repository’s Pages source setting.
 
-## Optional Best Buy key
+## Optional evidence credentials
 
-MemoryPulse works fully without this integration. To enable it:
+MemoryPulse works without these integrations. `CENSUS_API_KEY` enables official monthly memory-chip
+trade data. `SEC_CONTACT_EMAIL` supplies the contact identity required for compliant EDGAR automation.
+The licensed DDR5 panel additionally requires `KEEPA_API_KEY`, a comma-separated `KEEPA_DDR5_ASINS`
+panel, and `KEEPA_PUBLIC_EXPORT_ACKNOWLEDGED=true` only after the owner confirms redistribution rights.
 
-1. Obtain a key under the Best Buy API’s then-current terms; free availability is not guaranteed.
-2. For local use, copy `.env.example` to `.env`, set `BESTBUY_API_KEY`, and export/load it into the
-   shell before the update. `.env` is ignored.
-3. For scheduled updates, open **GitHub repository → Settings → Secrets and variables → Actions →
-   New repository secret**, name it `BESTBUY_API_KEY`, and save the value.
-
-The secret is read only by the Python runner. It is never generated into frontend JavaScript or
-committed files.
+For scheduled updates, add the relevant values under **GitHub repository → Settings → Secrets and
+variables → Actions**. Secrets remain server-side and are never generated into browser JavaScript.
 
 ## Limitations
 
@@ -301,7 +301,9 @@ committed files.
 - FRED’s broad semiconductor index is contextual and is not a direct RAM price.
 - Stanford series mix source definitions; HBM estimates remain labeled as estimates.
 - Public news metadata measures coverage intensity, not ground truth or causal impact.
-- Optional retail coverage can be absent, lowering index confidence.
+- Optional retail, trade, and supplier coverage can be absent, lowering evidence readiness.
+- More rows do not automatically make a long-range model eligible; time depth, source independence,
+  product breadth, and official driver diversity must all pass their published thresholds.
 - A statistical forecast cannot capture every manufacturer, inventory, or demand shock.
 
 ## Repository structure

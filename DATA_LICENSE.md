@@ -27,8 +27,11 @@ or rights associated with an upstream data source.
 - TrendForce and Gartner outlook records contain short attributed paraphrases and public numeric facts.
   They remain external views and are not relicensed as MemoryPulse forecasts.
 - DRAMeXchange observations are excluded from public releases unless written permission is obtained.
-- Best Buy records remain optional and may be included only when collection and redistribution comply
-  with the current API terms.
+- Census and SEC facts retain their official-source attribution and measurement definitions.
+- Keepa-derived product history is excluded unless the repository owner confirms public-export rights;
+  any included records remain subject to the applicable Keepa subscription terms.
+- Best Buy content is excluded from the historical public archive under the current 72-hour caching
+  restriction unless separate written permission is obtained.
 - Short-horizon forecasts, structural scenarios, Memory Pressure Index values, and decision briefs are MemoryPulse analytical outputs built
   from the cited public inputs and remain subject to the disclaimers above.
 

@@ -95,7 +95,7 @@ function App() {
         <div><HashLink className="brand brand--footer" to="/"><span className="brand-mark"><i /><i /><i /></span><span>Memory<strong>Pulse</strong></span></HashLink><p>Open, explainable memory-market intelligence from public data.</p></div>
         <div><p className="eyebrow">Explore</p><HashLink to="/analytics">Market analytics</HashLink><HashLink to="/forecasts">Forecasts</HashLink><HashLink to="/explorer">Scenario lab</HashLink></div>
         <div><p className="eyebrow">Trust</p><HashLink to="/data">Open dataset</HashLink><HashLink to="/methodology">How it works</HashLink><HashLink to="/health">Data health</HashLink></div>
-        <div><p className="eyebrow">Project</p><a href="https://github.com/Photon7777/memorypulse">GitHub repository</a><span>Updated {manifest.error ? 'when data is available' : formatDate(manifest.data?.generated_at, true)}</span><span>Stanford · FRED · BLS · SEC · World Bank · GDELT · Federal Register</span></div>
+        <div><p className="eyebrow">Project</p><a href="https://github.com/Photon7777/memorypulse">GitHub repository</a><span>Updated {manifest.error ? 'when data is available' : formatDate(manifest.data?.generated_at, true)}</span><span>Stanford · FRED · BLS · Census · SEC · World Bank · GDELT · Federal Register</span></div>
         <p className="footer-disclaimer">Independent analytical estimates from public evidence—not an official benchmark, investment recommendation, or purchasing guarantee.</p>
       </footer>
     </div>

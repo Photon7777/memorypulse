@@ -72,17 +72,19 @@ review [DATA_LICENSE.md](DATA_LICENSE.md) and the source-specific notes below be
 
 ## FRED semiconductor and electronics indicators
 
-- **URL:** <https://fred.stlouisfed.org/graph/fredgraph.csv?id=PCU3344133441,CUSR0000SEEE01,IPG3344S>
+- **URL:** <https://fred.stlouisfed.org/graph/fredgraph.csv?id=PCU3344133441,CUSR0000SEEE01,IPG3344S,PCU33443344,IZ3344,CAPUTLG3344S>
 - **Series:** `PCU3344133441` semiconductor producer prices, `CUSR0000SEEE01` consumer prices for
-  computers/peripherals/smart-home assistants, and `IPG3344S` computer/electronics industrial production.
+  computers/peripherals/smart-home assistants, `IPG3344S` industrial production, `PCU33443344`
+  broader semiconductor/electronic-component producer prices, `IZ3344` semiconductor import prices,
+  and `CAPUTLG3344S` semiconductor/electronic-component capacity utilization.
 - **Collected:** Observation date, series identifier/name, numeric value, unit, URL, and UTC collection
   time. Missing `.`/blank values are excluded.
 - **Frequency:** Checked daily; the underlying series is generally monthly.
 - **Authentication:** None for the public graph CSV endpoint.
 - **Reliability:** Official-statistics context from FRED and its source agency.
 - **Caveats:** These are broad context indicators, not RAM prices or direct measures of consumer module
-  cost. Only the producer-price series enters the current structural forecast; the others are published
-  as explanatory context.
+  cost. Producer prices, import prices, and capacity utilization enter the structural scenario with
+  capped weights; the other series remain explanatory context.
 - **Redistribution:** Normalized values and source attribution are retained; FRED/source notes apply.
 - **Failure behavior:** The source degrades independently; price and news collection can continue.
 
@@ -123,17 +125,39 @@ review [DATA_LICENSE.md](DATA_LICENSE.md) and the source-specific notes below be
   event context; they do not establish causality or automatically change a procurement posture.
 - **Failure behavior:** Errors or empty results degrade independently and preserve earlier metadata.
 
+## Optional Census memory integrated-circuit trade
+
+- **URLs:** U.S. Census monthly International Trade imports and exports endpoints.
+- **Series:** Monthly total value of U.S. imports and exports under HS `854232`, electronic integrated
+  circuits classified as memories.
+- **Authentication:** `CENSUS_API_KEY`; Census documentation currently requires a key for all data queries.
+- **Reliability:** Official U.S. trade statistics.
+- **Caveats:** HS `854232` includes memory integrated circuits broadly and does not isolate DDR5. Trade
+  value mixes price and quantity effects, so it is an explanatory driver family rather than a direct
+  DDR5 price series.
+- **Failure behavior:** Without a key both adapters report disabled. Keys are removed from retained URLs
+  and failure messages. Previously validated observations remain available.
+
 ## Optional SEC supplier fundamentals
 
 - **SEC EDGAR:** The adapter supports Micron quarterly inventory, capital expenditure, and revenue from
-  Company Facts. Automated clients must declare a responsible organization and contact identity.
-  MemoryPulse does not invent or expose the repository owner's identity, so this adapter stays optional
-  and disabled until an owner-approved identity is configured. Failed access never affects core health.
+  Company Facts. Automated clients must declare a responsible organization and contact identity through
+  `SEC_CONTACT_EMAIL`. MemoryPulse does not invent the repository owner's identity, so the feed reports
+  disabled until an owner-approved contact is configured. Failed access never affects core health.
 
-## Evaluated but not enabled
+## Permission-gated licensed Keepa DDR5 panel
 
-- **U.S. Census international trade:** The current API documentation requires an API key for all
-  international-trade queries. It remains a future optional integration rather than a keyless core feed.
+- **Source:** Keepa Data Access product history API.
+- **Collected:** Monthly in-stock new-price observations for a curated 1–50 product DDR5 ASIN panel,
+  with manufacturer, product title, capacity, module count, speed, price, and USD/GB where unambiguous.
+- **Authentication:** `KEEPA_API_KEY` plus `KEEPA_DDR5_ASINS`.
+- **Normalization:** Raw change events are converted to one month-level price per product. Explicit
+  unavailable events create gaps and are never forward-filled as valid prices.
+- **Permission gate:** The public repository will not collect this source unless
+  `KEEPA_PUBLIC_EXPORT_ACKNOWLEDGED=true` is also configured after the owner confirms the subscription
+  permits the intended public dataset distribution.
+- **Caveats:** Product-panel breadth does not create additional independent time periods. Product mix,
+  marketplace sellers, promotions, and availability can move the panel independently of wholesale DDR5.
 
 ## GDELT DOC API
 
@@ -153,16 +177,10 @@ review [DATA_LICENSE.md](DATA_LICENSE.md) and the source-specific notes below be
   validated metadata remains available. Other API errors, malformed JSON, and zero rows also remain
   isolated from core price collection.
 
-## Optional Best Buy Products API
+## Best Buy Products API — historical archive disabled
 
 - **URL:** <https://api.bestbuy.com/v1/products>
-- **Collected:** SKU, manufacturer, product name, current/regular prices, availability, product URL,
-  parsed generation/capacity/module count/speed, price per GB, and parsing confidence.
-- **Frequency:** At most once during the daily run when configured.
-- **Authentication:** `BESTBUY_API_KEY`; optional and server-side only.
-- **Reliability:** Optional official retail API.
-- **Caveats:** API availability, pricing, quotas, and free access are not guaranteed. Products with low
-  parsing confidence remain visible in normalized output but are excluded from generation aggregates.
-- **Redistribution:** Normalized product facts and links only, subject to current API terms.
-- **Failure behavior:** Without a key it is explicitly `disabled`, not failed. With a key, errors are
-  isolated and lower index confidence rather than stopping the core pipeline.
+- **Status:** The parsing adapter and lawful fixture remain tested, but production collection is disabled.
+- **Reason:** Current API terms restrict cached content to 72 hours. That is incompatible with the public,
+  versioned historical archive without separate written permission; an API key alone is insufficient.
+- **Failure behavior:** The source is reported as permission-gated, not a system failure.

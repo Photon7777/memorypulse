@@ -1,0 +1,16 @@
+{
+  "products": [
+    {
+      "asin": "B0FIXTURE1",
+      "title": "Fixture 32GB (2x16GB) DDR5 6000MT/s Desktop Memory Kit",
+      "manufacturer": "Fixture Memory",
+      "csv": [null, [6331680, 12999, 6376320, -1, 6416640, 9999]]
+    },
+    {
+      "asin": "B0FIXTURE2",
+      "title": "Fixture 2 x 24GB DDR5 5600MHz Laptop Memory Kit",
+      "manufacturer": "Fixture Memory",
+      "csv": [null, [6331680, 14999, 6376320, 13999]]
+    }
+  ]
+}

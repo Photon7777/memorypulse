@@ -29,7 +29,7 @@ export function DataPage() {
   const dated = latestResources.filter((item) => ['memory_prices', 'spot_prices', 'retail_products', 'macro_indicators', 'news_events'].includes(item.dataset) && item.start_date && item.end_date)
   const startDate = dated.map((item) => item.start_date as string).sort()[0]
   const endDate = dated.map((item) => item.end_date as string).sort().at(-1)
-  const citation = `MemoryPulse Public Memory-Market Dataset, version ${catalog.data?.dataset_version ?? '1.3.0'}, ${catalog.data?.homepage ?? 'https://photon7777.github.io/memorypulse/#/data'}`
+  const citation = `MemoryPulse Public Memory-Market Dataset, version ${catalog.data?.dataset_version ?? '1.4.0'}, ${catalog.data?.homepage ?? 'https://photon7777.github.io/memorypulse/#/data'}`
 
   async function copyCitation() {
     try {
@@ -43,7 +43,7 @@ export function DataPage() {
 
   return (
     <>
-      <PageIntro kicker="Open data" title="Use the evidence behind MemoryPulse" description="Download official electronics price milestones, memory history, short-term forecasts, 12–24 month scenarios, sourced industry outlooks, supplier fundamentals, and market events—free, traceable, and ready for analysis." />
+      <PageIntro kicker="Open data" title="Use the evidence behind MemoryPulse" description="Download memory history, official supply and trade drivers, short-term forecasts, 12–24 month scenarios, sourced industry outlooks, and market events—free, traceable, and ready for analysis." />
       <DataBoundary loading={catalog.loading} error={catalog.error}>
         <section className="dataset-hero">
           <div><span className="dataset-version">Dataset v{catalog.data?.dataset_version}</span><h2>One download. Every analysis-ready table.</h2><p>Canonical history, official product-price milestones, sourced expert outlooks, scenario assumptions, analytical outputs, schemas, and checksums in a single versioned release.</p><div className="hero-actions"><a className="button button--primary" href={publicAssetUrl(`datasets/latest/${catalog.data?.bundle.path ?? ''}`)} download>Download everything · {formatBytes(catalog.data?.bundle.bytes)}</a><a className="button button--quiet" href={publicAssetUrl('datasets/latest/catalog.json')}>Open machine catalog</a></div></div>

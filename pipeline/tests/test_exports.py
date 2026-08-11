@@ -33,7 +33,7 @@ def test_export_contracts_are_valid(tmp_path) -> None:
     manifest = json.loads((data_dir / "manifest.json").read_text())
     assert manifest["production_data"] is True
     assert manifest["fixture_data"] is False
-    assert manifest["schema_version"] == "1.5.0"
+    assert manifest["schema_version"] == "1.6.0"
     brief = json.loads((data_dir / "decision-brief.json").read_text())
     assert brief["regime"] == "Watch"
     assert brief["conclusion"]
@@ -45,6 +45,7 @@ def test_export_contracts_are_valid(tmp_path) -> None:
     forecast = json.loads((data_dir / "forecast.json").read_text())
     assert "industry_outlooks" in forecast
     assert "structural_forecasts" in forecast
+    assert forecast["evidence_readiness"]["status"] == "scenario_only"
 
 
 def test_fixture_publication_guard_is_detected(tmp_path) -> None:
@@ -86,4 +87,4 @@ def test_health_export_uses_latest_status_and_clears_stale_reason(tmp_path) -> N
     assert stanford["records_collected"] == 703
     assert stanford["records_rejected"] == 4
     assert stanford["source_kind"] == "core"
-    assert sources["bestbuy_memory_products"]["source_kind"] == "optional"
+    assert sources["bestbuy_memory_products"]["source_kind"] == "permission_required"

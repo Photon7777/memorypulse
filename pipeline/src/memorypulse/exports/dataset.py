@@ -13,7 +13,7 @@ import duckdb
 
 from memorypulse.transformations.storage import atomic_write_text
 
-DATASET_VERSION = "1.3.0"
+DATASET_VERSION = "1.4.0"
 
 PUBLIC_TABLES = {
     "memory_prices": {

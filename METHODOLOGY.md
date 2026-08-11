@@ -1,6 +1,6 @@
 # MemoryPulse methodology
 
-Version: **1.3.0**
+Version: **1.4.0**
 
 > MemoryPulse is an independent research project. Its Memory Pressure Index and forecasts are
 > analytical estimates, not official industry benchmarks, investment advice, purchasing advice, or
@@ -145,11 +145,17 @@ The 1-, 3-, and 6-month curves are series-specific statistical forecasts. A flat
 that no eligible trend model beat the last-value baseline on unseen windows for that exact public
 series. It does not represent analyst consensus for the whole DRAM market.
 
-The separate 12-, 18-, and 24-month DDR5 structural model combines 45% clipped observed momentum,
-20% official semiconductor producer-price momentum, and 35% attributed directional research. The
-observed and macro inputs are capped, the second year is damped, and the output includes easing, base,
-and tight-supply cases. It is labeled low confidence while fewer than 36 monthly DDR5 observations are
-available. These are transparent market-informed scenarios, not claims of backtested multi-year accuracy.
+The separate 12-, 18-, and 24-month DDR5 structural model dynamically reweights the evidence that is
+actually available: 40% clipped observed momentum, up to 40% official semiconductor producer prices,
+import prices, and capacity utilization, and 20% attributed directional research. Missing drivers are
+excluded and represented weights are renormalized. Inputs are capped, the second year is damped, and the
+output includes easing, base, and tight-supply cases. These are transparent market-informed scenarios,
+not claims of backtested multi-year accuracy.
+
+An independent evidence-readiness gate prevents row count from being mistaken for model readiness. A
+governed long-range statistical candidate requires at least 48 comparable DDR5 months, two independent
+direct-price sources, 15 stable retail products, and three official driver families. The public score
+weights time depth 40%, direct-source breadth 20%, product-panel breadth 20%, and driver diversity 20%.
 
 Longer-horizon external industry outlooks are also stored separately with publisher, publication date, horizon,
 segment, metric, direction, source URL, and numeric ranges only when the publisher supplied them.
@@ -170,12 +176,12 @@ avoids a change in business policy pending confirmation.
 Driver contributions are the component score multiplied by its normalized effective weight. Missing
 signals and forecast uncertainty are listed as risks. This is explainable rules-based decision support,
 not an LLM-generated recommendation. The current brief and its compact history are exported and stored
-with methodology version 1.3.
+with methodology version 1.4.
 
-Baseline forecasting becomes eligible at 12 comparable observations. Fully learned multivariate or
-boosted models remain gated until at least 48 comparable monthly DDR5 observations exist. Until then,
-the long-range model uses disclosed weights and scenario assumptions, and the Analytics page reports the
-exact point count rather than labeling a small sample as ML-ready.
+Baseline forecasting becomes eligible at 12 comparable observations. Fully learned multivariate models
+remain gated by all four evidence thresholds—not time depth alone. Until then, the long-range model uses
+disclosed weights and scenario assumptions, and the interface reports the exact missing evidence rather
+than labeling a small or single-source sample as ML-ready.
 
 The procurement lab is a scenario calculation: purchase-now cost plus proportional annual carrying cost
 is compared with a wait cost after an explicit expected price move. It does not model supplier terms,

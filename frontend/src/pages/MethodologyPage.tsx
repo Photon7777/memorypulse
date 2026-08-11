@@ -8,10 +8,12 @@ const sourceNotes = [
   ['Attributed industry outlooks', 'Public TrendForce and Gartner research announcements, stored separately from statistical forecasts with their original segment, metric, horizon, and source link.'],
   ['Stanford memory-price data', 'Research-dataset reliability · checked daily for historical and monthly context with original attribution; estimated HBM points stay labeled.'],
   ['DRAMeXchange public homepage', 'Public-homepage reliability · optional daily spot and module tables only; disabled by default pending terms and robots review.'],
-  ['FRED PCU3344133441', 'Official-statistics reliability · monthly broad semiconductor producer-price context, never described as a direct RAM price.'],
-  ['SEC Company Facts', 'Official-filings reliability · quarterly Micron inventory, capital expenditure, and revenue from EDGAR; these are explanatory drivers, not direct memory-price observations.'],
+  ['FRED semiconductor drivers', 'Official-statistics reliability · producer prices, import prices, production, and capacity utilization. They improve supply-side context but remain broader than DDR5.'],
+  ['Census HS 854232 trade', 'Official-statistics reliability · monthly U.S. imports and exports of memory integrated circuits when a free API key is configured; this is a product class, not DDR5 alone.'],
+  ['SEC Company Facts', 'Official-filings reliability · quarterly Micron inventory, capital expenditure, and revenue from EDGAR once a compliant contact identity is configured.'],
+  ['Licensed Keepa DDR5 panel', 'Product-level monthly USD/GB observations across a curated ASIN basket only when subscription and public-export rights are explicitly confirmed.'],
   ['GDELT DOC API', 'Aggregated-metadata reliability · daily article metadata, short excerpts, and explainable keyword tags; no full article bodies.'],
-  ['Best Buy Products API', 'Optional official-API reliability · daily retail observations when an owner supplies a key; core operation never depends on it.'],
+  ['Best Buy Products API', 'Not used for public price history under the current 72-hour caching restriction; a key alone does not authorize archival redistribution.'],
 ]
 
 export function MethodologyPage() {

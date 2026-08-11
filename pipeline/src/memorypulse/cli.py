@@ -12,6 +12,7 @@ from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
+from memorypulse.analysis.evidence import build_evidence_readiness
 from memorypulse.config import indicator_config, repository_root, source_config
 from memorypulse.database import create_database
 from memorypulse.exports.dataset import build_public_dataset, validate_public_dataset
@@ -37,10 +38,13 @@ from memorypulse.quality.report import (
 from memorypulse.sources import (
     BestBuyMemoryProductsSource,
     BlsSemiconductorEmploymentSource,
+    CensusMemoryExportsSource,
+    CensusMemoryImportsSource,
     DramExchangeHomepageSource,
     FederalRegisterSemiconductorSource,
     FredSemiconductorSource,
     GdeltMemoryNewsSource,
+    KeepaDdr5PanelSource,
     SecMemorySupplierSource,
     StanfordMemoryPricesSource,
     WorldBankHighTechExportsSource,
@@ -61,6 +65,9 @@ ADAPTERS = {
     "federal_register_semiconductor": FederalRegisterSemiconductorSource,
     "gdelt_memory_news": GdeltMemoryNewsSource,
     "bestbuy_memory_products": BestBuyMemoryProductsSource,
+    "keepa_ddr5_panel": KeepaDdr5PanelSource,
+    "census_memory_imports": CensusMemoryImportsSource,
+    "census_memory_exports": CensusMemoryExportsSource,
     "sec_memory_supplier_fundamentals": SecMemorySupplierSource,
 }
 FIXTURES = {
@@ -72,6 +79,9 @@ FIXTURES = {
     "federal_register_semiconductor": "federal_register_semiconductor.json",
     "gdelt_memory_news": "gdelt_news.json",
     "bestbuy_memory_products": "bestbuy_products.json",
+    "keepa_ddr5_panel": "keepa_ddr5_panel.json",
+    "census_memory_imports": "census_memory_imports.json",
+    "census_memory_exports": "census_memory_exports.json",
     "sec_memory_supplier_fundamentals": "sec_companyfacts.json",
 }
 
@@ -162,13 +172,22 @@ def _generate_forecasts(connection: Any, history: Path, force: bool = False) -> 
     created_at = utc_now()
     forecasts = []
     structural_forecasts = []
-    ppi_rows = connection.execute(
-        """SELECT observation_date, value FROM macro_indicators
-        WHERE series_id = 'PCU3344133441' ORDER BY observation_date"""
-    ).fetchall()
-    producer_price_change = None
-    if len(ppi_rows) >= 13 and ppi_rows[-13][1]:
-        producer_price_change = 100 * (float(ppi_rows[-1][1]) / float(ppi_rows[-13][1]) - 1)
+    def annual_change(series_id: str) -> float | None:
+        series_rows = connection.execute(
+            """SELECT observation_date, value FROM macro_indicators
+            WHERE series_id = ? ORDER BY observation_date""",
+            [series_id],
+        ).fetchall()
+        if len(series_rows) < 13 or not series_rows[-13][1]:
+            return None
+        return 100 * (float(series_rows[-1][1]) / float(series_rows[-13][1]) - 1)
+
+    macro_drivers = {
+        "producer_price_change": annual_change("PCU3344133441"),
+        "import_price_change": annual_change("IZ3344"),
+        "capacity_utilization_change": annual_change("CAPUTLG3344S"),
+    }
+    evidence_readiness = build_evidence_readiness(connection)
     outlook_rows = connection.execute(
         """SELECT direction, source_id FROM industry_outlooks
         WHERE segment IN ('DRAM', 'DRAM + SSD') ORDER BY published_at DESC"""
@@ -197,9 +216,10 @@ def _generate_forecasts(connection: Any, history: Path, force: bool = False) -> 
                     values,
                     created_at,
                     {horizon: _add_months(max(dates), horizon) for horizon in STRUCTURAL_HORIZONS},
-                    producer_price_change,
+                    macro_drivers,
                     expert_direction,
                     expert_source_ids,
+                    evidence_readiness,
                 )
             )
     written, _ = append_csv_records(

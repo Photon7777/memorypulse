@@ -1,19 +1,38 @@
 import { DataBoundary } from '../components/DataBoundary'
 import { PageIntro } from '../components/PageIntro'
 import { useStaticData } from '../hooks/useStaticData'
-import type { SourceHealthData } from '../types/data'
+import type { SourceHealth, SourceHealthData } from '../types/data'
 import { formatDate, formatNumber, freshnessLabel } from '../utils/format'
 
 const SOURCE_LABELS: Record<string, string> = {
   bestbuy_memory_products: 'Best Buy memory products',
   bls_semiconductor_employment: 'BLS semiconductor employment',
+  census_memory_exports: 'Census memory-chip exports',
+  census_memory_imports: 'Census memory-chip imports',
   dramexchange_homepage: 'DRAMeXchange homepage',
   federal_register_semiconductor: 'Federal Register semiconductor policy',
   fred_semiconductor: 'FRED semiconductor',
   gdelt_memory_news: 'GDELT memory news',
+  keepa_ddr5_panel: 'Licensed Keepa DDR5 product panel',
   sec_memory_supplier_fundamentals: 'SEC memory-supplier fundamentals',
   stanford_memory_prices: 'Stanford memory prices',
   world_bank_high_tech_exports: 'World Bank high-technology exports',
+}
+
+function heldSourceDescription(source: SourceHealth): string {
+  if (source.source_id === 'bestbuy_memory_products') return 'Historical archiving remains disabled because the current API terms limit cached content to 72 hours. A key alone does not authorize an open price-history dataset.'
+  if (source.source_id === 'keepa_ddr5_panel') return 'Requires a Keepa subscription, a curated DDR5 ASIN panel, and confirmation that the intended public export complies with the subscription terms.'
+  if (source.source_id.startsWith('census_memory_')) return 'The official adapter is ready. A free Census API key is required before monthly HS 854232 memory-chip trade observations can be collected.'
+  if (source.source_id === 'sec_memory_supplier_fundamentals') return 'The official adapter is ready. SEC fair-access policy requires an owner-approved contact email before automated Company Facts collection begins.'
+  return source.reason
+}
+
+function heldSourceLink(sourceId: string): [string, string] {
+  if (sourceId === 'bestbuy_memory_products') return ['https://developers.bestbuy.com/legal', 'Review Best Buy API terms']
+  if (sourceId === 'keepa_ddr5_panel') return ['https://keepa.com/#!api', 'Keepa Data Access']
+  if (sourceId.startsWith('census_memory_')) return ['https://api.census.gov/data/key_signup.html', 'Request a Census API key']
+  if (sourceId === 'sec_memory_supplier_fundamentals') return ['https://www.sec.gov/search-filings/edgar-application-programming-interfaces', 'SEC API documentation']
+  return ['https://www.dramexchange.com/About/TermsOfUse', 'Review current Terms of Use']
 }
 
 export function HealthPage() {
@@ -55,16 +74,10 @@ export function HealthPage() {
 
             <details className="held-sources disclosure-card"><summary><span>Optional and permission-gated sources</span><small>{heldSources.length} integrations · not counted as system failures</small></summary><section className="held-source-grid">
               {heldSources.map((source) => <article key={source.source_id}>
-                <span className="held-source-kind">{source.source_kind === 'optional' ? 'Optional integration' : 'Written permission required'}</span>
+                <span className="held-source-kind">{source.source_kind === 'optional' ? 'Configuration required' : 'Written permission required'}</span>
                 <h3>{SOURCE_LABELS[source.source_id] ?? source.source_id.replaceAll('_', ' ')}</h3>
-                <p>{source.source_id === 'bestbuy_memory_products'
-                  ? source.optional_key_configured ? 'The API key is configured; the next scheduled run can collect this feed.' : 'No API key is configured. Add BESTBUY_API_KEY as a GitHub Actions secret to enable official retail coverage.'
-                  : source.source_id === 'sec_memory_supplier_fundamentals' ? `${source.reason || 'The SEC Company Facts feed is available when automated access succeeds.'} The integration remains separate from core site health.`
-                  : source.reason}</p>
-                {source.source_id === 'bestbuy_memory_products'
-                  ? <a href="https://bestbuyapis.github.io/api-documentation/" target="_blank" rel="noreferrer">Best Buy API setup</a>
-                  : source.source_id === 'sec_memory_supplier_fundamentals' ? <a href="https://www.sec.gov/search-filings/edgar-application-programming-interfaces" target="_blank" rel="noreferrer">SEC API documentation</a>
-                  : <a href="https://www.dramexchange.com/About/TermsOfUse" target="_blank" rel="noreferrer">Review current Terms of Use</a>}
+                <p>{heldSourceDescription(source)}</p>
+                <a href={heldSourceLink(source.source_id)[0]} target="_blank" rel="noreferrer">{heldSourceLink(source.source_id)[1]}</a>
               </article>)}
             </section></details>
           </>

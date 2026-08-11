@@ -14,10 +14,11 @@ from memorypulse.analysis.briefing import (
     build_decision_brief,
     build_electronics_story,
 )
+from memorypulse.analysis.evidence import build_evidence_readiness
 from memorypulse.indicators.pressure import IndexResult, calculate_index, components_from_database
 from memorypulse.transformations.storage import atomic_write_text
 
-SCHEMA_VERSION = "1.5.0"
+SCHEMA_VERSION = "1.6.0"
 
 
 def _json_value(value: Any) -> Any:
@@ -168,6 +169,7 @@ def _forecast_export(connection: duckdb.DuckDBPyConnection) -> dict[str, Any]:
     return {
         "forecasts": forecasts,
         "structural_forecasts": structural,
+        "evidence_readiness": build_evidence_readiness(connection),
         "historical_accuracy": accuracy,
         "industry_outlooks": outlooks,
         "empty_message": "Collecting additional history before publishing a forecast.",
@@ -200,7 +202,10 @@ def _health_export(connection: duckdb.DuckDBPyConnection) -> dict[str, Any]:
         WHERE ranked.recency_rank = 1 ORDER BY ranked.source_id""",
     )
     source_kinds = {
-        "bestbuy_memory_products": "optional",
+        "bestbuy_memory_products": "permission_required",
+        "keepa_ddr5_panel": "permission_required",
+        "census_memory_imports": "optional",
+        "census_memory_exports": "optional",
         "dramexchange_homepage": "permission_required",
         "sec_memory_supplier_fundamentals": "optional",
     }
@@ -281,7 +286,7 @@ def export_frontend(
             "normalization": "Robust 10th–90th percentile scaling; values are clamped to 0–100.",
             "missing_data": "Available components are reweighted; confidence is represented configured weight.",
             "unit_rule": "Gb means gigabits and GB means gigabytes. Conversion is never inferred from ambiguous text.",
-            "forecasting": "Horizon-specific rolling-origin validation compares ten short-term candidates. A separate 12–24 month driver ensemble combines clipped DDR5 momentum, official semiconductor PPI, and attributed directional research with disclosed scenario assumptions.",
+            "forecasting": "Horizon-specific rolling-origin validation compares ten short-term candidates. A separately governed 12–24 month driver ensemble dynamically reweights DDR5 momentum, official semiconductor producer/import prices, capacity utilization, and attributed research. Long-range statistical modeling remains gated by explicit history, source, product-panel, and driver thresholds.",
             "caveats": [
                 "Chip spot prices and retail module prices use different definitions.",
                 "Official device starting prices are not always like-for-like when memory, storage, and performance configurations change.",

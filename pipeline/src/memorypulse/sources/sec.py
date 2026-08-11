@@ -1,16 +1,35 @@
 from __future__ import annotations
 
 import json
+import os
 from datetime import date
+from pathlib import Path
 from typing import Any
 
 from memorypulse.models import MacroIndicatorObservation, stable_id
-from memorypulse.sources.base import FetchedPayload, SourceAdapter
+from memorypulse.sources.base import FetchedPayload, HealthResult, SourceAdapter
 
 
 class SecMemorySupplierSource(SourceAdapter[MacroIndicatorObservation]):
     source_id = "sec_memory_supplier_fundamentals"
     source_name = "SEC EDGAR memory-supplier fundamentals"
+
+    def __init__(self, config: dict[str, Any], root: Path):
+        super().__init__(config, root)
+        contact = os.getenv("SEC_CONTACT_EMAIL", "").strip()
+        if contact:
+            self.session.headers["User-Agent"] = f"MemoryPulse public research project {contact}"
+
+    @property
+    def is_enabled(self) -> bool:
+        return super().is_enabled and bool(os.getenv("SEC_CONTACT_EMAIL"))
+
+    def run(self, fixture_path: Any = None) -> tuple[list[MacroIndicatorObservation], HealthResult]:
+        if not fixture_path and not os.getenv("SEC_CONTACT_EMAIL"):
+            result = HealthResult("disabled", "Optional SEC_CONTACT_EMAIL is not configured")
+            self._last_health = result
+            return [], result
+        return super().run(fixture_path)
 
     def parse(self, payload: FetchedPayload) -> list[dict[str, Any]]:
         document = json.loads(payload.content.decode("utf-8"))

@@ -172,7 +172,7 @@ class SourceAdapter(ABC, Generic[RecordT]):
         return self._last_health
 
     def run(self, fixture_path: Path | None = None) -> tuple[list[RecordT], HealthResult]:
-        if not self.is_enabled:
+        if not self.is_enabled and not fixture_path:
             result = HealthResult("disabled", str(self.config.get("disabled_reason", "Disabled in config")))
             self._last_health = result
             return [], result

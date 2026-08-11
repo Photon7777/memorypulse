@@ -28,6 +28,11 @@ jobs:
       - name: Collect, validate, and export
         env:
           BESTBUY_API_KEY: ${{ secrets.BESTBUY_API_KEY }}
+          CENSUS_API_KEY: ${{ secrets.CENSUS_API_KEY }}
+          SEC_CONTACT_EMAIL: ${{ secrets.SEC_CONTACT_EMAIL }}
+          KEEPA_API_KEY: ${{ secrets.KEEPA_API_KEY }}
+          KEEPA_DDR5_ASINS: ${{ secrets.KEEPA_DDR5_ASINS }}
+          KEEPA_PUBLIC_EXPORT_ACKNOWLEDGED: ${{ secrets.KEEPA_PUBLIC_EXPORT_ACKNOWLEDGED }}
         run: |
           python -m memorypulse.cli update 2>&1 | tee pipeline.log
           python -m memorypulse.cli validate

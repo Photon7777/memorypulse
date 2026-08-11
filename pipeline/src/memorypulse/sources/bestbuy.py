@@ -26,6 +26,13 @@ class BestBuyMemoryProductsSource(SourceAdapter[RetailProductObservation]):
         return super().is_enabled and bool(os.getenv("BESTBUY_API_KEY"))
 
     def run(self, fixture_path: Any = None) -> tuple[list[RetailProductObservation], HealthResult]:
+        if not fixture_path and not bool(self.config.get("enabled", True)):
+            result = HealthResult(
+                "disabled",
+                str(self.config.get("disabled_reason", "Disabled in source configuration")),
+            )
+            self._last_health = result
+            return [], result
         if not fixture_path and not os.getenv("BESTBUY_API_KEY"):
             result = HealthResult("disabled", "Optional BESTBUY_API_KEY is not configured")
             self._last_health = result

@@ -26,7 +26,7 @@ def test_public_dataset_has_catalog_schemas_bundle_and_checksums(tmp_path) -> No
     )
     connection.close()
 
-    assert catalog["dataset_version"] == "1.3.0"
+    assert catalog["dataset_version"] == "1.4.0"
     assert len(catalog["resources"]) == 26
     assert any(resource["id"] == "structural_forecasts-parquet" for resource in catalog["resources"])
     assert (output / catalog["bundle"]["path"]).exists()

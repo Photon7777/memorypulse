@@ -55,11 +55,26 @@ def test_structural_forecast_publishes_three_scenarios_and_rising_base() -> None
         values,
         datetime(2026, 1, 1, tzinfo=timezone.utc),
         {12: date(2026, 12, 1), 18: date(2027, 6, 1), 24: date(2027, 12, 1)},
-        4.0,
+        {
+            "producer_price_change": 4.0,
+            "import_price_change": 3.0,
+            "capacity_utilization_change": 2.0,
+        },
         "upward",
         ["trendforce_memory_outlook"],
+        {
+            "score": 34.0,
+            "status": "scenario_only",
+            "ddr5_months": 24,
+            "direct_sources": 1,
+            "retail_products": 0,
+            "driver_family_count": 2,
+            "long_range_statistical_ready": False,
+        },
     )
     assert len(forecasts) == 9
     assert {forecast.scenario for forecast in forecasts} == {"easing", "base", "tight_supply"}
     assert all(forecast.lower_bound <= forecast.point_forecast <= forecast.upper_bound for forecast in forecasts)
     assert all(forecast.direction == "upward" for forecast in forecasts if forecast.scenario == "base")
+    assert all(forecast.confidence == "low" for forecast in forecasts)
+    assert all(forecast.model_version == "1.1.0" for forecast in forecasts)

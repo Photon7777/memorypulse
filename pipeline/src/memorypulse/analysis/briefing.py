@@ -6,6 +6,7 @@ from typing import Any
 
 import duckdb
 
+from memorypulse.analysis.evidence import build_evidence_readiness
 from memorypulse.forecasting.models import MODELS, rolling_origin_backtest
 from memorypulse.indicators.pressure import IndexResult
 from memorypulse.models import stable_id
@@ -542,9 +543,7 @@ def build_business_analytics(
                 ),
             }
         )
-    readiness_points = connection.execute(
-        "SELECT count(DISTINCT observation_date) FROM memory_prices WHERE memory_generation = 'DDR5'"
-    ).fetchone()[0]
+    evidence_readiness = build_evidence_readiness(connection)
     return {
         "components": components,
         "pressure_history": _pressure_history(connection),
@@ -553,10 +552,15 @@ def build_business_analytics(
         "model_diagnostics": _model_diagnostics(connection),
         "event_pressure": event_counts,
         "model_readiness": {
-            "ddr5_monthly_points": readiness_points,
-            "baseline_models_ready": readiness_points >= 12,
-            "advanced_ml_ready": readiness_points >= 48,
-            "points_until_advanced_ml": max(0, 48 - readiness_points),
-            "explanation": "Ten transparent time-series candidates compete now. Multivariate boosted models remain gated until at least 48 comparable monthly observations exist.",
+            "ddr5_monthly_points": evidence_readiness["ddr5_months"],
+            "baseline_models_ready": evidence_readiness["short_term_ready"],
+            "advanced_ml_ready": evidence_readiness["long_range_statistical_ready"],
+            "points_until_advanced_ml": max(
+                0,
+                evidence_readiness["thresholds"]["ddr5_months"]
+                - evidence_readiness["ddr5_months"],
+            ),
+            "explanation": evidence_readiness["explanation"],
         },
+        "evidence_readiness": evidence_readiness,
     }
