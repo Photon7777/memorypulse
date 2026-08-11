@@ -1,0 +1,32 @@
+{
+  "cik": 723125,
+  "entityName": "Micron Technology, Inc.",
+  "facts": {
+    "us-gaap": {
+      "InventoryNet": {
+        "units": {
+          "USD": [
+            {"end": "2025-05-29", "val": 8500000000, "filed": "2025-06-26", "form": "10-Q", "frame": "CY2025Q2I"},
+            {"end": "2025-08-28", "val": 8100000000, "filed": "2025-10-03", "form": "10-K", "frame": "CY2025Q3I"}
+          ]
+        }
+      },
+      "PaymentsToAcquirePropertyPlantAndEquipment": {
+        "units": {
+          "USD": [
+            {"start": "2025-03-01", "end": "2025-05-29", "val": 3100000000, "filed": "2025-06-26", "form": "10-Q", "frame": "CY2025Q2"},
+            {"start": "2025-05-30", "end": "2025-08-28", "val": 3500000000, "filed": "2025-10-03", "form": "10-K", "frame": "CY2025Q3"}
+          ]
+        }
+      },
+      "RevenueFromContractWithCustomerExcludingAssessedTax": {
+        "units": {
+          "USD": [
+            {"start": "2025-03-01", "end": "2025-05-29", "val": 9100000000, "filed": "2025-06-26", "form": "10-Q", "frame": "CY2025Q2"},
+            {"start": "2025-05-30", "end": "2025-08-28", "val": 9700000000, "filed": "2025-10-03", "form": "10-K", "frame": "CY2025Q3"}
+          ]
+        }
+      }
+    }
+  }
+}

@@ -11,6 +11,7 @@ from memorypulse.sources import (
     FederalRegisterSemiconductorSource,
     FredSemiconductorSource,
     GdeltMemoryNewsSource,
+    SecMemorySupplierSource,
     StanfordMemoryPricesSource,
     WorldBankHighTechExportsSource,
 )
@@ -122,3 +123,17 @@ def test_bestbuy_fixture_keeps_uncertain_products_but_exposes_confidence() -> No
     assert len(records) == 2
     assert records[0].price_per_gb is not None
     assert records[1].parsing_confidence == 0
+
+
+def test_sec_company_facts_adds_supplier_inventory_capex_and_revenue() -> None:
+    config = {**source_config(ROOT)["sec_memory_supplier_fundamentals"], "enabled": True}
+    source = SecMemorySupplierSource(config, ROOT)
+    records, health = source.run(FIXTURES / "sec_companyfacts.json")
+    assert health.status == "success"
+    assert len(records) == 6
+    assert {record.series_id.split("_")[-1] for record in records} == {
+        "InventoryNet",
+        "PaymentsToAcquirePropertyPlantAndEquipment",
+        "RevenueFromContractWithCustomerExcludingAssessedTax",
+    }
+    assert all(record.source_id == "sec_memory_supplier_fundamentals" for record in records)

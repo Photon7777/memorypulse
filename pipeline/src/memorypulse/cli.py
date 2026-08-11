@@ -17,6 +17,7 @@ from memorypulse.database import create_database
 from memorypulse.exports.dataset import build_public_dataset, validate_public_dataset
 from memorypulse.exports.frontend import export_frontend
 from memorypulse.forecasting.models import forecast_series
+from memorypulse.forecasting.structural import STRUCTURAL_HORIZONS, build_structural_forecasts
 from memorypulse.indicators.pressure import calculate_index, components_from_database
 from memorypulse.models import (
     DecisionBriefObservation,
@@ -40,6 +41,7 @@ from memorypulse.sources import (
     FederalRegisterSemiconductorSource,
     FredSemiconductorSource,
     GdeltMemoryNewsSource,
+    SecMemorySupplierSource,
     StanfordMemoryPricesSource,
     WorldBankHighTechExportsSource,
 )
@@ -59,6 +61,7 @@ ADAPTERS = {
     "federal_register_semiconductor": FederalRegisterSemiconductorSource,
     "gdelt_memory_news": GdeltMemoryNewsSource,
     "bestbuy_memory_products": BestBuyMemoryProductsSource,
+    "sec_memory_supplier_fundamentals": SecMemorySupplierSource,
 }
 FIXTURES = {
     "stanford_memory_prices": "stanford_memory_prices.csv",
@@ -69,6 +72,7 @@ FIXTURES = {
     "federal_register_semiconductor": "federal_register_semiconductor.json",
     "gdelt_memory_news": "gdelt_news.json",
     "bestbuy_memory_products": "bestbuy_products.json",
+    "sec_memory_supplier_fundamentals": "sec_companyfacts.json",
 }
 
 
@@ -140,7 +144,10 @@ def _append_records(history: Path, records: list[Any]) -> tuple[int, int]:
 
 def _generate_forecasts(connection: Any, history: Path, force: bool = False) -> int:
     latest_vintage = connection.execute("SELECT max(forecast_created_at) FROM forecasts").fetchone()[0]
-    if latest_vintage and not force:
+    latest_structural = connection.execute(
+        "SELECT max(forecast_created_at) FROM structural_forecasts"
+    ).fetchone()[0]
+    if latest_vintage and latest_structural and not force:
         comparable = latest_vintage.replace(tzinfo=timezone.utc) if latest_vintage.tzinfo is None else latest_vintage
         if comparable >= utc_now() - timedelta(days=7):
             return 0
@@ -154,6 +161,20 @@ def _generate_forecasts(connection: Any, history: Path, force: bool = False) -> 
         grouped[str(series_id)].append((observed, float(value)))
     created_at = utc_now()
     forecasts = []
+    structural_forecasts = []
+    ppi_rows = connection.execute(
+        """SELECT observation_date, value FROM macro_indicators
+        WHERE series_id = 'PCU3344133441' ORDER BY observation_date"""
+    ).fetchall()
+    producer_price_change = None
+    if len(ppi_rows) >= 13 and ppi_rows[-13][1]:
+        producer_price_change = 100 * (float(ppi_rows[-1][1]) / float(ppi_rows[-13][1]) - 1)
+    outlook_rows = connection.execute(
+        """SELECT direction, source_id FROM industry_outlooks
+        WHERE segment IN ('DRAM', 'DRAM + SSD') ORDER BY published_at DESC"""
+    ).fetchall()
+    expert_direction = "upward" if any(row[0] == "upward" for row in outlook_rows) else None
+    expert_source_ids = [str(row[1]) for row in outlook_rows]
     for series_id, points in grouped.items():
         dates = [point[0] for point in points]
         values = [point[1] for point in points]
@@ -168,10 +189,28 @@ def _generate_forecasts(connection: Any, history: Path, force: bool = False) -> 
             )
             if result:
                 forecasts.append(result)
+        if series_id == "DDR5 (Keepa)":
+            structural_forecasts.extend(
+                build_structural_forecasts(
+                    series_id,
+                    dates,
+                    values,
+                    created_at,
+                    {horizon: _add_months(max(dates), horizon) for horizon in STRUCTURAL_HORIZONS},
+                    producer_price_change,
+                    expert_direction,
+                    expert_source_ids,
+                )
+            )
     written, _ = append_csv_records(
         history / "forecasts.csv", forecasts, ("forecast_created_at", "series_id", "target_date")
     )
-    return written
+    structural_written, _ = append_csv_records(
+        history / "structural_forecasts.csv",
+        structural_forecasts,
+        ("forecast_created_at", "series_id", "scenario", "target_date"),
+    )
+    return written + structural_written
 
 
 def run_update(offline: bool, output_root: Path | None, force_forecast: bool = False) -> None:

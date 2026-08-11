@@ -1,6 +1,6 @@
 # MemoryPulse methodology
 
-Version: **1.2.0**
+Version: **1.3.0**
 
 > MemoryPulse is an independent research project. Its Memory Pressure Index and forecasts are
 > analytical estimates, not official industry benchmarks, investment advice, purchasing advice, or
@@ -65,7 +65,8 @@ These include price per GB, 7/30/90-period changes where observations exist, mon
 averages/volatility, DDR4–DDR5 spreads, retail discounts, availability counts, news intensity, freshness,
 coverage, and confidence.
 
-Official macro series remain independent because producer prices, employment, and export dollars are
+Official macro series remain independent because producer prices, computer/electronics production,
+consumer computer prices, employment, and export dollars are
 not compatible units. Only the configured FRED semiconductor producer-price series contributes to the
 macro-pressure component. BLS employment and World Bank exports are displayed as separate business
 context signals with their own changes, dates, and units.
@@ -79,7 +80,7 @@ so a score change can be distinguished from a coverage change.
 
 ## Memory Pressure Index
 
-Configured version 1.1 weights are:
+Configured version 1.3 weights are:
 
 | Component | Weight | Raw input |
 |---|---:|---|
@@ -115,13 +116,14 @@ price decline, HBM investment, factory construction, earnings guidance, shortage
 Relevance starts from a documented base and increases with bounded company, memory, and event-rule hits.
 The exported score is a triage aid, not a truth or sentiment score.
 
-## Forecast selection and backtesting
+## Short-horizon forecast selection and backtesting
 
 Forecasting requires at least 12 genuine observations at a consistent frequency. Ten candidates compete:
 naive last value, drift, three-observation rolling mean, seasonal naive, damped Holt trend, additive
 damped ETS, Theta, autoregression, ARIMA(1,1,1), and a robust ensemble. Candidate-specific minimum
-history rules prevent advanced models from fitting unsuitable short samples. A rolling origin begins
-after at least six training observations; every later observation is predicted using only earlier data.
+history rules prevent advanced models from fitting unsuitable short samples. A separate rolling-origin
+evaluation is run for the requested 1-, 3-, and 6-month horizon, so a model selected for one month is not
+automatically treated as the best six-month model. Each target is predicted using only earlier data.
 
 - `MAE = mean(|actual − forecast|)` is the primary comparable error.
 - `sMAPE` and `MASE` provide scale-aware diagnostics; MAPE is retained only when actual values are nonzero.
@@ -137,13 +139,19 @@ Forecast rows preserve model/version, training dates, observations used, metrics
 creation vintage. Forecasts are recalculated at most weekly unless manually forced. The accuracy view
 joins matured forecast targets to subsequently observed compatible values.
 
-### Statistical forecasts versus industry outlooks
+### Structural scenarios versus industry outlooks
 
 The 1-, 3-, and 6-month curves are series-specific statistical forecasts. A flat naive midpoint means
 that no eligible trend model beat the last-value baseline on unseen windows for that exact public
 series. It does not represent analyst consensus for the whole DRAM market.
 
-Longer-horizon industry outlooks are stored separately with publisher, publication date, horizon,
+The separate 12-, 18-, and 24-month DDR5 structural model combines 45% clipped observed momentum,
+20% official semiconductor producer-price momentum, and 35% attributed directional research. The
+observed and macro inputs are capped, the second year is damped, and the output includes easing, base,
+and tight-supply cases. It is labeled low confidence while fewer than 36 monthly DDR5 observations are
+available. These are transparent market-informed scenarios, not claims of backtested multi-year accuracy.
+
+Longer-horizon external industry outlooks are also stored separately with publisher, publication date, horizon,
 segment, metric, direction, source URL, and numeric ranges only when the publisher supplied them.
 MemoryPulse never converts a qualitative view into an invented percentage or applies a combined
 DRAM-and-SSD estimate directly to DDR5 $/GB. The interface juxtaposes these evidence layers while
@@ -152,7 +160,8 @@ preserving their different definitions.
 ## Business conclusion and ML readiness
 
 Every validated run generates a deterministic executive brief from the versioned index, its component
-coverage, the latest comparable DDR5 movement, and the latest eligible rolling-backtest forecast. The
+coverage, the latest comparable DDR5 movement, the latest eligible rolling-backtest forecast, and the
+24-month structural base case when available. The
 rules classify the market as Watch, Stable, Tightening, Easing, or High pressure; state direction and
 confidence; and map those signals to procurement, inventory, and budget-risk postures. When less than
 35% of configured index weight is represented, the regime is always Watch and the conclusion explicitly
@@ -161,11 +170,12 @@ avoids a change in business policy pending confirmation.
 Driver contributions are the component score multiplied by its normalized effective weight. Missing
 signals and forecast uncertainty are listed as risks. This is explainable rules-based decision support,
 not an LLM-generated recommendation. The current brief and its compact history are exported and stored
-with methodology version 1.1.
+with methodology version 1.3.
 
-Baseline forecasting becomes eligible at 12 comparable observations. A future advanced multivariate or
-boosted model is gated until at least 48 comparable monthly DDR5 observations exist. Until then, the
-Analytics page reports the exact point count and gap instead of labeling a small sample as ML-ready.
+Baseline forecasting becomes eligible at 12 comparable observations. Fully learned multivariate or
+boosted models remain gated until at least 48 comparable monthly DDR5 observations exist. Until then,
+the long-range model uses disclosed weights and scenario assumptions, and the Analytics page reports the
+exact point count rather than labeling a small sample as ML-ready.
 
 The procurement lab is a scenario calculation: purchase-now cost plus proportional annual carrying cost
 is compared with a wait cost after an explicit expected price move. It does not model supplier terms,
@@ -177,7 +187,7 @@ After successful validation, the pipeline materializes the canonical public tabl
 equivalent Zstandard Parquet. It derives JSON Schemas from the ephemeral DuckDB contracts, publishes row
 counts, date coverage, source IDs, byte sizes, and SHA-256 hashes in `catalog.json`, and bundles the same
 artifacts in a versioned ZIP. The release includes forecasts, index vintages, conclusion history, and
-source-run health, official electronics price milestones, and explicit device exposure assumptions so
+source-run health, official electronics price milestones, structural forecasts, and explicit device exposure assumptions so
 downstream users can reproduce both analytical results and their evidence state.
 No raw HTML, article bodies, API keys, or permission-gated DRAMeXchange observations are distributed.
 Third-party source rights remain separate from the repository's MIT code license.

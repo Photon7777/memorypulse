@@ -13,7 +13,7 @@ from statsmodels.tsa.holtwinters import ExponentialSmoothing, Holt
 from memorypulse.models import ForecastObservation
 
 MINIMUM_HISTORY = 12
-MODEL_VERSION = "2.0.0"
+MODEL_VERSION = "2.1.0"
 
 
 @dataclass(slots=True)
@@ -150,23 +150,25 @@ def forecast_model(values: np.ndarray, model_name: str, horizon: int = 1) -> flo
     raise KeyError(f"unknown model: {model_name}")
 
 
-def rolling_origin_backtest(values: list[float], model_name: str) -> BacktestResult:
+def rolling_origin_backtest(values: list[float], model_name: str, horizon: int = 1) -> BacktestResult:
+    if horizon < 1:
+        raise ValueError("backtest horizon must be positive")
     data = np.asarray(values, dtype=float)
     start = max(6, len(data) // 2, MODEL_MINIMUMS[model_name])
-    if len(data) <= start:
+    if len(data) < start + horizon:
         return BacktestResult(model_name, float("inf"), None, None, None, None, [], 0, 0.0)
     residuals = []
     percentage_errors = []
     symmetric_errors = []
     directions = []
     fallbacks = 0
-    for index in range(start, len(data)):
+    for index in range(start, len(data) - horizon + 1):
         try:
-            prediction = forecast_model(data[:index], model_name)
+            prediction = forecast_model(data[:index], model_name, horizon)
         except (ValueError, RuntimeError, np.linalg.LinAlgError):
             prediction = _naive(data[:index])
             fallbacks += 1
-        actual = float(data[index])
+        actual = float(data[index + horizon - 1])
         error = actual - prediction
         residuals.append(error)
         if actual != 0:
@@ -209,7 +211,7 @@ def forecast_series(
 ) -> ForecastObservation | None:
     if len(values) < MINIMUM_HISTORY or len(values) != len(dates):
         return None
-    results = [rolling_origin_backtest(values, name) for name in MODELS]
+    results = [rolling_origin_backtest(values, name, horizon) for name in MODELS]
     eligible = [result for result in results if np.isfinite(result.mae) and result.stability >= 0.75]
     if not eligible:
         return None

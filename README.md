@@ -35,13 +35,15 @@ flowchart LR
   C --> D["Ephemeral DuckDB"]
   D --> E["Polars normalization\nquality checks · views"]
   E --> F["Pressure Index\ntransparent baselines"]
-  E --> G["Forecast selection\n1 · 3 · 6 month horizons\nrolling-origin backtests"]
+  E --> G["Forecast selection\n1 · 3 · 6 month horizons\nhorizon-specific backtests"]
+  E --> S["Structural scenarios\n12 · 18 · 24 months\ndrivers · easing · base · tight supply"]
   O["Attributed industry outlooks\nmetric · horizon · source"] --> H
   C --> P["Official device milestones\nPlayStation · Xbox · Nintendo · MacBook"]
   P --> H
   F --> Q["Executive decision brief\nposture · drivers · risks"]
   F --> H["Atomic static JSON"]
   G --> H
+  S --> H
   Q --> H
   E --> R["Versioned public dataset\nCSV · NDJSON · Parquet\nschemas · checksums · ZIP"]
   H --> I["React · TypeScript · ECharts"]
@@ -67,7 +69,8 @@ dataset release; no live database or application server is required.
 | Source | Role | Authentication | Default behavior |
 |---|---|---:|---|
 | [Stanford Memory Price Data](https://dam.stanford.edu/assets/memory-prices/memory-prices.csv) | Historical/monthly price context, including source attribution | None | Enabled |
-| [FRED PCU3344133441](https://fred.stlouisfed.org/series/PCU3344133441) | Broad semiconductor producer-price context | None | Enabled |
+| [FRED](https://fred.stlouisfed.org/series/PCU3344133441) | Semiconductor producer prices, computer-device CPI, and electronics production | None | Enabled |
+| [SEC Company Facts](https://www.sec.gov/search-filings/edgar-application-programming-interfaces) | Optional supplier inventory, capital expenditure, and revenue | Approved automated-access identity | Adapter included; disabled without owner-approved identity |
 | [BLS Public Data API](https://www.bls.gov/developers/home.htm) | U.S. semiconductor manufacturing employment | None | Enabled |
 | [World Bank Indicators API](https://api.worldbank.org/v2/country/WLD/indicator/TX.VAL.TECH.CD?format=json) | Global high-technology export context | None | Enabled |
 | [Federal Register API](https://www.federalregister.gov/developers/documentation/api/v1) | Official semiconductor policy and rule metadata | None | Enabled |
@@ -210,8 +213,9 @@ release includes canonical CSV or NDJSON, equivalent Zstandard Parquet files, JS
 catalog, Schema.org metadata, SHA-256 checksums, and a complete ZIP. The catalog records row counts,
 date coverage, source IDs, artifact sizes, and content hashes. Scheduled updates rebuild the release only
 after validation; the first scheduled run of each UTC month also attaches the bundle to a versioned
-GitHub Release for durable snapshots. Version 1.2 includes official electronics price milestones,
-transparent device-category exposure assumptions, and sourced expert outlooks so the published story
+GitHub Release for durable snapshots. Version 1.3 includes official electronics price milestones,
+transparent device-category exposure assumptions, sourced expert outlooks, and 12–24 month structural
+scenarios so the published story
 and the distinction between statistical forecasts and industry expectations can be reproduced.
 
 Code is MIT-licensed, but upstream data rights remain source-specific. Review
@@ -225,12 +229,14 @@ naive last value, drift, three-period rolling mean, seasonal naive, damped Holt,
 Theta, autoregression, ARIMA(1,1,1), and a robust ensemble. Rolling-origin validation records MAE,
 sMAPE, MASE, directional accuracy, and stability. A complex candidate must beat naive by at least 2%
 and remain stable across at least 75% of eligible windows; otherwise the simpler baseline wins.
-Forecasts are published at 1-, 3-, and 6-month horizons with empirical residual intervals that widen
+Models are selected separately at 1-, 3-, and 6-month horizons with empirical residual intervals that widen
 with horizon. Forecast vintages remain in history for later accuracy checks.
 No synthetic history is generated, and insufficient series show: **“Collecting additional history
 before publishing a forecast.”**
 
-The Forecast workspace separately presents attributed longer-horizon industry outlooks. Those records
+The Forecast workspace also presents a 12-, 18-, and 24-month market-driver ensemble with easing, base,
+and tight-supply paths. Its formula, drivers, confidence, and source IDs are published in the public
+dataset. It remains separate from attributed industry outlooks. Those records
 retain their original segment and metric: for example, a combined DRAM-and-SSD estimate is not applied
 as if it were a DDR5 $/GB forecast. A flat statistical baseline therefore remains visible alongside—not
 instead of—the sourced structural view.

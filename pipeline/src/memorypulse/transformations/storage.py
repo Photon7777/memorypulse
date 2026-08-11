@@ -20,6 +20,7 @@ from memorypulse.models import (
     PriceObservation,
     RetailProductObservation,
     SourceRun,
+    StructuralForecastObservation,
 )
 
 HISTORY_CONTRACTS = {
@@ -29,6 +30,7 @@ HISTORY_CONTRACTS = {
     "electronics_prices.csv": ElectronicsPriceObservation,
     "device_exposure.csv": DeviceExposureAssumption,
     "industry_outlooks.csv": IndustryOutlookObservation,
+    "structural_forecasts.csv": StructuralForecastObservation,
     "macro_indicators.csv": MacroIndicatorObservation,
     "forecasts.csv": ForecastObservation,
     "market_index.csv": MarketIndexObservation,

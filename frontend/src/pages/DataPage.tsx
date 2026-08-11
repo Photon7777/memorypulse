@@ -7,8 +7,8 @@ import type { DatasetCatalog, DatasetResource } from '../types/data'
 import { formatBytes, formatDate, formatNumber } from '../utils/format'
 
 type ResourceFormat = 'all' | 'csv' | 'ndjson' | 'parquet'
-const RESOURCE_ORDER = ['electronics_prices', 'memory_prices', 'market_index', 'forecasts', 'industry_outlooks', 'device_exposure', 'news_events', 'macro_indicators', 'decision_briefs', 'source_runs', 'retail_products', 'spot_prices']
-const FEATURED_DATASETS = ['electronics_prices', 'memory_prices', 'forecasts', 'industry_outlooks']
+const RESOURCE_ORDER = ['electronics_prices', 'memory_prices', 'market_index', 'forecasts', 'structural_forecasts', 'industry_outlooks', 'device_exposure', 'news_events', 'macro_indicators', 'decision_briefs', 'source_runs', 'retail_products', 'spot_prices']
+const FEATURED_DATASETS = ['electronics_prices', 'memory_prices', 'structural_forecasts', 'industry_outlooks']
 
 function ResourceActions({ resource }: { resource: DatasetResource }) {
   return <div className="resource-actions"><a href={publicAssetUrl(`datasets/latest/${resource.path}`)} download>Download</a><a href={publicAssetUrl(`datasets/latest/${resource.schema_path}`)}>Schema</a></div>
@@ -29,7 +29,7 @@ export function DataPage() {
   const dated = latestResources.filter((item) => ['memory_prices', 'spot_prices', 'retail_products', 'macro_indicators', 'news_events'].includes(item.dataset) && item.start_date && item.end_date)
   const startDate = dated.map((item) => item.start_date as string).sort()[0]
   const endDate = dated.map((item) => item.end_date as string).sort().at(-1)
-  const citation = `MemoryPulse Public Memory-Market Dataset, version ${catalog.data?.dataset_version ?? '1.2.0'}, ${catalog.data?.homepage ?? 'https://photon7777.github.io/memorypulse/#/data'}`
+  const citation = `MemoryPulse Public Memory-Market Dataset, version ${catalog.data?.dataset_version ?? '1.3.0'}, ${catalog.data?.homepage ?? 'https://photon7777.github.io/memorypulse/#/data'}`
 
   async function copyCitation() {
     try {
@@ -43,7 +43,7 @@ export function DataPage() {
 
   return (
     <>
-      <PageIntro kicker="Open data" title="Use the evidence behind MemoryPulse" description="Download official electronics price milestones, memory history, statistical forecasts, sourced industry outlooks, exposure scenarios, and market events—free, traceable, and ready for analysis." />
+      <PageIntro kicker="Open data" title="Use the evidence behind MemoryPulse" description="Download official electronics price milestones, memory history, short-term forecasts, 12–24 month scenarios, sourced industry outlooks, supplier fundamentals, and market events—free, traceable, and ready for analysis." />
       <DataBoundary loading={catalog.loading} error={catalog.error}>
         <section className="dataset-hero">
           <div><span className="dataset-version">Dataset v{catalog.data?.dataset_version}</span><h2>One download. Every analysis-ready table.</h2><p>Canonical history, official product-price milestones, sourced expert outlooks, scenario assumptions, analytical outputs, schemas, and checksums in a single versioned release.</p><div className="hero-actions"><a className="button button--primary" href={publicAssetUrl(`datasets/latest/${catalog.data?.bundle.path ?? ''}`)} download>Download everything · {formatBytes(catalog.data?.bundle.bytes)}</a><a className="button button--quiet" href={publicAssetUrl('datasets/latest/catalog.json')}>Open machine catalog</a></div></div>
@@ -53,7 +53,7 @@ export function DataPage() {
         <section className="dataset-trust-strip" aria-label="Dataset guarantees"><span><strong>Versioned</strong>Stable releases</span><span><strong>Traceable</strong>Sources and dates retained</span><span><strong>Verifiable</strong>SHA-256 checksums</span><span><strong>Open access</strong>No account or API key</span></section>
 
         <section className="section-block featured-datasets">
-          <div className="section-heading"><div><p className="kicker">Start here</p><h2>Four tables that reproduce the story</h2></div><p>Official device milestones, component history, model outputs, and attributed expert outlooks—packaged as analysis-ready Parquet.</p></div>
+          <div className="section-heading"><div><p className="kicker">Start here</p><h2>Four tables that reproduce the story</h2></div><p>Official device milestones, component history, structural scenarios, and attributed expert outlooks—packaged as analysis-ready Parquet.</p></div>
           <div className="featured-resource-grid">{featuredResources.map((resource) => <article key={resource.id}>
             <div className="resource-card-head"><span>{resource.format}</span><b>{formatNumber(resource.rows, 0)} rows</b></div>
             <h3>{resource.title}</h3><p>{resource.description}</p><small>{formatBytes(resource.bytes)} · {resource.start_date ? `${formatDate(resource.start_date)}–${formatDate(resource.end_date)}` : 'Awaiting observations'}</small>

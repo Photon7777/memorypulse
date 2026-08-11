@@ -17,7 +17,7 @@ from memorypulse.analysis.briefing import (
 from memorypulse.indicators.pressure import IndexResult, calculate_index, components_from_database
 from memorypulse.transformations.storage import atomic_write_text
 
-SCHEMA_VERSION = "1.4.0"
+SCHEMA_VERSION = "1.5.0"
 
 
 def _json_value(value: Any) -> Any:
@@ -160,12 +160,18 @@ def _forecast_export(connection: duckdb.DuckDBPyConnection) -> dict[str, Any]:
         """SELECT * FROM industry_outlooks
         ORDER BY published_at DESC, segment, metric""",
     )
+    structural = _rows(
+        connection,
+        """SELECT * FROM structural_forecasts
+        ORDER BY forecast_created_at DESC, target_date, scenario""",
+    )
     return {
         "forecasts": forecasts,
+        "structural_forecasts": structural,
         "historical_accuracy": accuracy,
         "industry_outlooks": outlooks,
         "empty_message": "Collecting additional history before publishing a forecast.",
-        "disclaimer": "Short-horizon forecasts are statistical estimates; industry outlooks are attributed external views. Neither is a guarantee of future prices.",
+        "disclaimer": "Short-horizon forecasts are statistical estimates; 12–24 month paths are transparent market-informed scenarios; industry outlooks are attributed external views. None is a guarantee of future prices.",
     }
 
 
@@ -196,6 +202,7 @@ def _health_export(connection: duckdb.DuckDBPyConnection) -> dict[str, Any]:
     source_kinds = {
         "bestbuy_memory_products": "optional",
         "dramexchange_homepage": "permission_required",
+        "sec_memory_supplier_fundamentals": "optional",
     }
     for source in latest:
         source["source_kind"] = source_kinds.get(str(source["source_id"]), "core")
@@ -274,7 +281,7 @@ def export_frontend(
             "normalization": "Robust 10th–90th percentile scaling; values are clamped to 0–100.",
             "missing_data": "Available components are reweighted; confidence is represented configured weight.",
             "unit_rule": "Gb means gigabits and GB means gigabytes. Conversion is never inferred from ambiguous text.",
-            "forecasting": "Rolling-origin validation compares ten candidates, including ETS, Theta, autoregression, ARIMA, and a robust ensemble. Complex models must beat naive by at least 2% and remain stable.",
+            "forecasting": "Horizon-specific rolling-origin validation compares ten short-term candidates. A separate 12–24 month driver ensemble combines clipped DDR5 momentum, official semiconductor PPI, and attributed directional research with disclosed scenario assumptions.",
             "caveats": [
                 "Chip spot prices and retail module prices use different definitions.",
                 "Official device starting prices are not always like-for-like when memory, storage, and performance configurations change.",

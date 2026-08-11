@@ -53,6 +53,12 @@ CREATE TABLE forecasts (
  training_start DATE, training_end DATE, backtest_mae DOUBLE, backtest_mape DOUBLE,
  observations_used INTEGER, data_frequency VARCHAR
 );
+CREATE TABLE structural_forecasts (
+ forecast_created_at TIMESTAMPTZ, target_date DATE, series_id VARCHAR, scenario VARCHAR,
+ model_name VARCHAR, model_version VARCHAR, point_forecast DOUBLE, lower_bound DOUBLE,
+ upper_bound DOUBLE, baseline_value DOUBLE, change_from_baseline_percent DOUBLE,
+ direction VARCHAR, confidence VARCHAR, driver_summary VARCHAR, basis VARCHAR, source_ids VARCHAR
+);
 CREATE TABLE market_index (
  observation_date DATE, calculated_at TIMESTAMPTZ, total_score DOUBLE, status_label VARCHAR,
  confidence_score DOUBLE, spot_momentum_score DOUBLE, retail_momentum_score DOUBLE,
@@ -158,6 +164,7 @@ FILE_TO_TABLE = {
     "industry_outlooks.csv": "industry_outlooks",
     "macro_indicators.csv": "macro_indicators",
     "forecasts.csv": "forecasts",
+    "structural_forecasts.csv": "structural_forecasts",
     "market_index.csv": "market_index",
     "source_runs.csv": "source_runs",
     "decision_briefs.csv": "decision_briefs",

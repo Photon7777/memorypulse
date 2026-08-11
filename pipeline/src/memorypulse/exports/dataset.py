@@ -13,7 +13,7 @@ import duckdb
 
 from memorypulse.transformations.storage import atomic_write_text
 
-DATASET_VERSION = "1.2.0"
+DATASET_VERSION = "1.3.0"
 
 PUBLIC_TABLES = {
     "memory_prices": {
@@ -59,6 +59,11 @@ PUBLIC_TABLES = {
     "forecasts": {
         "filename": "forecasts.csv",
         "description": "Versioned governed forecasts with empirical uncertainty and rolling-backtest metrics.",
+        "date_column": "target_date",
+    },
+    "structural_forecasts": {
+        "filename": "structural_forecasts.csv",
+        "description": "Market-informed 12–24 month DDR5 scenarios with transparent drivers, bounds, confidence, and source IDs.",
         "date_column": "target_date",
     },
     "market_index": {

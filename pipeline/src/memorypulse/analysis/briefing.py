@@ -46,6 +46,19 @@ def _latest_ddr5_forecast(connection: duckdb.DuckDBPyConnection) -> dict[str, An
     return rows[0] if rows else None
 
 
+def _latest_ddr5_structural(connection: duckdb.DuckDBPyConnection) -> dict[str, Any] | None:
+    rows = _rows(
+        connection,
+        """SELECT forecast_created_at, target_date, series_id, scenario, model_name,
+        point_forecast, lower_bound, upper_bound, baseline_value,
+        change_from_baseline_percent, direction, confidence, driver_summary, basis, source_ids
+        FROM structural_forecasts WHERE series_id LIKE 'DDR5%' AND scenario = 'base'
+        QUALIFY forecast_created_at = max(forecast_created_at) OVER ()
+        ORDER BY target_date DESC LIMIT 1""",
+    )
+    return rows[0] if rows else None
+
+
 def _confidence_label(value: float, has_forecast: bool) -> str:
     adjusted = value if has_forecast else value * 0.8
     if adjusted >= 0.85:
@@ -55,7 +68,15 @@ def _confidence_label(value: float, has_forecast: bool) -> str:
     return "Low"
 
 
-def _direction(recent_change: float | None, forecast_change: float | None) -> str:
+def _direction(
+    recent_change: float | None,
+    forecast_change: float | None,
+    structural_change: float | None = None,
+) -> str:
+    if structural_change is not None and structural_change > 2:
+        if recent_change is not None and recent_change < -2:
+            return "Mixed signals"
+        return "Upward risk"
     if recent_change is not None and forecast_change is not None:
         recent_direction = 0 if abs(recent_change) < 2 else 1 if recent_change > 0 else -1
         forecast_direction = 0 if abs(forecast_change) < 2 else 1 if forecast_change > 0 else -1
@@ -101,13 +122,15 @@ def build_decision_brief(
     index = index_result.observation
     latest_price, price_date = _latest_ddr5_price(connection)
     forecast = _latest_ddr5_forecast(connection)
+    structural = _latest_ddr5_structural(connection)
     forecast_change = (
         100 * (float(forecast["point_forecast"]) / latest_price - 1)
         if forecast and latest_price
         else None
     )
     recent_change = key_changes.get("ddr5_recent_change")
-    direction = _direction(recent_change, forecast_change)
+    structural_change = float(structural["change_from_baseline_percent"]) if structural else None
+    direction = _direction(recent_change, forecast_change, structural_change)
     regime = _regime(index.total_score, direction, index.confidence_score)
     procurement, inventory, budget_risk = _postures(regime, direction)
     confidence = _confidence_label(index.confidence_score, forecast is not None)
@@ -142,6 +165,11 @@ def build_decision_brief(
         risks.append(f"The next DDR5 forecast interval spans {interval_width:.2f} source-defined units.")
     else:
         risks.append("No eligible DDR5 forecast is available; the posture relies on observed signals only.")
+    if structural:
+        risks.append(
+            f"The 24-month base case is {structural_change:.1f}% from the latest DDR5 value, "
+            f"with {str(structural['confidence']).lower()} confidence and explicit easing and tight-supply alternatives."
+        )
     risks.append("Public data can lag supplier negotiations and private contract pricing.")
 
     previous = connection.execute(
@@ -164,10 +192,16 @@ def build_decision_brief(
             "value": round(forecast_change, 2) if forecast_change is not None else None,
             "unit": "% to next target",
         },
+        {
+            "label": "24-month structural base",
+            "value": round(structural_change, 2) if structural_change is not None else None,
+            "unit": "% vs latest observation",
+        },
     ]
     conclusion = (
         f"{regime} conditions with {direction.lower()} and {confidence.lower()} confidence. "
-        f"The analytical procurement posture is to {procurement.lower()}, while the inventory posture is to "
+        + (f"The market-informed 24-month DDR5 base case is {structural_change:.1f}% versus the latest observation. " if structural_change is not None else "")
+        + f"The analytical procurement posture is to {procurement.lower()}, while the inventory posture is to "
         f"{inventory.lower()}. Budget exposure is {budget_risk.lower()}."
     )
     return {
@@ -194,8 +228,10 @@ def build_decision_brief(
             "recent_change_percent": recent_change,
             "forecast_change_percent": forecast_change,
             "forecast": forecast,
+            "structural_change_percent": structural_change,
+            "structural_forecast": structural,
         },
-        "method": "Deterministic rules over validated index components and a stability-gated rolling-origin forecast selected against a naive baseline.",
+        "method": "Deterministic rules over validated index components, a horizon-specific rolling-origin forecast, and a separately labeled 12–24 month market-driver scenario ensemble.",
         "disclaimer": "Analytical decision support only—not purchasing, investment, or inventory-management advice.",
     }
 

@@ -1,12 +1,12 @@
 import { lazy, Suspense, useMemo, useState } from 'react'
-import { ForecastFanChart } from '../charts/AnalyticsCharts'
+import { StructuralForecastChart } from '../charts/AnalyticsCharts'
 import { ElectronicsStoryChart } from '../charts/ElectronicsStoryChart'
 import { AnimatedMetric } from '../components/AnimatedMetric'
 import { DataBoundary } from '../components/DataBoundary'
 import { HashLink } from '../components/HashLink'
 import { useStaticData } from '../hooks/useStaticData'
 import type { AnalyticsData, DecisionBrief, ElectronicsStory, ForecastData, MarketSummary, PricesData, SourceHealthData } from '../types/data'
-import { formatCurrency, formatDate, formatNumber } from '../utils/format'
+import { formatDate, formatNumber } from '../utils/format'
 import { buildLinkedInCopy, downloadInsightCard } from '../utils/share'
 
 const SignalCore3D = lazy(() => import('../components/SignalCore3D').then((module) => ({ default: module.SignalCore3D })))
@@ -46,6 +46,13 @@ export function OverviewPage() {
   )
   const ddr5Forecasts = allDdr5Forecasts.filter((item) => item.forecast_created_at === latestForecastVintage)
   const latestForecast = ddr5Forecasts[0]
+  const latestStructuralVintage = (forecasts.data?.structural_forecasts ?? []).reduce(
+    (latest, item) => item.forecast_created_at > latest ? item.forecast_created_at : latest,
+    '',
+  )
+  const structuralForecasts = (forecasts.data?.structural_forecasts ?? []).filter((item) => item.forecast_created_at === latestStructuralVintage)
+  const structuralBase = structuralForecasts.filter((item) => item.scenario === 'base').sort((left, right) => left.target_date.localeCompare(right.target_date))
+  const structuralEnd = structuralBase.at(-1)
   const diagnostic = analytics.data?.model_diagnostics.find((item) => item.series_id === ddr5Series?.label)
   const selectedCandidate = diagnostic?.candidates.find((item) => item.selected)
   const exposure = story.data?.exposure_scenarios.find((item) => item.category === exposureCategory) ?? story.data?.exposure_scenarios[0]
@@ -88,7 +95,7 @@ export function OverviewPage() {
           </div>
         </div>
         <div className="signal-stage" aria-label="Memory signal moving through consumer electronics">
-          <Suspense fallback={<div className="signal-stage__fallback" />}><SignalCore3D /></Suspense>
+          <Suspense fallback={<div className="signal-stage__fallback" />}><SignalCore3D pressure={brief.data?.pressure_score} outlookChange={structuralEnd?.change_from_baseline_percent} /></Suspense>
           <div className="signal-stage__halo" />
           <span className="signal-node signal-node--one">DDR5</span>
           <span className="signal-node signal-node--two">CONSOLES</span>
@@ -175,20 +182,21 @@ export function OverviewPage() {
       <section className="story-chapter" id="forecast-story">
         <div className="story-chapter__intro">
           <span className="chapter-number">03</span>
-          <div><p className="kicker">What comes next</p><h2>Ten models compete. Complexity has to earn its place.</h2></div>
-          <p>Every forecast is judged on unseen historical windows. A complex model is published only when it is stable and beats the naive baseline by at least 2%.</p>
+          <div><p className="kicker">What comes next</p><h2>Two horizons answer two different decisions.</h2></div>
+          <p>Short-term models compete on unseen history. The longer 12–24 month path combines observed momentum, official producer prices, and sourced structural research.</p>
         </div>
         <div className="forecast-story-grid">
           <article className="chart-card">
-            <div className="section-heading compact-heading"><div><p className="kicker">Selected DDR5 path</p><h2>{latestForecast ? `${formatCurrency(latestForecast.point_forecast)} / GB` : 'Building sufficient history'}</h2></div><p>{latestForecast ? `95% range ${formatCurrency(latestForecast.lower_bound)}–${formatCurrency(latestForecast.upper_bound)}` : 'The system withholds forecasts when evidence is insufficient.'}</p></div>
-            <ForecastFanChart history={ddr5Series} forecasts={ddr5Forecasts} />
-            <p className="chart-takeaway"><strong>Takeaway</strong>The range is the decision surface. The midpoint is not a promise, and every new observed vintage is scored against what the model previously published.</p>
+            <div className="section-heading compact-heading"><div><p className="kicker">DDR5 structural path</p><h2>{structuralEnd ? `${structuralEnd.change_from_baseline_percent >= 0 ? '+' : ''}${formatNumber(structuralEnd.change_from_baseline_percent, 1)}% base case` : 'Building sufficient history'}</h2></div><p>{structuralEnd ? `Through ${formatDate(structuralEnd.target_date)} · ${structuralEnd.confidence} confidence` : 'The system withholds long-range scenarios when evidence is insufficient.'}</p></div>
+            <StructuralForecastChart history={ddr5Series} forecasts={structuralForecasts} />
+            <p className="chart-takeaway"><strong>Takeaway</strong>{structuralEnd?.direction === 'upward' ? 'The market-informed base case rises, but the easing and tight-supply paths show how widely outcomes can diverge.' : 'The market-informed base case is not currently rising; review the driver readout before acting.'}</p>
           </article>
           <aside className="model-governance-card">
             <p className="kicker">Model governance</p>
             <h3>{MODEL_LABELS[diagnostic?.selected_model ?? ''] ?? diagnostic?.selected_model?.replaceAll('_', ' ') ?? 'No eligible model'}</h3>
             <p>Selected for {ddr5Series?.label ?? 'DDR5'} using rolling-origin validation.</p>
             <dl>
+              <div><dt>Short-term model</dt><dd>{MODEL_LABELS[latestForecast?.model_name ?? ''] ?? latestForecast?.model_name?.replaceAll('_', ' ') ?? 'n/a'}</dd></div>
               <div><dt>Validation MAE</dt><dd>{formatNumber(selectedCandidate?.mae, 3)}</dd></div>
               <div><dt>MASE</dt><dd>{selectedCandidate?.mase == null ? 'n/a' : formatNumber(selectedCandidate.mase, 2)}</dd></div>
               <div><dt>Direction accuracy</dt><dd>{selectedCandidate?.direction_accuracy == null ? 'n/a' : `${formatNumber(selectedCandidate.direction_accuracy, 0)}%`}</dd></div>

@@ -209,6 +209,40 @@ class IndustryOutlookObservation(Contract):
 
 
 @dataclass(slots=True)
+class StructuralForecastObservation(Contract):
+    forecast_created_at: datetime
+    target_date: date
+    series_id: str
+    scenario: str
+    model_name: str
+    model_version: str
+    point_forecast: float
+    lower_bound: float
+    upper_bound: float
+    baseline_value: float
+    change_from_baseline_percent: float
+    direction: str
+    confidence: str
+    driver_summary: str
+    basis: str
+    source_ids: str
+
+    def validate(self) -> None:
+        if self.scenario not in {"easing", "base", "tight_supply"}:
+            raise ValidationError(f"unsupported structural scenario: {self.scenario}")
+        if self.direction not in {"upward", "easing", "flat"}:
+            raise ValidationError(f"unsupported structural direction: {self.direction}")
+        if self.confidence not in {"low", "moderate", "high"}:
+            raise ValidationError(f"unsupported structural confidence: {self.confidence}")
+        if self.baseline_value <= 0 or self.point_forecast <= 0:
+            raise ValidationError("structural forecast values must be positive")
+        if not 0 <= self.lower_bound <= self.point_forecast <= self.upper_bound:
+            raise ValidationError("structural forecast interval is not ordered")
+        if not self.driver_summary or not self.basis or not self.source_ids:
+            raise ValidationError("structural forecast requires drivers, basis, and sources")
+
+
+@dataclass(slots=True)
 class MacroIndicatorObservation(Contract):
     observation_id: str
     observation_date: date

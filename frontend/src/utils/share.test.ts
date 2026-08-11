@@ -6,11 +6,12 @@ describe('LinkedIn insight copy', () => {
   it('includes the conclusion, DDR5 move, source link, and disclosure-friendly tags', () => {
     const brief = {
       regime: 'Stable', direction: 'Mixed signals', conclusion: 'Maintain planned purchasing.', pressure_score: 28,
-      confidence: 'Medium', ddr5: { recent_change_percent: 4.25 },
+      confidence: 'Medium', ddr5: { recent_change_percent: 4.25, structural_change_percent: 41.84 },
     } as DecisionBrief
     const copy = buildLinkedInCopy(brief, 'https://example.com')
     expect(copy).toContain('Maintain planned purchasing.')
     expect(copy).toContain('+4.3%')
+    expect(copy).toContain('24-month structural base case: +41.8%')
     expect(copy).toContain('https://example.com')
     expect(copy).toContain('#OpenData')
   })

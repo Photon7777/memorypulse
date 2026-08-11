@@ -100,6 +100,8 @@ export interface DecisionBrief {
     recent_change_percent: number | null
     forecast_change_percent: number | null
     forecast: Forecast | null
+    structural_change_percent: number | null
+    structural_forecast: StructuralForecast | null
   }
   method: string
   disclaimer: string
@@ -224,10 +226,30 @@ export interface Forecast {
 
 export interface ForecastData {
   forecasts: Forecast[]
+  structural_forecasts: StructuralForecast[]
   historical_accuracy: Array<Record<string, string | number | null>>
   industry_outlooks: IndustryOutlook[]
   empty_message: string
   disclaimer: string
+}
+
+export interface StructuralForecast {
+  forecast_created_at: string
+  target_date: string
+  series_id: string
+  scenario: 'easing' | 'base' | 'tight_supply'
+  model_name: string
+  model_version: string
+  point_forecast: number
+  lower_bound: number
+  upper_bound: number
+  baseline_value: number
+  change_from_baseline_percent: number
+  direction: 'upward' | 'easing' | 'flat'
+  confidence: 'low' | 'moderate' | 'high'
+  driver_summary: string
+  basis: string
+  source_ids: string
 }
 
 export interface IndustryOutlook {

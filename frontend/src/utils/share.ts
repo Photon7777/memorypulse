@@ -3,12 +3,16 @@ import type { DecisionBrief } from '../types/data'
 export function buildLinkedInCopy(brief: DecisionBrief, url: string): string {
   const ddr5 = brief.ddr5.recent_change_percent
   const movement = ddr5 == null ? 'DDR5 movement is not yet comparable.' : `Latest comparable DDR5 move: ${ddr5 >= 0 ? '+' : ''}${ddr5.toFixed(1)}%.`
+  const structural = brief.ddr5.structural_change_percent
+  const longRange = structural == null
+    ? 'Long-range structural outlook is not yet available.'
+    : `24-month structural base case: ${structural >= 0 ? '+' : ''}${structural.toFixed(1)}%.`
   return [
     `MemoryPulse market read — ${brief.regime} conditions`,
     '',
     `${brief.conclusion}`,
     '',
-    `Pressure score: ${brief.pressure_score.toFixed(1)}/100 · ${brief.confidence.toLowerCase()} confidence. ${movement}`,
+    `Pressure score: ${brief.pressure_score.toFixed(1)}/100 · ${brief.confidence.toLowerCase()} confidence. ${movement} ${longRange}`,
     '',
     `Explore the interactive evidence, transparent forecasts, and free open dataset: ${url}`,
     '',
@@ -39,11 +43,11 @@ export function downloadInsightCard(brief: DecisionBrief): void {
   if (!context) return
 
   const gradient = context.createLinearGradient(0, 0, 1200, 630)
-  gradient.addColorStop(0, '#071413')
-  gradient.addColorStop(1, '#15312d')
+  gradient.addColorStop(0, '#080a18')
+  gradient.addColorStop(1, '#18204a')
   context.fillStyle = gradient
   context.fillRect(0, 0, 1200, 630)
-  context.strokeStyle = 'rgba(100,184,169,.16)'
+  context.strokeStyle = 'rgba(110,123,255,.16)'
   for (let x = 0; x <= 1200; x += 60) {
     context.beginPath(); context.moveTo(x, 0); context.lineTo(x, 630); context.stroke()
   }
@@ -51,35 +55,35 @@ export function downloadInsightCard(brief: DecisionBrief): void {
     context.beginPath(); context.moveTo(0, y); context.lineTo(1200, y); context.stroke()
   }
 
-  context.fillStyle = '#d7a353'
+  context.fillStyle = '#f7b955'
   context.font = '600 24px ui-monospace, monospace'
   context.fillText('MEMORYPULSE · LATEST DECISION BRIEF', 68, 70)
-  context.fillStyle = '#f2f3ea'
+  context.fillStyle = '#f5f7ff'
   context.font = '700 66px Georgia, serif'
   context.fillText(`${brief.regime} · ${brief.direction}`, 68, 165)
-  context.fillStyle = '#a9bbb5'
+  context.fillStyle = '#9ba6c9'
   context.font = '400 30px system-ui, sans-serif'
   wrappedLines(context, brief.conclusion, 780).slice(0, 4).forEach((line, index) => context.fillText(line, 68, 235 + index * 44))
 
-  context.fillStyle = 'rgba(4,12,11,.52)'
+  context.fillStyle = 'rgba(8,10,24,.72)'
   context.fillRect(870, 72, 260, 260)
-  context.fillStyle = '#64b8a9'
+  context.fillStyle = '#6e7bff'
   context.font = '700 94px system-ui, sans-serif'
   context.textAlign = 'center'
   context.fillText(brief.pressure_score.toFixed(1), 1000, 205)
-  context.fillStyle = '#a9bbb5'
+  context.fillStyle = '#9ba6c9'
   context.font = '500 20px ui-monospace, monospace'
   context.fillText('PRESSURE / 100', 1000, 250)
   context.fillText(`${brief.confidence.toUpperCase()} CONFIDENCE`, 1000, 292)
 
   context.textAlign = 'left'
-  context.fillStyle = '#f2f3ea'
+  context.fillStyle = '#f5f7ff'
   context.font = '600 22px system-ui, sans-serif'
   context.fillText(`Procurement: ${brief.recommended_posture.procurement}`, 68, 505)
-  context.fillStyle = '#a9bbb5'
+  context.fillStyle = '#9ba6c9'
   context.font = '400 19px system-ui, sans-serif'
   context.fillText('Public evidence · transparent baselines · downloadable dataset', 68, 552)
-  context.fillStyle = '#64b8a9'
+  context.fillStyle = '#47c8ff'
   context.fillText('photon7777.github.io/memorypulse', 68, 588)
 
   const anchor = document.createElement('a')

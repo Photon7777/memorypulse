@@ -27,6 +27,7 @@ def build_quality_report(
         "source_runs",
         "market_index",
         "forecasts",
+        "structural_forecasts",
         "decision_briefs",
     ]
     counts = {table: connection.execute(f"SELECT count(*) FROM {table}").fetchone()[0] for table in tables}

@@ -29,7 +29,7 @@ or rights associated with an upstream data source.
 - DRAMeXchange observations are excluded from public releases unless written permission is obtained.
 - Best Buy records remain optional and may be included only when collection and redistribution comply
   with the current API terms.
-- Forecasts, Memory Pressure Index values, and decision briefs are MemoryPulse analytical outputs built
+- Short-horizon forecasts, structural scenarios, Memory Pressure Index values, and decision briefs are MemoryPulse analytical outputs built
   from the cited public inputs and remain subject to the disclaimers above.
 
 No additional rights in third-party source material are granted. When a source's terms conflict with

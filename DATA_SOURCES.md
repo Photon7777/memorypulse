@@ -70,18 +70,19 @@ review [DATA_LICENSE.md](DATA_LICENSE.md) and the source-specific notes below be
   obtained and collection is explicitly enabled, blocked access, a layout mismatch, more than 100 parsed
   rows, or zero rows marks the source degraded while previous data remains intact.
 
-## FRED semiconductor indicator
+## FRED semiconductor and electronics indicators
 
-- **URL:** <https://fred.stlouisfed.org/graph/fredgraph.csv?id=PCU3344133441>
-- **Series:** `PCU3344133441`, Producer Price Index by Industry: Semiconductor and Related Device
-  Manufacturing.
+- **URL:** <https://fred.stlouisfed.org/graph/fredgraph.csv?id=PCU3344133441,CUSR0000SEEE01,IPG3344S>
+- **Series:** `PCU3344133441` semiconductor producer prices, `CUSR0000SEEE01` consumer prices for
+  computers/peripherals/smart-home assistants, and `IPG3344S` computer/electronics industrial production.
 - **Collected:** Observation date, series identifier/name, numeric value, unit, URL, and UTC collection
   time. Missing `.`/blank values are excluded.
 - **Frequency:** Checked daily; the underlying series is generally monthly.
 - **Authentication:** None for the public graph CSV endpoint.
 - **Reliability:** Official-statistics context from FRED and its source agency.
-- **Caveats:** This is a broad semiconductor producer-price index, not a RAM price and not a direct
-  measure of consumer module cost.
+- **Caveats:** These are broad context indicators, not RAM prices or direct measures of consumer module
+  cost. Only the producer-price series enters the current structural forecast; the others are published
+  as explanatory context.
 - **Redistribution:** Normalized values and source attribution are retained; FRED/source notes apply.
 - **Failure behavior:** The source degrades independently; price and news collection can continue.
 
@@ -122,11 +123,15 @@ review [DATA_LICENSE.md](DATA_LICENSE.md) and the source-specific notes below be
   event context; they do not establish causality or automatically change a procurement posture.
 - **Failure behavior:** Errors or empty results degrade independently and preserve earlier metadata.
 
+## Optional SEC supplier fundamentals
+
+- **SEC EDGAR:** The adapter supports Micron quarterly inventory, capital expenditure, and revenue from
+  Company Facts. Automated clients must declare a responsible organization and contact identity.
+  MemoryPulse does not invent or expose the repository owner's identity, so this adapter stays optional
+  and disabled until an owner-approved identity is configured. Failed access never affects core health.
+
 ## Evaluated but not enabled
 
-- **SEC EDGAR:** The API is free, but automated clients must declare a responsible organization and
-  contact email in the User-Agent. MemoryPulse does not invent or expose the repository owner's email,
-  so EDGAR is not enabled until the owner explicitly supplies an approved contact identity.
 - **U.S. Census international trade:** The current API documentation requires an API key for all
   international-trade queries. It remains a future optional integration rather than a keyless core feed.
 

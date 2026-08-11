@@ -11,6 +11,7 @@ const SOURCE_LABELS: Record<string, string> = {
   federal_register_semiconductor: 'Federal Register semiconductor policy',
   fred_semiconductor: 'FRED semiconductor',
   gdelt_memory_news: 'GDELT memory news',
+  sec_memory_supplier_fundamentals: 'SEC memory-supplier fundamentals',
   stanford_memory_prices: 'Stanford memory prices',
   world_bank_high_tech_exports: 'World Bank high-technology exports',
 }
@@ -58,9 +59,11 @@ export function HealthPage() {
                 <h3>{SOURCE_LABELS[source.source_id] ?? source.source_id.replaceAll('_', ' ')}</h3>
                 <p>{source.source_id === 'bestbuy_memory_products'
                   ? source.optional_key_configured ? 'The API key is configured; the next scheduled run can collect this feed.' : 'No API key is configured. Add BESTBUY_API_KEY as a GitHub Actions secret to enable official retail coverage.'
+                  : source.source_id === 'sec_memory_supplier_fundamentals' ? `${source.reason || 'The SEC Company Facts feed is available when automated access succeeds.'} The integration remains separate from core site health.`
                   : source.reason}</p>
                 {source.source_id === 'bestbuy_memory_products'
                   ? <a href="https://bestbuyapis.github.io/api-documentation/" target="_blank" rel="noreferrer">Best Buy API setup</a>
+                  : source.source_id === 'sec_memory_supplier_fundamentals' ? <a href="https://www.sec.gov/search-filings/edgar-application-programming-interfaces" target="_blank" rel="noreferrer">SEC API documentation</a>
                   : <a href="https://www.dramexchange.com/About/TermsOfUse" target="_blank" rel="noreferrer">Review current Terms of Use</a>}
               </article>)}
             </section></details>

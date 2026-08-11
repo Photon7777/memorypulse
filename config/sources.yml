@@ -17,6 +17,12 @@ sources:
       - id: PCU3344133441
         name: Semiconductor and related device manufacturing producer price index
         unit: index
+      - id: CUSR0000SEEE01
+        name: U.S. consumer price index for computers, peripherals, and smart home assistants
+        unit: index
+      - id: IPG3344S
+        name: U.S. industrial production for computer and electronic product manufacturing
+        unit: index
     frequency: monthly
     reliability: official_statistics
   bls_semiconductor_employment:
@@ -52,3 +58,21 @@ sources:
     url: https://api.bestbuy.com/v1/products
     frequency: daily
     reliability: optional_retail_api
+  sec_memory_supplier_fundamentals:
+    enabled: false
+    disabled_reason: Optional SEC Company Facts integration requires an owner-approved contact identity for compliant automated access.
+    url: https://data.sec.gov/api/xbrl/companyfacts/CIK0000723125.json
+    company: Micron Technology
+    ticker: MU
+    frequency: quarterly
+    reliability: official_company_filings
+    facts:
+      - tag: InventoryNet
+        name: inventory
+        unit: USD
+      - tag: PaymentsToAcquirePropertyPlantAndEquipment
+        name: capital expenditure
+        unit: USD
+      - tag: RevenueFromContractWithCustomerExcludingAssessedTax
+        name: revenue
+        unit: USD

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ForecastFanChart } from '../charts/AnalyticsCharts'
+import { ForecastFanChart, StructuralForecastChart } from '../charts/AnalyticsCharts'
 import { DataBoundary } from '../components/DataBoundary'
 import { MetricCard } from '../components/MetricCard'
 import { PageIntro } from '../components/PageIntro'
@@ -42,6 +42,13 @@ export function ForecastsPage() {
   const nandOutlook = outlooks.find((item) => item.segment === 'NAND Flash')
   const hbmOutlook = outlooks.find((item) => item.segment === 'HBM')
   const flatBaseline = forecast?.model_name === 'naive_last_value'
+  const latestStructuralVintage = (state.data?.structural_forecasts ?? []).reduce(
+    (latest, item) => item.forecast_created_at > latest ? item.forecast_created_at : latest,
+    '',
+  )
+  const structural = (state.data?.structural_forecasts ?? []).filter((item) => item.forecast_created_at === latestStructuralVintage)
+  const structuralBase = structural.filter((item) => item.scenario === 'base').sort((left, right) => left.target_date.localeCompare(right.target_date))
+  const structuralEnd = structuralBase.at(-1)
 
   function horizonLabel(target: string): string {
     if (!history?.points.length) return formatDate(target)
@@ -79,6 +86,20 @@ export function ForecastsPage() {
           <article className="outlook-evidence-grid__mixed"><span>NAND · 2H27</span><strong>↘ Easing later</strong><p>{nandOutlook?.summary}</p><small>Published {formatDate(nandOutlook?.published_at)} · {nandOutlook?.source_label}</small></article>
           <article><span>Finished devices · 2026</span><strong>PC +{formatNumber(pcOutlook?.central_estimate, 0)}% · Phone +{formatNumber(smartphoneOutlook?.central_estimate, 0)}%</strong><p>Gartner’s estimated retail-price effects from higher memory costs versus 2025.</p><small>Published {formatDate(pcOutlook?.published_at)} · Gartner</small></article>
         </section>
+
+        {structural.length ? <section className="structural-forecast-section">
+          <div className="section-heading"><div><p className="kicker">Market-informed model · 12–24 months</p><h2>A longer path built from drivers—not a repeated last value.</h2></div><p>The structural model combines clipped DDR5 momentum, official semiconductor producer prices, and attributed research. It publishes easing, base, and tight-supply cases so uncertainty remains visible.</p></div>
+          <article className="chart-card structural-forecast-card">
+            <div className="structural-forecast-card__summary">
+              <div><span>24-month base case</span><strong>{structuralEnd ? `${structuralEnd.change_from_baseline_percent >= 0 ? '+' : ''}${formatNumber(structuralEnd.change_from_baseline_percent, 1)}%` : 'n/a'}</strong><small>versus the latest observed DDR5 value</small></div>
+              <div><span>Direction</span><strong>{structuralEnd?.direction ?? 'n/a'}</strong><small>{structuralEnd?.confidence ?? 'low'} confidence · scenario model</small></div>
+              <div><span>Conclusion</span><p>{structuralEnd?.direction === 'upward' ? 'The base case points upward, while the easing case preserves a credible reversal path.' : 'The structural evidence does not currently support a rising base case.'}</p></div>
+            </div>
+            <StructuralForecastChart history={prices.data?.series.find((item) => item.generation === 'DDR5')} forecasts={structural} />
+            <p className="chart-takeaway"><strong>Driver readout</strong>{structuralEnd?.driver_summary}</p>
+            <p className="chart-summary">{structuralEnd?.basis}</p>
+          </article>
+        </section> : null}
 
         <div className="forecast-scope-divider"><span>Observed-series model · 1–6 months</span><div><h2>Now zoom into a specific public price series.</h2><p>This model is descriptive and backtested. A flat midpoint means no trend model beat the naive baseline on that series—not that industry experts expect the whole market to remain flat.</p></div></div>
         {forecast ? (
