@@ -76,7 +76,7 @@ function App() {
   const manifest = useStaticData<Manifest>('manifest.json', isManifest)
   const route = useHashRoute()
   useEffect(() => {
-    document.title = `${routeTitles[route] ?? 'Memory intelligence'} — MemoryPulse`
+    document.title = `${routeTitles[route] ?? 'Memory intelligence'} | MemoryPulse`
   }, [route])
   return (
     <div className="site-shell">
@@ -84,7 +84,7 @@ function App() {
       <header className="site-header">
         <HashLink className="brand" to="/" aria-label="MemoryPulse home"><span className="brand-mark"><i /><i /><i /></span><span>Memory<strong>Pulse</strong></span></HashLink>
         <nav aria-label="Primary navigation">{navigation.map(([path, label]) => <HashLink key={path} to={path} active={route === path}>{label}</HashLink>)}</nav>
-        <details className="header-more"><summary>More</summary><div><HashLink to="/prices">Price explorer</HashLink><HashLink to="/events">Event catalog</HashLink><HashLink to="/context">Why AI demand matters</HashLink><HashLink to="/methodology">How it works</HashLink><HashLink to="/health">Data health</HashLink><a href="https://github.com/Photon7777/memorypulse" target="_blank" rel="noreferrer">View on GitHub ↗</a></div></details>
+        <details className="header-more"><summary>More</summary><div><HashLink to="/prices">Price explorer</HashLink><HashLink to="/events">Event catalog</HashLink><HashLink to="/context">AI demand pathway</HashLink><HashLink to="/methodology">Methodology</HashLink><HashLink to="/health">Data health</HashLink><a href="https://github.com/Photon7777/memorypulse" target="_blank" rel="noreferrer">View on GitHub ↗</a></div></details>
       </header>
       <main id="main-content" tabIndex={-1}>
         <Suspense fallback={<LoadingSkeleton compact />}>
@@ -92,11 +92,11 @@ function App() {
         </Suspense>
       </main>
       <footer className="site-footer">
-        <div><HashLink className="brand brand--footer" to="/"><span className="brand-mark"><i /><i /><i /></span><span>Memory<strong>Pulse</strong></span></HashLink><p>Open, explainable memory-market intelligence from public data.</p></div>
+        <div><HashLink className="brand brand--footer" to="/"><span className="brand-mark"><i /><i /><i /></span><span>Memory<strong>Pulse</strong></span></HashLink><p>Public memory-market data, forecasts, and source records.</p></div>
         <div><p className="eyebrow">Explore</p><HashLink to="/analytics">Market analytics</HashLink><HashLink to="/forecasts">Forecasts</HashLink><HashLink to="/explorer">Scenario lab</HashLink></div>
         <div><p className="eyebrow">Trust</p><HashLink to="/data">Open dataset</HashLink><HashLink to="/methodology">How it works</HashLink><HashLink to="/health">Data health</HashLink></div>
-        <div><p className="eyebrow">Project</p><a href="https://github.com/Photon7777/memorypulse">GitHub repository</a><span>Updated {manifest.error ? 'when data is available' : formatDate(manifest.data?.generated_at, true)}</span><span>Stanford · FRED · BLS · Census · SEC · World Bank · GDELT · Federal Register</span></div>
-        <p className="footer-disclaimer">Independent analytical estimates from public evidence—not an official benchmark, investment recommendation, or purchasing guarantee.</p>
+        <div><p className="eyebrow">Project</p><a href="https://github.com/Photon7777/memorypulse">GitHub repository</a><span>Updated {manifest.error ? 'when data is available' : formatDate(manifest.data?.generated_at, true)}</span><span>Current source availability is listed in Data health.</span></div>
+        <p className="footer-disclaimer">Independent analytical estimates based on public evidence. This is not an official benchmark, investment recommendation, or purchasing guarantee.</p>
       </footer>
     </div>
   )

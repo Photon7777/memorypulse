@@ -5,7 +5,7 @@ interface Props {
 }
 
 export function ScoreDial({ score, status, confidence }: Props) {
-  const displayed = score == null ? '—' : Math.round(score).toString()
+  const displayed = score == null ? 'n/a' : Math.round(score).toString()
   const progress = score ?? 0
   return (
     <div className="score-lockup">

@@ -8,13 +8,17 @@ export function buildLinkedInCopy(brief: DecisionBrief, url: string): string {
     ? 'Long-range structural outlook is not yet available.'
     : `24-month structural base case: ${structural >= 0 ? '+' : ''}${structural.toFixed(1)}%.`
   return [
-    `MemoryPulse market read — ${brief.regime} conditions`,
+    `MemoryPulse | ${brief.regime} market conditions`,
     '',
-    `${brief.conclusion}`,
+    brief.headline,
     '',
-    `Pressure score: ${brief.pressure_score.toFixed(1)}/100 · ${brief.confidence.toLowerCase()} confidence. ${movement} ${longRange}`,
+    brief.conclusion,
     '',
-    `Explore the interactive evidence, transparent forecasts, and free open dataset: ${url}`,
+    `Pressure score: ${brief.pressure_score.toFixed(1)}/100. Confidence: ${brief.confidence.toLowerCase()}.`,
+    movement,
+    longRange,
+    '',
+    `Review the source records, forecasts, and downloadable dataset: ${url}`,
     '',
     '#DataAnalytics #Semiconductors #DDR5 #Forecasting #OpenData',
   ].join('\n')
@@ -57,7 +61,7 @@ export function downloadInsightCard(brief: DecisionBrief): void {
 
   context.fillStyle = '#f7b955'
   context.font = '600 24px ui-monospace, monospace'
-  context.fillText('MEMORYPULSE · LATEST DECISION BRIEF', 68, 70)
+  context.fillText('MEMORYPULSE | MARKET BRIEF', 68, 70)
   context.fillStyle = '#f5f7ff'
   context.font = '700 66px Georgia, serif'
   context.fillText(`${brief.regime} · ${brief.direction}`, 68, 165)
@@ -82,7 +86,7 @@ export function downloadInsightCard(brief: DecisionBrief): void {
   context.fillText(`Procurement: ${brief.recommended_posture.procurement}`, 68, 505)
   context.fillStyle = '#9ba6c9'
   context.font = '400 19px system-ui, sans-serif'
-  context.fillText('Public evidence · transparent baselines · downloadable dataset', 68, 552)
+  context.fillText('Source records | forecast ranges | downloadable dataset', 68, 552)
   context.fillStyle = '#47c8ff'
   context.fillText('photon7777.github.io/memorypulse', 68, 588)
 

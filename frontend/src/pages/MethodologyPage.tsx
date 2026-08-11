@@ -20,7 +20,7 @@ export function MethodologyPage() {
   const state = useStaticData<MethodologyData>('methodology.json')
   return (
     <>
-      <PageIntro kicker="Methodology · reproducible by design" title="Every score has a trail back to stored public facts" description="MemoryPulse favors plain statistical baselines, preserved source definitions, visible missingness, and language that separates association from causation." />
+      <PageIntro kicker="Methodology" title="How MemoryPulse calculates each result" description="The methodology preserves source definitions, records missing inputs, compares forecasts with simple baselines, and separates association from causation." />
       <DataBoundary loading={state.loading} error={state.error}>
         <section className="method-grid">
           <article className="method-feature"><p className="eyebrow">Memory Pressure Index · v{state.data?.version}</p><h2>Five signals, one confidence-aware score</h2><p>{state.data?.normalization}</p><div className="weight-list">{Object.entries(state.data?.weights ?? {}).map(([key, weight]) => <div key={key}><span>{key.replaceAll('_', ' ')}</span><i><b style={{ width: `${weight * 100}%` }} /></i><strong>{Math.round(weight * 100)}%</strong></div>)}</div><p className="caveat">{state.data?.missing_data}</p></article>

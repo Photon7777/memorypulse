@@ -173,7 +173,7 @@ def _forecast_export(connection: duckdb.DuckDBPyConnection) -> dict[str, Any]:
         "historical_accuracy": accuracy,
         "industry_outlooks": outlooks,
         "empty_message": "Collecting additional history before publishing a forecast.",
-        "disclaimer": "Short-horizon forecasts are statistical estimates; 12–24 month paths are transparent market-informed scenarios; industry outlooks are attributed external views. None is a guarantee of future prices.",
+        "disclaimer": "Short-term forecasts are statistical estimates. The 12 to 24 month paths are market-informed scenarios. Industry outlooks remain attributed external views. None guarantees future prices.",
     }
 
 
@@ -283,10 +283,10 @@ def export_frontend(
         "methodology.json": {
             "version": methodology_version,
             "weights": weights,
-            "normalization": "Robust 10th–90th percentile scaling; values are clamped to 0–100.",
+            "normalization": "Robust 10th to 90th percentile scaling; values are clamped to 0 to 100.",
             "missing_data": "Available components are reweighted; confidence is represented configured weight.",
             "unit_rule": "Gb means gigabits and GB means gigabytes. Conversion is never inferred from ambiguous text.",
-            "forecasting": "Horizon-specific rolling-origin validation compares ten short-term candidates. A separately governed 12–24 month driver ensemble dynamically reweights DDR5 momentum, official semiconductor producer/import prices, capacity utilization, and attributed research. Long-range statistical modeling remains gated by explicit history, source, product-panel, and driver thresholds.",
+            "forecasting": "Horizon-specific rolling-origin validation compares ten short-term candidates. A separately governed 12 to 24 month driver ensemble dynamically reweights DDR5 momentum, official semiconductor producer and import prices, capacity utilization, and attributed research. Long-range statistical modeling remains gated by explicit history, source, product-panel, and driver thresholds.",
             "caveats": [
                 "Chip spot prices and retail module prices use different definitions.",
                 "Official device starting prices are not always like-for-like when memory, storage, and performance configurations change.",

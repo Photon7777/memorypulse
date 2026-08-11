@@ -43,20 +43,20 @@ export function DataPage() {
 
   return (
     <>
-      <PageIntro kicker="Open data" title="Use the evidence behind MemoryPulse" description="Download memory history, official supply and trade drivers, short-term forecasts, 12–24 month scenarios, sourced industry outlooks, and market events—free, traceable, and ready for analysis." />
+      <PageIntro kicker="Open data" title="Download the MemoryPulse dataset" description="The release contains memory history, official supply indicators, short-term forecasts, 12 to 24 month scenarios, attributed industry outlooks, and market events." />
       <DataBoundary loading={catalog.loading} error={catalog.error}>
         <section className="dataset-hero">
-          <div><span className="dataset-version">Dataset v{catalog.data?.dataset_version}</span><h2>One download. Every analysis-ready table.</h2><p>Canonical history, official product-price milestones, sourced expert outlooks, scenario assumptions, analytical outputs, schemas, and checksums in a single versioned release.</p><div className="hero-actions"><a className="button button--primary" href={publicAssetUrl(`datasets/latest/${catalog.data?.bundle.path ?? ''}`)} download>Download everything · {formatBytes(catalog.data?.bundle.bytes)}</a><a className="button button--quiet" href={publicAssetUrl('datasets/latest/catalog.json')}>Open machine catalog</a></div></div>
-          <dl><div><dt>Updated</dt><dd>{formatDate(catalog.data?.generated_at, true)}</dd></div><div><dt>Tables</dt><dd>{latestResources.length}</dd></div><div><dt>Rows</dt><dd>{formatNumber(totalRows, 0)}</dd></div><div><dt>Coverage</dt><dd>{formatDate(startDate)}–{formatDate(endDate)}</dd></div></dl>
+          <div><span className="dataset-version">Dataset v{catalog.data?.dataset_version}</span><h2>Complete release in one file</h2><p>The versioned archive includes canonical history, product-price milestones, industry outlooks, scenario assumptions, analytical outputs, schemas, and checksums.</p><div className="hero-actions"><a className="button button--primary" href={publicAssetUrl(`datasets/latest/${catalog.data?.bundle.path ?? ''}`)} download>Download everything · {formatBytes(catalog.data?.bundle.bytes)}</a><a className="button button--quiet" href={publicAssetUrl('datasets/latest/catalog.json')}>Open machine catalog</a></div></div>
+          <dl><div><dt>Updated</dt><dd>{formatDate(catalog.data?.generated_at, true)}</dd></div><div><dt>Tables</dt><dd>{latestResources.length}</dd></div><div><dt>Rows</dt><dd>{formatNumber(totalRows, 0)}</dd></div><div><dt>Coverage</dt><dd>{formatDate(startDate)} to {formatDate(endDate)}</dd></div></dl>
         </section>
 
         <section className="dataset-trust-strip" aria-label="Dataset guarantees"><span><strong>Versioned</strong>Stable releases</span><span><strong>Traceable</strong>Sources and dates retained</span><span><strong>Verifiable</strong>SHA-256 checksums</span><span><strong>Open access</strong>No account or API key</span></section>
 
         <section className="section-block featured-datasets">
-          <div className="section-heading"><div><p className="kicker">Start here</p><h2>Four tables that reproduce the story</h2></div><p>Official device milestones, component history, structural scenarios, and attributed expert outlooks—packaged as analysis-ready Parquet.</p></div>
+          <div className="section-heading"><div><p className="kicker">Core tables</p><h2>Four datasets used in the main analysis</h2></div><p>Official device milestones, component history, structural scenarios, and attributed industry outlooks are provided as Parquet files.</p></div>
           <div className="featured-resource-grid">{featuredResources.map((resource) => <article key={resource.id}>
             <div className="resource-card-head"><span>{resource.format}</span><b>{formatNumber(resource.rows, 0)} rows</b></div>
-            <h3>{resource.title}</h3><p>{resource.description}</p><small>{formatBytes(resource.bytes)} · {resource.start_date ? `${formatDate(resource.start_date)}–${formatDate(resource.end_date)}` : 'Awaiting observations'}</small>
+            <h3>{resource.title}</h3><p>{resource.description}</p><small>{formatBytes(resource.bytes)} · {resource.start_date ? `${formatDate(resource.start_date)} to ${formatDate(resource.end_date)}` : 'Awaiting observations'}</small>
             <ResourceActions resource={resource} />
           </article>)}</div>
         </section>
@@ -72,7 +72,7 @@ export function DataPage() {
         </details>
 
         <section className="data-pipeline-section">
-          <div><p className="kicker">Built for trust</p><h2>Every release earns its way onto the site</h2><p>A failed feed cannot erase a working dataset. Collection, validation, analysis, and release remain separate steps.</p></div>
+          <div><p className="kicker">Release controls</p><h2>Four checks precede publication</h2><p>Collection, validation, analysis, and release run as separate steps. A failed source does not remove the previous validated dataset.</p></div>
           <ol className="pipeline-steps"><li><span>01</span><strong>Collect</strong><p>Public, bounded sources</p></li><li><span>02</span><strong>Validate</strong><p>Dates, units, and quality</p></li><li><span>03</span><strong>Analyze</strong><p>Index and forecasts</p></li><li><span>04</span><strong>Release</strong><p>Files and checksums</p></li></ol>
         </section>
 

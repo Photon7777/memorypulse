@@ -76,7 +76,7 @@ class StanfordMemoryPricesSource(SourceAdapter[PriceObservation]):
                     source_url=payload.url,
                     source_label=f"Stanford dataset; underlying source: {source_attribution}",
                     source_reliability=str(self.config.get("reliability", "research_dataset")),
-                    raw_description=" — ".join(part for part in (series, representative, notes) if part),
+                    raw_description=" | ".join(part for part in (series, representative, notes) if part),
                     is_estimate=estimate,
                 )
             )

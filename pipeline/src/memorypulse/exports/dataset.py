@@ -63,7 +63,7 @@ PUBLIC_TABLES = {
     },
     "structural_forecasts": {
         "filename": "structural_forecasts.csv",
-        "description": "Market-informed 12–24 month DDR5 scenarios with transparent drivers, bounds, confidence, and source IDs.",
+        "description": "Market-informed 12 to 24 month DDR5 scenarios with documented drivers, bounds, confidence, and source IDs.",
         "date_column": "target_date",
     },
     "market_index": {

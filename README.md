@@ -335,16 +335,17 @@ Add captures after the first GitHub Pages deployment:
 
 ## Portfolio copy
 
-**LinkedIn-ready:** Built MemoryPulse, a zero-cost, open-source market-intelligence product that connects
-memory-market pressure to official PlayStation, Xbox, Nintendo, and MacBook price milestones. It ships a
-3D evidence-led React experience, ten-model rolling-origin forecast selection, a deterministic conclusion
-on every validated run, and a reusable public dataset in CSV, NDJSON, and Parquet—with no paid APIs or servers.
+**LinkedIn post:** I built MemoryPulse to examine whether memory-market pressure is appearing in consumer
+electronics prices. The project compares public DDR5 indicators with official PlayStation, Xbox, Nintendo,
+and MacBook price records. It publishes short-term backtests, clearly labeled long-range scenarios, source
+health, and a reusable dataset in CSV, NDJSON, and Parquet. The site also states where the evidence is still
+too limited for a governed statistical forecast.
 
 **Resume-ready:**
 
 - Engineered a keyless Python data pipeline with source-isolated failures, atomic history updates,
   DuckDB analytical views, Polars normalization, and reproducible static JSON contracts.
-- Designed a transparent 0–100 market-pressure indicator with robust normalization, missing-component
+- Designed a transparent 0 to 100 market-pressure indicator with robust normalization, missing-component
   reweighting, confidence scoring, and deterministic evidence-safe insights.
 - Implemented rolling-origin governance across ten statistical candidates, including ETS, Theta,
   autoregression, ARIMA, and an ensemble, with stability gates and empirical uncertainty intervals.

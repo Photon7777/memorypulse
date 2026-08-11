@@ -28,6 +28,6 @@ export function AnimatedMetric({ value, decimals = 0, prefix = '', suffix = '' }
     return () => window.cancelAnimationFrame(frame)
   }, [value])
 
-  if (value == null) return <>—</>
+  if (value == null) return <>n/a</>
   return <>{prefix}{display.toFixed(decimals)}{suffix}</>
 }

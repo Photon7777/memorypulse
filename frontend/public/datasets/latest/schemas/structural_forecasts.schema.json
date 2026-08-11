@@ -2,7 +2,7 @@
   "$id": "https://photon7777.github.io/memorypulse/datasets/latest/schemas/structural_forecasts.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
-  "description": "Market-informed 12–24 month DDR5 scenarios with transparent drivers, bounds, confidence, and source IDs.",
+  "description": "Market-informed 12 to 24 month DDR5 scenarios with documented drivers, bounds, confidence, and source IDs.",
   "properties": {
     "baseline_value": {
       "type": [

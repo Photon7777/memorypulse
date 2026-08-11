@@ -6,7 +6,7 @@ import { formatDate } from '../utils/format'
 
 const mechanism = [
   ['01', 'AI infrastructure demand', 'Accelerator deployments can increase demand for high-bandwidth and server memory.'],
-  ['02', 'HBM & server prioritization', 'Higher-value products may influence how manufacturers prioritize production and investment.'],
+  ['02', 'HBM and server prioritization', 'Higher-value products may influence how manufacturers prioritize production and investment.'],
   ['03', 'Manufacturing allocation', 'Shared capital, packaging, and process constraints can shape available capacity.'],
   ['04', 'Conventional DRAM supply', 'Allocation choices may coincide with tighter or looser DDR supply conditions.'],
   ['05', 'Consumer price implications', 'Retail outcomes also depend on inventory, competition, device demand, and channel margins.'],
@@ -17,7 +17,7 @@ export function ContextPage() {
   const evidence = state.data?.events.filter((event) => event.event_tags.some((tag) => ['capacity allocation', 'HBM investment', 'supply expansion', 'production cut'].includes(tag))).slice(0, 4) ?? []
   return (
     <>
-      <PageIntro kicker="AI & consumer memory" title="A mechanism to investigate—not a causal verdict" description="MemoryPulse connects public market signals through a clearly labeled conceptual pathway and places source metadata beside the interpretation." />
+      <PageIntro kicker="AI demand pathway" title="How AI demand may affect consumer memory" description="This conceptual pathway connects accelerator demand, HBM allocation, conventional DRAM supply, and consumer pricing. Source records appear beside the interpretation." />
       <section className="mechanism" aria-label="Conceptual memory market mechanism">
         {mechanism.map(([number, title, detail], index) => (
           <article key={number}>

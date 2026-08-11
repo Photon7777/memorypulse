@@ -37,7 +37,7 @@ export function ExplorerPage() {
 
   return (
     <>
-      <PageIntro kicker="Consumer impact explorer" title="Turn a memory-price scenario into cost exposure" description="Adjust explicit assumptions to estimate component-level exposure. This calculator does not predict a product's retail price or manufacturer behavior." />
+      <PageIntro kicker="Scenario calculator" title="Estimate memory-cost exposure" description="Set component price, capacity, bill-of-materials share, and pass-through assumptions. Results describe component exposure, not a predicted retail price." />
       <section className="explorer-layout">
         <form className="scenario-form" onSubmit={(event) => event.preventDefault()}>
           <label>Device category<select value={category} onChange={(event) => changeCategory(event.target.value as keyof typeof categories)}>{Object.keys(categories).map((item) => <option key={item}>{item}</option>)}</select></label>
@@ -55,10 +55,10 @@ export function ExplorerPage() {
         <MetricCard eyebrow="Central scenario" value={formatCurrency(result.central)} detail="Direct result of the selected assumptions" tone="accent" />
         <MetricCard eyebrow="High scenario" value={formatCurrency(result.high)} detail="140% of central component exposure" />
       </div>
-      <p className="page-disclaimer">Scenario tool only—not a retail price prediction. It excludes channel margins, other components, promotions, demand response, and manufacturer pricing strategy.</p>
+      <p className="page-disclaimer">This scenario is not a retail-price prediction. It excludes channel margins, other components, promotions, demand response, and manufacturer pricing strategy.</p>
 
       <section className="section-block">
-        <div className="section-heading"><div><p className="kicker">Procurement decision lab</p><h2>Buy now, wait, or stagger?</h2></div><p>Compare a modeled price move with the carrying cost of purchasing earlier. No assumption is hidden.</p></div>
+        <div className="section-heading"><div><p className="kicker">Procurement comparison</p><h2>Compare buying now with waiting</h2></div><p>The calculation compares a modeled price move with the carrying cost of purchasing earlier.</p></div>
         <div className="explorer-layout procurement-lab">
           <form className="scenario-form" onSubmit={(event) => event.preventDefault()}>
             <div className="field-pair"><label>Units <span>{formatNumber(units, 0)}</span><input type="range" min="50" max="10000" step="50" value={units} onChange={(event) => setUnits(Number(event.target.value))} /></label><label>Memory per unit <span>{procurementCapacity} GB</span><input type="range" min="8" max="256" step="8" value={procurementCapacity} onChange={(event) => setProcurementCapacity(Number(event.target.value))} /></label></div>

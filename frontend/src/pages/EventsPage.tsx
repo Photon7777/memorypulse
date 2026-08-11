@@ -25,7 +25,7 @@ export function EventsPage() {
 
   return (
     <>
-      <PageIntro kicker="Event timeline" title="The announcements behind the signal" description="Filter public article metadata across investments, capacity decisions, production, pricing, inventory, and earnings guidance." />
+      <PageIntro kicker="Source records" title="Market events and company announcements" description="Filter retained metadata for investments, capacity decisions, production, pricing, inventory, and earnings guidance." />
       <DataBoundary loading={state.loading} error={state.error}>
         <section className="filter-bar" aria-label="Timeline filters">
           <label>Search<input type="search" value={search} placeholder="Policy, company, memory…" onChange={(event) => setSearch(event.target.value)} /></label>

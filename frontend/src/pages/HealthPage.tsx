@@ -44,7 +44,7 @@ export function HealthPage() {
 
   return (
     <>
-      <PageIntro kicker="Data health" title="Know what is current—and what is not" description="See the latest state of every automatic source. Optional and permission-gated integrations stay separate from system health." />
+      <PageIntro kicker="Data health" title="Source status and data freshness" description="Review the latest collection result for each automatic source. Optional and permission-gated integrations are reported separately." />
       <DataBoundary loading={state.loading} error={state.error}>
         {state.data?.sources.length ? (
           <>

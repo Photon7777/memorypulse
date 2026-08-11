@@ -200,10 +200,10 @@ def build_decision_brief(
         },
     ]
     conclusion = (
-        f"{regime} conditions with {direction.lower()} and {confidence.lower()} confidence. "
-        + (f"The market-informed 24-month DDR5 base case is {structural_change:.1f}% versus the latest observation. " if structural_change is not None else "")
-        + f"The analytical procurement posture is to {procurement.lower()}, while the inventory posture is to "
-        f"{inventory.lower()}. Budget exposure is {budget_risk.lower()}."
+        f"{regime} conditions. Direction: {direction.lower()}. Confidence: {confidence.lower()}. "
+        + (f"The 24-month DDR5 base scenario is {structural_change:.1f}% versus the latest observation. " if structural_change is not None else "")
+        + f"Current posture: {procurement.lower()}. Inventory: {inventory.lower()}. "
+        f"Budget risk: {budget_risk.lower()}."
     )
     return {
         "brief_id": stable_id("brief", generated_at.isoformat(), regime, direction),
@@ -213,7 +213,7 @@ def build_decision_brief(
         "confidence": confidence,
         "confidence_score": index.confidence_score,
         "pressure_score": index.total_score,
-        "headline": f"{regime}: {procurement}",
+        "headline": f"{procurement} under {regime.lower()} conditions",
         "conclusion": conclusion,
         "recommended_posture": {
             "procurement": procurement,
@@ -232,8 +232,8 @@ def build_decision_brief(
             "structural_change_percent": structural_change,
             "structural_forecast": structural,
         },
-        "method": "Deterministic rules over validated index components, a horizon-specific rolling-origin forecast, and a separately labeled 12–24 month market-driver scenario ensemble.",
-        "disclaimer": "Analytical decision support only—not purchasing, investment, or inventory-management advice.",
+        "method": "Deterministic rules over validated index components, a horizon-specific rolling-origin forecast, and a separately labeled 12 to 24 month market-driver scenario ensemble.",
+        "disclaimer": "Analytical decision support only. This is not purchasing, investment, or inventory-management advice.",
     }
 
 
@@ -383,7 +383,7 @@ def build_electronics_story(
     air_change = float(family_lookup.get("MacBook Air entry tier", {}).get("change_percent", 0))
     pro_change = float(family_lookup.get("MacBook Pro entry tier", {}).get("change_percent", 0))
     return {
-        "headline": "The component squeeze is reaching finished electronics—but not in the same way.",
+        "headline": "Component pressure is reaching finished electronics at different rates.",
         "thesis": (
             f"Official U.S. milestones put PS5 and Xbox Series X prices about {ps5_change:.0f}% and "
             f"{xbox_change:.0f}% above launch. Nintendo has announced a {switch_change:.0f}% Switch 2 "
@@ -420,7 +420,7 @@ def build_electronics_story(
                 "label": "MacBook Pro entry tier",
                 "value": pro_change,
                 "unit": "% since 2020",
-                "interpretation": "A product-tier comparison—not a like-for-like price index.",
+                "interpretation": "This is a product-tier comparison rather than a like-for-like price index.",
             },
         ],
         "story": {
@@ -446,9 +446,9 @@ def build_electronics_story(
             ],
         },
         "conclusion": (
-            "Console price escalation is directly observable; laptop pricing is a configuration-adjusted story. "
-            "Memory pressure is a credible cost channel, not a complete causal explanation. The most defensible "
-            "forward view is therefore a range of product-cost exposure rather than a promised retail-price forecast."
+            "Official records show higher console prices. Laptop comparisons require configuration adjustments. "
+            "Memory pressure is one documented cost channel, but the public evidence does not isolate its share "
+            "of finished-product price changes. Forward results are therefore reported as product-cost exposure ranges."
         ),
         "disclaimer": "Official price milestones and transparent scenarios; not a causal estimate or retail-price guarantee.",
     }

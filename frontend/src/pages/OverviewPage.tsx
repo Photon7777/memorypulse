@@ -82,13 +82,13 @@ export function OverviewPage() {
     <DataBoundary loading={loading} error={error}>
       <section className="story-hero">
         <div className="story-hero__copy">
-          <p className="kicker"><span className="live-pip" />Component intelligence · finished-product impact</p>
-          <h1>The memory shock is reaching the devices people buy.</h1>
-          <p className="story-hero__lede">Follow the evidence from DDR5 and semiconductor pressure to PlayStation, Xbox, Nintendo, MacBook, and the future cost of electronics.</p>
+          <p className="kicker"><span className="live-pip" />Memory markets and consumer electronics</p>
+          <h1>Memory market pressure is reaching consumer electronics.</h1>
+          <p className="story-hero__lede">Compare public DDR5 indicators with official PlayStation, Xbox, Nintendo, and MacBook price records. Forecasts and assumptions remain separately labeled.</p>
           <div className="hero-actions">
-            <button className="button button--primary" type="button" onClick={() => scrollToChapter('price-story')}>Start the story</button>
-            <HashLink className="button button--quiet" to="/forecasts">Inspect the models</HashLink>
-            <HashLink className="button button--text" to="/data">Download the evidence ↗</HashLink>
+            <button className="button button--primary" type="button" onClick={() => scrollToChapter('price-story')}>Review the evidence</button>
+            <HashLink className="button button--quiet" to="/forecasts">Review forecasts</HashLink>
+            <HashLink className="button button--text" to="/data">Download the dataset ↗</HashLink>
           </div>
           <div className="story-hero__proof">
             {heroEvidence.map((item) => <article key={item.label}><span>{item.label}</span><strong><AnimatedMetric value={item.value} decimals={1} prefix={item.value >= 0 ? '+' : ''} suffix="%" /></strong><small>{item.unit}</small></article>)}
@@ -101,7 +101,7 @@ export function OverviewPage() {
           <span className="signal-node signal-node--two">CONSOLES</span>
           <span className="signal-node signal-node--three">LAPTOPS</span>
           <aside className="signal-readout">
-            <span>LIVE PRESSURE</span>
+            <span>PRESSURE INDEX</span>
             <strong><AnimatedMetric value={brief.data?.pressure_score} decimals={0} /></strong>
             <small>{brief.data?.regime} · {brief.data?.confidence} confidence</small>
           </aside>
@@ -109,16 +109,16 @@ export function OverviewPage() {
       </section>
 
       <nav className="story-rail" aria-label="Story chapters">
-        <button type="button" onClick={() => scrollToChapter('price-story')}><b>01</b><span>Price break</span></button>
-        <button type="button" onClick={() => scrollToChapter('cost-path')}><b>02</b><span>Cost path</span></button>
-        <button type="button" onClick={() => scrollToChapter('forecast-story')}><b>03</b><span>What comes next</span></button>
-        <button type="button" onClick={() => scrollToChapter('decision-story')}><b>04</b><span>The conclusion</span></button>
+        <button type="button" onClick={() => scrollToChapter('price-story')}><b>01</b><span>Product prices</span></button>
+        <button type="button" onClick={() => scrollToChapter('cost-path')}><b>02</b><span>Cost transmission</span></button>
+        <button type="button" onClick={() => scrollToChapter('forecast-story')}><b>03</b><span>Market outlook</span></button>
+        <button type="button" onClick={() => scrollToChapter('decision-story')}><b>04</b><span>Current conclusion</span></button>
       </nav>
 
       <section className="story-chapter" id="price-story">
         <div className="story-chapter__intro">
           <span className="chapter-number">01</span>
-          <div><p className="kicker">The price break</p><h2>Console prices moved. Laptop prices need context.</h2></div>
+          <div><p className="kicker">Official price records</p><h2>Console prices increased. Laptop comparisons require configuration context.</h2></div>
           <p>{story.data?.thesis}</p>
         </div>
         <div className="story-evidence-grid">
@@ -132,11 +132,11 @@ export function OverviewPage() {
         <article className="chart-card story-price-chart">
           <div className="section-heading"><div><p className="kicker">Official milestones</p><h2>Starting prices across product generations</h2></div><p>Solid lines are the closest comparisons. Dashed lines connect evolving laptop entry tiers and must be read with their configuration changes.</p></div>
           <ElectronicsStoryChart series={storySeries} />
-          <p className="chart-takeaway"><strong>Takeaway</strong>PS5 and Xbox increases are directly visible in official same-family price paths. MacBook starting tiers also rose, but higher memory, storage, and performance prevent a clean like-for-like conclusion.</p>
+          <p className="chart-takeaway"><strong>Analyst note</strong>Official same-family records show higher PS5 and Xbox prices. MacBook starting tiers also rose, but changes in memory, storage, and performance limit direct comparison.</p>
         </article>
         <div className="manufacturer-signal">
           <span className="manufacturer-signal__mark">X</span>
-          <div><p className="kicker">The clearest manufacturer signal</p><h3>Microsoft explicitly connected its 2026 console increase to storage and memory pressure.</h3><p>This is evidence of a real cost channel—not proof that memory explains every dollar of the price change.</p></div>
+          <div><p className="kicker">Manufacturer disclosure</p><h3>Microsoft connected its 2026 console increase to storage and memory pressure.</h3><p>The statement supports a component-cost channel. It does not quantify memory's share of the retail price increase.</p></div>
           <a href="https://news.xbox.com/en-us/2026/06/25/xbox-console-price-update/" target="_blank" rel="noreferrer">Read the official update ↗</a>
         </div>
       </section>
@@ -144,8 +144,8 @@ export function OverviewPage() {
       <section className="story-chapter story-chapter--dark" id="cost-path">
         <div className="story-chapter__intro">
           <span className="chapter-number">02</span>
-          <div><p className="kicker">The transmission path</p><h2>A component shock does not travel in a straight line.</h2></div>
-          <p>Manufacturers can absorb, delay, reconfigure, or pass through higher costs. MemoryPulse models that uncertainty instead of pretending retail prices are mechanically determined.</p>
+          <div><p className="kicker">Cost transmission</p><h2>Four steps connect memory costs to retail prices.</h2></div>
+          <p>Manufacturers can absorb costs, delay purchases, change configurations, or adjust prices. The scenario model includes that uncertainty.</p>
         </div>
         <div className="signal-path" aria-label="Component cost transmission path">
           <article><span>01</span><i className="signal-path__orb" /><h3>Memory market</h3><p>DDR5, NAND, producer costs</p></article>
@@ -159,8 +159,8 @@ export function OverviewPage() {
 
         <div className="exposure-lab">
           <div className="exposure-lab__controls">
-            <p className="kicker">Interactive exposure model</p>
-            <h3>Which electronics category feels the signal most?</h3>
+            <p className="kicker">Exposure model</p>
+            <h3>Compare modeled exposure by device category</h3>
             <div role="tablist" aria-label="Device exposure category">
               {story.data?.exposure_scenarios.map((item) => <button type="button" role="tab" aria-selected={item.category === exposure?.category} className={item.category === exposure?.category ? 'active' : ''} onClick={() => setExposureCategory(item.category)} key={item.category}>{item.display_name}</button>)}
             </div>
@@ -172,7 +172,7 @@ export function OverviewPage() {
               <div><dt>Signal used</dt><dd>{formatNumber(exposure?.signal_percent, 1)}%</dd></div>
               <div><dt>Component share</dt><dd>{formatNumber((exposure?.memory_storage_share_central ?? 0) * 100, 0)}%</dd></div>
               <div><dt>Pass-through</dt><dd>{formatNumber((exposure?.pass_through_central ?? 0) * 100, 0)}%</dd></div>
-              <div><dt>Scenario range</dt><dd>{formatNumber(exposure?.modeled_product_effect_low, 2)}%–{formatNumber(exposure?.modeled_product_effect_high, 2)}%</dd></div>
+              <div><dt>Scenario range</dt><dd>{formatNumber(exposure?.modeled_product_effect_low, 2)}% to {formatNumber(exposure?.modeled_product_effect_high, 2)}%</dd></div>
             </dl>
             <p>Scenario analysis only. This is not a retail-price forecast.</p>
           </article>
@@ -182,14 +182,14 @@ export function OverviewPage() {
       <section className="story-chapter" id="forecast-story">
         <div className="story-chapter__intro">
           <span className="chapter-number">03</span>
-          <div><p className="kicker">What comes next</p><h2>Two horizons answer two different decisions.</h2></div>
-          <p>Short-term models compete on unseen history. The longer 12–24 month path combines observed momentum, official producer prices, and sourced structural research.</p>
+          <div><p className="kicker">Forecast horizons</p><h2>Short-term estimates and long-range scenarios serve different decisions.</h2></div>
+          <p>Short-term models compete through rolling backtests. The 12 to 24 month path combines observed momentum, official producer prices, and attributed industry research.</p>
         </div>
         <div className="forecast-story-grid">
           <article className="chart-card">
             <div className="section-heading compact-heading"><div><p className="kicker">DDR5 structural path</p><h2>{structuralEnd ? `${structuralEnd.change_from_baseline_percent >= 0 ? '+' : ''}${formatNumber(structuralEnd.change_from_baseline_percent, 1)}% base case` : 'Building sufficient history'}</h2></div><p>{structuralEnd ? `Through ${formatDate(structuralEnd.target_date)} · ${structuralEnd.confidence} confidence` : 'The system withholds long-range scenarios when evidence is insufficient.'}</p></div>
             <StructuralForecastChart history={ddr5Series} forecasts={structuralForecasts} />
-            <p className="chart-takeaway"><strong>Takeaway</strong>{structuralEnd?.direction === 'upward' ? 'The market-informed base case rises, but the easing and tight-supply paths show how widely outcomes can diverge.' : 'The market-informed base case is not currently rising; review the driver readout before acting.'}</p>
+            <p className="chart-takeaway"><strong>Analyst note</strong>{structuralEnd?.direction === 'upward' ? 'The base case rises. The easing and tight-supply paths show the range created by different market assumptions.' : 'The current drivers do not produce a rising base case. Review the driver readout before using the scenario.'}</p>
           </article>
           <aside className="model-governance-card">
             <p className="kicker">Model governance</p>
@@ -213,13 +213,13 @@ export function OverviewPage() {
       <section className="story-chapter story-conclusion" id="decision-story">
         <div className="story-chapter__intro">
           <span className="chapter-number">04</span>
-          <div><p className="kicker">The conclusion</p><h2>{brief.data?.headline}</h2></div>
+          <div><p className="kicker">Current conclusion</p><h2>{brief.data?.headline}</h2></div>
           <p>{story.data?.conclusion}</p>
         </div>
         <div className="evidence-boundary-grid">
-          <article><span>What the data proves</span><ul>{story.data?.story.proves.map((item) => <li key={item}>{item}</li>)}</ul></article>
-          <article><span>What it suggests</span><ul>{story.data?.story.suggests.map((item) => <li key={item}>{item}</li>)}</ul></article>
-          <article><span>What remains uncertain</span><ul>{story.data?.story.uncertain.map((item) => <li key={item}>{item}</li>)}</ul></article>
+          <article><span>Observed evidence</span><ul>{story.data?.story.proves.map((item) => <li key={item}>{item}</li>)}</ul></article>
+          <article><span>Scenario implications</span><ul>{story.data?.story.suggests.map((item) => <li key={item}>{item}</li>)}</ul></article>
+          <article><span>Remaining limits</span><ul>{story.data?.story.uncertain.map((item) => <li key={item}>{item}</li>)}</ul></article>
         </div>
         <div className="decision-banner">
           <div><span>Current analytical posture</span><h3>{brief.data?.recommended_posture.procurement}</h3><p>{brief.data?.conclusion}</p></div>
@@ -229,7 +229,7 @@ export function OverviewPage() {
       </section>
 
       <section className="share-insight story-share">
-        <div><p className="kicker">Explore or reproduce it</p><h2>The story is public. So is the evidence.</h2><p>Inspect every model, download the versioned dataset, or share the latest evidence-based conclusion.</p></div>
+        <div><p className="kicker">Research access</p><h2>Inspect the models and download the data.</h2><p>The versioned release includes source records, forecast outputs, schemas, and checksums.</p></div>
         <div className="share-insight__actions">
           <HashLink className="button button--primary" to="/data">Download open dataset</HashLink>
           <button type="button" className="button button--quiet" onClick={() => void copyLinkedIn()} disabled={!brief.data}>{copied ? 'LinkedIn copy ready' : 'Copy LinkedIn summary'}</button>

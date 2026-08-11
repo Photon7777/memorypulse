@@ -75,7 +75,7 @@ export function PricesPage() {
 
   return (
     <>
-      <PageIntro kicker="Price intelligence" title="Trends without false equivalence" description="Explore source-defined memory series. Estimates, chip prices, module prices, and retail observations remain clearly labeled." />
+      <PageIntro kicker="Price data" title="Compare memory prices without mixing definitions" description="Filter chip, module, estimate, and retail series by memory generation. Units, market type, and source attribution remain visible." />
       <DataBoundary loading={state.loading} error={state.error}>
         {ddr5Series && latestDdr5 ? (
           <section className="ddr5-availability" aria-label="DDR5 data availability">
@@ -106,7 +106,7 @@ export function PricesPage() {
           </div>
           {available.length > 1 ? <div className="series-picker" aria-label="Displayed price series">{available.map((item) => <button type="button" className={!hiddenSeries.has(item.id) ? 'active' : ''} aria-pressed={!hiddenSeries.has(item.id)} onClick={() => toggleSeries(item.id)} key={item.id}><i />{item.label}</button>)}</div> : null}
           {selected.length ? <PriceChart series={selected} normalized={normalized} /> : <div className="empty-state"><strong>No compatible series</strong><p>Try another memory type or source. Missing observations are not interpolated.</p></div>}
-          {selected.length ? <p className="chart-takeaway"><strong>Takeaway</strong>{leadChange == null ? `${selected.length} compatible series are visible. Use normalization to compare direction when source units differ.` : `${leadSeries.label} is ${Math.abs(leadChange).toFixed(1)}% ${leadChange >= 0 ? 'higher' : 'lower'} across the selected window. Compare direction—not absolute height—between differently defined sources.`}</p> : null}
+          {selected.length ? <p className="chart-takeaway"><strong>Analyst note</strong>{leadChange == null ? `${selected.length} compatible series are visible. Use normalization to compare direction when source units differ.` : `${leadSeries.label} is ${Math.abs(leadChange).toFixed(1)}% ${leadChange >= 0 ? 'higher' : 'lower'} across the selected window. Compare direction between differently defined sources; their absolute values are not interchangeable.`}</p> : null}
           <p className="chart-summary">Showing {selected.length} source-defined series. {state.data?.units_note}</p>
         </section>
         <section className="series-list" aria-label="Displayed series definitions">

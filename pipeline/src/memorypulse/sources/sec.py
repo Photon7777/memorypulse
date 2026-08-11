@@ -75,7 +75,7 @@ class SecMemorySupplierSource(SourceAdapter[MacroIndicatorObservation]):
                     collected_at=payload.retrieved_at,
                     source_id=self.source_id,
                     series_id=series_id,
-                    series_name=f"{company} — {row['name']}",
+                    series_name=f"{company}: {row['name']}",
                     value=float(row["val"]),
                     unit=str(row["unit"]),
                     source_url=payload.url,

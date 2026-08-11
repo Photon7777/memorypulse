@@ -46,6 +46,17 @@ def test_export_contracts_are_valid(tmp_path) -> None:
     assert "industry_outlooks" in forecast
     assert "structural_forecasts" in forecast
     assert forecast["evidence_readiness"]["status"] == "scenario_only"
+    editorial_copy = [
+        brief["headline"],
+        brief["conclusion"],
+        brief["method"],
+        brief["disclaimer"],
+        story["headline"],
+        story["conclusion"],
+        story["disclaimer"],
+        forecast["disclaimer"],
+    ]
+    assert all("—" not in item and "–" not in item for item in editorial_copy)
 
 
 def test_fixture_publication_guard_is_detected(tmp_path) -> None:
