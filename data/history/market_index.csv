@@ -22,3 +22,4 @@ observation_date,calculated_at,total_score,status_label,confidence_score,spot_mo
 2026-07-01,2026-08-11T11:07:41Z,28.0,Moderate Pressure,0.75,9.61,,0.03,100.0,20.77,1.4.0
 2026-07-01,2026-08-12T11:12:59Z,28.0,Moderate Pressure,0.75,9.61,,0.03,100.0,20.77,1.4.0
 2026-07-01,2026-08-13T11:13:24Z,28.0,Moderate Pressure,0.75,9.61,,0.03,100.0,20.77,1.4.0
+2026-07-01,2026-08-14T11:10:44Z,23.85,Normal,0.75,9.61,,0.03,0.0,100.0,1.4.0
