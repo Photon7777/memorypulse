@@ -36,21 +36,21 @@
       "status": "warning"
     }
   },
-  "generated_at": "2026-08-18T10:50:46Z",
+  "generated_at": "2026-08-19T10:48:51Z",
   "production_data": true,
   "status": "pass",
   "table_counts": {
-    "decision_briefs": 24,
+    "decision_briefs": 25,
     "device_exposure": 6,
     "electronics_prices": 17,
     "forecasts": 114,
     "industry_outlooks": 6,
-    "macro_indicators": 2855,
-    "market_index": 28,
+    "macro_indicators": 2858,
+    "market_index": 29,
     "memory_prices": 703,
     "news_events": 194,
     "retail_products": 0,
-    "source_runs": 261,
+    "source_runs": 273,
     "spot_prices": 0,
     "structural_forecasts": 36
   }
