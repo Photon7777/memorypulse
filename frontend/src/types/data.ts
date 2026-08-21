@@ -225,12 +225,14 @@ export interface NewsEvent {
   event_tags: string[]
   short_excerpt: string
   relevance_score: number
+  source_tier?: 'official' | 'discovery'
+  review_status?: 'approved_metadata' | 'candidate'
 }
 
 export interface NewsData {
   events: NewsEvent[]
   daily_counts: Array<{ date: string; count: number }>
-  filters: { companies: string[]; memory_types: string[]; event_tags: string[] }
+  filters: { companies: string[]; memory_types: string[]; event_tags: string[]; query_categories?: string[] }
   retention_days: number
 }
 
@@ -450,6 +452,119 @@ export interface ElectronicsStory {
     uncertain: string[]
     would_change_view: string[]
   }
+  conclusion: string
+  disclaimer: string
+}
+
+export type DeviceResponseType =
+  | 'price_and_spec_compression'
+  | 'specification_compression'
+  | 'price_increase'
+  | 'cost_absorption'
+  | 'mixed_or_no_material_change'
+  | 'new_entry_tier'
+  | 'insufficient_evidence'
+
+export interface DeviceSnapshot {
+  snapshot_id: string
+  observation_date: string
+  market: string
+  category: string
+  manufacturer: string
+  product_family: string
+  generation: string
+  model: string
+  sku: string
+  product_tier: string
+  price_usd: number
+  price_basis: string
+  ram_gb: number | null
+  ram_type: string
+  storage_gb: number | null
+  processor_family: string
+  source_id: string
+  source_url: string
+  source_label: string
+  source_tier: 'official' | 'reputable_secondary' | 'aggregated'
+  review_status: 'approved' | 'candidate' | 'rejected'
+  comparability: string
+  notes: string
+}
+
+export interface DeviceChangeEvent {
+  event_id: string
+  previous_snapshot_id: string | null
+  observation_date: string
+  previous_observation_date: string | null
+  market: string
+  category: string
+  manufacturer: string
+  product_family: string
+  generation: string
+  model: string
+  sku: string
+  product_tier: string
+  previous_price_usd: number | null
+  price_usd: number
+  price_change_percent: number | null
+  previous_ram_gb: number | null
+  ram_gb: number | null
+  ram_change_percent: number | null
+  previous_storage_gb: number | null
+  storage_gb: number | null
+  storage_change_percent: number | null
+  memory_value_change_percent: number | null
+  comparability: string
+  response_type: DeviceResponseType
+  source_url: string
+  source_label: string
+  source_tier: string
+  notes: string
+}
+
+export interface DeviceMarketData {
+  generated_from: string
+  watchlist: {
+    version: string
+    market: string
+    free_only: boolean
+    cadence: Record<string, string>
+    family_count: number
+    manufacturer_count: number
+    target_configurations: number
+    categories: Array<{ id: string; families: number; manufacturers: number; target_configurations: number }>
+    families: Array<{ category: string; manufacturer: string; family: string }>
+  }
+  metrics: {
+    sticker_price_pressure_percent: number | null
+    spec_compression_rate_percent: number | null
+    consumer_memory_burden: number | null
+    memory_value_change_percent: number | null
+    comparable_transitions: number
+    approved_snapshots: number
+    primary_source_share: number
+    confidence: number
+  }
+  metric_definitions: Record<string, string>
+  coverage: {
+    reviewed_families: number
+    watchlist_families: number
+    reviewed_categories: number
+    watchlist_categories: number
+    reviewed_manufacturers: number
+    watchlist_manufacturers: number
+  }
+  model_readiness: {
+    ready: boolean
+    status: 'ready' | 'panel_building'
+    thresholds: Record<string, number>
+    current: Record<string, number>
+    explanation: string
+  }
+  response_counts: Array<{ response_type: DeviceResponseType; count: number }>
+  events: DeviceChangeEvent[]
+  snapshots: DeviceSnapshot[]
+  review_queue: Array<Record<string, unknown>>
   conclusion: string
   disclaimer: string
 }

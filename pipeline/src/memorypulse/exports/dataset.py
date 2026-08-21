@@ -13,7 +13,7 @@ import duckdb
 
 from memorypulse.transformations.storage import atomic_write_text
 
-DATASET_VERSION = "1.4.0"
+DATASET_VERSION = "1.5.0"
 
 PUBLIC_TABLES = {
     "memory_prices": {
@@ -35,6 +35,17 @@ PUBLIC_TABLES = {
         "filename": "electronics_prices.csv",
         "description": "Official U.S. product-price milestones with configuration and comparability labels.",
         "date_column": "observation_date",
+    },
+    "device_configuration_snapshots": {
+        "filename": "device_configuration_snapshots.csv",
+        "description": "Review-gated U.S. device price and configuration snapshots with source tier and comparability labels.",
+        "date_column": "observation_date",
+    },
+    "device_change_events": {
+        "filename": "device_change_events.csv",
+        "description": "Derived before-and-after device transitions classified as price increases, specification compression, cost absorption, or insufficient evidence.",
+        "date_column": "observation_date",
+        "derived": True,
     },
     "device_exposure": {
         "filename": "device_exposure.csv",
@@ -174,7 +185,13 @@ def build_public_dataset(
             canonical = history_dir / str(config["filename"])
             file_format = "ndjson" if canonical.suffix == ".ndjson" else "csv"
             text_target = csv_dir / canonical.name
-            shutil.copy2(canonical, text_target)
+            if config.get("derived"):
+                escaped_text = str(text_target).replace("'", "''")
+                connection.execute(
+                    f"COPY (SELECT * FROM {table}) TO '{escaped_text}' (HEADER, DELIMITER ',')"
+                )
+            else:
+                shutil.copy2(canonical, text_target)
 
             parquet_target = parquet_dir / f"{table}.parquet"
             escaped = str(parquet_target).replace("'", "''")
@@ -240,7 +257,7 @@ def build_public_dataset(
             "pipeline_run_id": pipeline_run_id,
             "production_data": production_data,
             "name": "MemoryPulse Public Memory-Market Dataset",
-            "description": "Normalized memory prices, official electronics price milestones, device-exposure assumptions, business context, forecasts, and auditable decision briefs.",
+            "description": "Normalized memory prices, reviewed device configurations and change events, device-exposure assumptions, business context, forecasts, and auditable decision briefs.",
             "publisher": "MemoryPulse",
             "homepage": "https://photon7777.github.io/memorypulse/#/data",
             "repository": "https://github.com/Photon7777/memorypulse",

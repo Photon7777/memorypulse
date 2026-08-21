@@ -11,6 +11,7 @@ from typing import Any
 
 from memorypulse.models import (
     DecisionBriefObservation,
+    DeviceConfigurationSnapshot,
     DeviceExposureAssumption,
     ElectronicsPriceObservation,
     ForecastObservation,
@@ -28,6 +29,7 @@ HISTORY_CONTRACTS = {
     "memory_prices.csv": PriceObservation,
     "retail_products.csv": RetailProductObservation,
     "electronics_prices.csv": ElectronicsPriceObservation,
+    "device_configuration_snapshots.csv": DeviceConfigurationSnapshot,
     "device_exposure.csv": DeviceExposureAssumption,
     "industry_outlooks.csv": IndustryOutlookObservation,
     "structural_forecasts.csv": StructuralForecastObservation,

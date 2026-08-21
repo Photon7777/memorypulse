@@ -36,11 +36,12 @@
       "status": "warning"
     }
   },
-  "generated_at": "2026-08-21T10:51:19Z",
+  "generated_at": "2026-08-21T19:47:54Z",
   "production_data": true,
   "status": "pass",
   "table_counts": {
     "decision_briefs": 27,
+    "device_configuration_snapshots": 19,
     "device_exposure": 6,
     "electronics_prices": 17,
     "forecasts": 114,

@@ -30,6 +30,15 @@ CREATE TABLE electronics_prices (
  storage_gb DOUBLE, comparability VARCHAR, source_id VARCHAR, source_url VARCHAR,
  source_label VARCHAR, notes VARCHAR
 );
+CREATE TABLE device_configuration_snapshots (
+ snapshot_id VARCHAR PRIMARY KEY, observation_date DATE, collected_at TIMESTAMPTZ,
+ market VARCHAR, category VARCHAR, manufacturer VARCHAR, product_family VARCHAR,
+ generation VARCHAR, model VARCHAR, sku VARCHAR, product_tier VARCHAR, price_usd DOUBLE,
+ price_basis VARCHAR, ram_gb DOUBLE, ram_type VARCHAR, storage_gb DOUBLE,
+ processor_family VARCHAR, gpu_memory_gb DOUBLE, display_class VARCHAR, source_id VARCHAR,
+ source_url VARCHAR, source_label VARCHAR, source_tier VARCHAR, review_status VARCHAR,
+ comparability VARCHAR, notes VARCHAR
+);
 CREATE TABLE device_exposure (
  exposure_id VARCHAR PRIMARY KEY, category VARCHAR, display_name VARCHAR,
  memory_storage_share_low DOUBLE, memory_storage_share_central DOUBLE,
@@ -147,6 +156,55 @@ CREATE VIEW electronics_price_changes AS
  SELECT *, 100 * (price_usd / nullif(first_value(price_usd) OVER (
    PARTITION BY product_family ORDER BY observation_date), 0) - 1) AS change_from_first_percent
  FROM electronics_prices;
+CREATE VIEW device_change_events AS
+ WITH ordered AS (
+   SELECT *,
+     lag(snapshot_id) OVER w AS previous_snapshot_id,
+     lag(observation_date) OVER w AS previous_observation_date,
+     lag(price_usd) OVER w AS previous_price_usd,
+     lag(ram_gb) OVER w AS previous_ram_gb,
+     lag(storage_gb) OVER w AS previous_storage_gb
+   FROM device_configuration_snapshots
+   WHERE review_status = 'approved'
+   WINDOW w AS (
+     PARTITION BY market, product_family, product_tier
+     ORDER BY observation_date, snapshot_id
+   )
+ ), changes AS (
+   SELECT *,
+     100 * (price_usd / nullif(previous_price_usd, 0) - 1) AS price_change_percent,
+     100 * (ram_gb / nullif(previous_ram_gb, 0) - 1) AS ram_change_percent,
+     100 * (storage_gb / nullif(previous_storage_gb, 0) - 1) AS storage_change_percent,
+     100 * ((price_usd / nullif(ram_gb, 0)) /
+       nullif(previous_price_usd / nullif(previous_ram_gb, 0), 0) - 1)
+       AS memory_value_change_percent
+   FROM ordered
+ )
+ SELECT snapshot_id AS event_id, previous_snapshot_id, observation_date,
+   previous_observation_date, market, category, manufacturer, product_family, generation,
+   model, sku, product_tier, previous_price_usd, price_usd, price_change_percent,
+   previous_ram_gb, ram_gb, ram_change_percent, previous_storage_gb, storage_gb,
+   storage_change_percent, memory_value_change_percent, comparability,
+   CASE
+     WHEN previous_snapshot_id IS NULL OR comparability = 'insufficient' THEN 'insufficient_evidence'
+     WHEN comparability = 'new_entry_tier' THEN 'new_entry_tier'
+     WHEN price_usd > previous_price_usd * 1.02 AND
+       (coalesce(ram_gb, previous_ram_gb) < previous_ram_gb OR
+        coalesce(storage_gb, previous_storage_gb) < previous_storage_gb)
+       THEN 'price_and_spec_compression'
+     WHEN price_usd >= previous_price_usd * 0.98 AND
+       (coalesce(ram_gb, previous_ram_gb) < previous_ram_gb OR
+        coalesce(storage_gb, previous_storage_gb) < previous_storage_gb)
+       THEN 'specification_compression'
+     WHEN price_usd > previous_price_usd * 1.02 THEN 'price_increase'
+     WHEN abs(price_usd / nullif(previous_price_usd, 0) - 1) <= 0.02 AND
+       coalesce(ram_gb, 0) >= coalesce(previous_ram_gb, 0) AND
+       coalesce(storage_gb, 0) >= coalesce(previous_storage_gb, 0)
+       THEN 'cost_absorption'
+     ELSE 'mixed_or_no_material_change'
+   END AS response_type,
+   source_id, source_url, source_label, source_tier, review_status, notes
+ FROM changes;
 CREATE VIEW market_pressure_components AS
  SELECT observation_date, total_score, confidence_score, component, score
  FROM market_index UNPIVOT(score FOR component IN (
@@ -160,6 +218,7 @@ FILE_TO_TABLE = {
     "memory_prices.csv": "memory_prices",
     "retail_products.csv": "retail_products",
     "electronics_prices.csv": "electronics_prices",
+    "device_configuration_snapshots.csv": "device_configuration_snapshots",
     "device_exposure.csv": "device_exposure",
     "industry_outlooks.csv": "industry_outlooks",
     "macro_indicators.csv": "macro_indicators",

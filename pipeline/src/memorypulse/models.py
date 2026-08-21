@@ -143,6 +143,58 @@ class ElectronicsPriceObservation(Contract):
 
 
 @dataclass(slots=True)
+class DeviceConfigurationSnapshot(Contract):
+    snapshot_id: str
+    observation_date: date
+    collected_at: datetime
+    market: str
+    category: str
+    manufacturer: str
+    product_family: str
+    generation: str
+    model: str
+    sku: str
+    product_tier: str
+    price_usd: float
+    price_basis: str
+    ram_gb: float | None
+    ram_type: str
+    storage_gb: float | None
+    processor_family: str
+    gpu_memory_gb: float | None
+    display_class: str
+    source_id: str
+    source_url: str
+    source_label: str
+    source_tier: str
+    review_status: str
+    comparability: str
+    notes: str
+
+    def validate(self) -> None:
+        validate_observation_date(self.observation_date)
+        if self.price_usd <= 0:
+            raise ValidationError("device price must be positive")
+        if not self.market or not self.category or not self.product_family:
+            raise ValidationError("device snapshot requires market, category, and family")
+        if self.price_basis not in {
+            "launch_msrp", "current_list_price", "announced_msrp", "promotional_price"
+        }:
+            raise ValidationError(f"unsupported device price basis: {self.price_basis}")
+        if self.source_tier not in {"official", "reputable_secondary", "aggregated"}:
+            raise ValidationError(f"unsupported source tier: {self.source_tier}")
+        if self.review_status not in {"approved", "candidate", "rejected"}:
+            raise ValidationError(f"unsupported review status: {self.review_status}")
+        if self.comparability not in {
+            "like_for_like", "same_family", "starting_tier", "new_entry_tier",
+            "mixed_bundle", "insufficient",
+        }:
+            raise ValidationError(f"unsupported device comparability: {self.comparability}")
+        if self.ram_gb is not None and self.ram_gb <= 0:
+            raise ValidationError("RAM must be positive when present")
+
+
+@dataclass(slots=True)
 class DeviceExposureAssumption(Contract):
     exposure_id: str
     category: str

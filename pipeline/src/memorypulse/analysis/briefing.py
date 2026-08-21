@@ -6,6 +6,7 @@ from typing import Any
 
 import duckdb
 
+from memorypulse.analysis.device_market import build_device_market
 from memorypulse.analysis.evidence import build_evidence_readiness
 from memorypulse.forecasting.models import MODELS, rolling_origin_backtest
 from memorypulse.indicators.pressure import IndexResult
@@ -376,24 +377,46 @@ def build_electronics_story(
             }
         )
 
+    device_market = build_device_market(connection)
+    device_events = {
+        str(item["product_family"]): item
+        for item in device_market["events"]
+        if item["previous_snapshot_id"] is not None
+    }
     family_lookup = {item["family"]: item for item in series}
     ps5_change = float(family_lookup.get("PlayStation 5 standard", {}).get("change_percent", 0))
     xbox_change = float(family_lookup.get("Xbox Series X", {}).get("change_percent", 0))
-    switch_change = float(family_lookup.get("Nintendo Switch 2", {}).get("change_percent", 0))
     air_change = float(family_lookup.get("MacBook Air entry tier", {}).get("change_percent", 0))
     pro_change = float(family_lookup.get("MacBook Pro entry tier", {}).get("change_percent", 0))
+    pixel = device_events.get("Google Pixel Pro entry tier", {})
+    surface = device_events.get("Surface Laptop 13-inch entry tier", {})
     return {
-        "headline": "Component pressure is reaching finished electronics at different rates.",
+        "headline": "Consumers are seeing higher prices and leaner base configurations.",
         "thesis": (
             f"Official U.S. milestones put PS5 and Xbox Series X prices about {ps5_change:.0f}% and "
-            f"{xbox_change:.0f}% above launch. Nintendo has announced a {switch_change:.0f}% Switch 2 "
-            "increase. MacBook starting tiers also moved, but specification changes make causal comparisons weaker."
+            f"{xbox_change:.0f}% above launch. The reviewed device panel also captures base RAM changes "
+            "in Pixel and Surface products. These downstream observations describe manufacturer responses; "
+            "they do not train or override the DDR5 forecast."
         ),
         "memory_signal_percent": signal,
         "product_series": series,
         "milestones": milestones,
         "exposure_scenarios": scenarios,
         "evidence": [
+            {
+                "kind": "qualified",
+                "label": "Pixel Pro entry tier",
+                "value": float(pixel.get("price_change_percent") or 0),
+                "unit": "% price change; base RAM fell from 16GB to 12GB",
+                "interpretation": "Storage and processor generation also changed, so this is a reviewed mixed-bundle comparison.",
+            },
+            {
+                "kind": "qualified",
+                "label": "Surface Laptop 13 entry tier",
+                "value": float(surface.get("price_change_percent") or 0),
+                "unit": "% price change; entry RAM fell from 16GB to 8GB",
+                "interpretation": "The metric uses full list prices and excludes temporary promotions.",
+            },
             {
                 "kind": "observed",
                 "label": "PS5 standard",
@@ -426,18 +449,20 @@ def build_electronics_story(
         "story": {
             "proves": [
                 "Major console makers have published substantial U.S. list-price increases.",
+                "Reviewed Pixel and Surface entry configurations pair higher list prices with less base RAM.",
                 "The latest public DDR5 series and official semiconductor indicators show measurable component-market movement.",
                 "Product pricing differs materially by configuration and commercial model.",
             ],
             "suggests": [
                 "Memory-intensive and lower-margin devices can have greater exposure when component pressure persists.",
-                "Configurable PCs may transmit component changes faster than fixed-platform products.",
+                "Configurable PCs may transmit component changes through tiering as well as sticker prices.",
                 "Manufacturers may respond through price, configuration, promotions, margins, or launch timing.",
             ],
             "uncertain": [
                 "Public evidence does not isolate memory as the sole cause of any finished-product price change.",
                 "Supplier contracts, tariffs, exchange rates, logistics, and product redesign are not fully observable.",
                 "MacBook generations are not directly comparable without quality adjustment.",
+                "The reviewed device panel is still below its preregistered coverage threshold for market-wide modeling.",
             ],
             "would_change_view": [
                 "A sustained reversal in observed DDR5 prices and producer-cost pressure.",
@@ -446,9 +471,10 @@ def build_electronics_story(
             ],
         },
         "conclusion": (
-            "Official records show higher console prices. Laptop comparisons require configuration adjustments. "
-            "Memory pressure is one documented cost channel, but the public evidence does not isolate its share "
-            "of finished-product price changes. Forward results are therefore reported as product-cost exposure ranges."
+            "Official records show higher console prices, while reviewed Pixel and Surface examples show that "
+            "consumers can also face leaner entry configurations. Memory pressure is one documented cost channel, "
+            "but the public evidence does not isolate its share of finished-product changes. The device panel remains "
+            "descriptive until its coverage gates are met."
         ),
         "disclaimer": "Official price milestones and transparent scenarios; not a causal estimate or retail-price guarantee.",
     }

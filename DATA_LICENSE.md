@@ -20,16 +20,17 @@ or rights associated with an upstream data source.
 
 - Stanford, FRED, BLS, World Bank, Federal Register, and GDELT records retain their source attribution.
   Their respective source terms continue to apply.
-- PlayStation, Xbox, Nintendo, and Apple price records are normalized factual milestones linked to
-  official manufacturer pages. Product names and trademarks remain their respective owners'.
+- PlayStation, Xbox, Nintendo, Apple, Google, Microsoft Surface, and Dell device records are normalized
+  factual configuration snapshots linked to their cited official or reputable secondary sources.
+  Product names and trademarks remain their respective owners'.
 - Device-category component shares and pass-through ranges are clearly labeled MemoryPulse scenario
   assumptions, not observed manufacturer costs or retail-price forecasts.
 - TrendForce and Gartner outlook records contain short attributed paraphrases and public numeric facts.
   They remain external views and are not relicensed as MemoryPulse forecasts.
 - DRAMeXchange observations are excluded from public releases unless written permission is obtained.
 - Census and SEC facts retain their official-source attribution and measurement definitions.
-- Keepa-derived product history is excluded unless the repository owner confirms public-export rights;
-  any included records remain subject to the applicable Keepa subscription terms.
+- Keepa-derived product history is excluded from the free public workflow; private experiments remain
+  subject to the applicable Keepa subscription terms.
 - Best Buy content is excluded from the historical public archive under the current 72-hour caching
   restriction unless separate written permission is obtained.
 - Short-horizon forecasts, structural scenarios, Memory Pressure Index values, and decision briefs are MemoryPulse analytical outputs built

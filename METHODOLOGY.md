@@ -1,6 +1,6 @@
 # MemoryPulse methodology
 
-Version: **1.4.0**
+Version: **1.5.0**
 
 > MemoryPulse is an independent research project. Its Memory Pressure Index and forecasts are
 > analytical estimates, not official industry benchmarks, investment advice, purchasing advice, or
@@ -78,6 +78,31 @@ observations. The underlying series ID is exposed in the tooltip; incompatible s
 The Pressure Index history chart plots stored index vintages and their represented-weight confidence,
 so a score change can be distinguished from a coverage change.
 
+## Device response panel
+
+The downstream device panel is analytically separate from memory-price forecasting. Only approved
+configuration snapshots contribute to device metrics. Each snapshot retains market, category,
+manufacturer, family, generation, model, SKU, tier, list-price basis, RAM, storage, processor, source
+tier, review status, and comparability. Consecutive approved snapshots are compared only within the same
+market, product family, and tier.
+
+- **Sticker Price Pressure** is the median list-price percentage change across comparable transitions.
+- **Spec Compression Rate** is the share of comparable transitions with less RAM or storage at a similar
+  or higher list price.
+- **Memory Value Change** is the median change in price per GB of included system RAM when both snapshots
+  disclose RAM. It is a consumer configuration measure, not a DRAM chip price.
+- **Consumer Memory Burden** is a bounded descriptive blend: 45% normalized sticker-price pressure,
+  35% specification compression, and 20% normalized RAM-value change.
+
+The burden score is withheld when there are no comparable transitions and is never called causal.
+Promotions are excluded from list-price comparisons. Mixed bundles, such as a RAM decrease paired with a
+storage increase, remain explicitly labeled.
+
+The device layer remains descriptive until it reaches at least 100 comparable transitions, 40 reviewed
+families, three categories, and 80% official-source coverage. Until all gates pass, the interface says
+`panel building`; no learned downstream model is fit. Device outcomes never enter the DDR5 forecast
+training set, preventing manufacturer pricing decisions from being mistaken for upstream memory prices.
+
 ## Memory Pressure Index
 
 Configured version 1.3 weights are:
@@ -110,8 +135,8 @@ does not guarantee shortages or future prices.
 
 ## News relevance and event tags
 
-No LLM is used. Case-insensitive keyword rules identify Samsung, SK hynix, Micron, DRAM, DDR4, DDR5,
-HBM, and event categories such as supply expansion, production cut, capacity allocation, price increase,
+No LLM is used. Case-insensitive keyword rules identify memory suppliers, device OEMs, major product
+families, DRAM, DDR4, DDR5, HBM, and event categories such as supply expansion, configuration change, RAM reduction, price increase,
 price decline, HBM investment, factory construction, earnings guidance, shortage, and inventory.
 Relevance starts from a documented base and increases with bounded company, memory, and event-rule hits.
 The exported score is a triage aid, not a truth or sentiment score.
@@ -193,7 +218,7 @@ After successful validation, the pipeline materializes the canonical public tabl
 equivalent Zstandard Parquet. It derives JSON Schemas from the ephemeral DuckDB contracts, publishes row
 counts, date coverage, source IDs, byte sizes, and SHA-256 hashes in `catalog.json`, and bundles the same
 artifacts in a versioned ZIP. The release includes forecasts, index vintages, conclusion history, and
-source-run health, official electronics price milestones, structural forecasts, and explicit device exposure assumptions so
+source-run health, reviewed device snapshots, derived device change events, official electronics price milestones, structural forecasts, and explicit device exposure assumptions so
 downstream users can reproduce both analytical results and their evidence state.
 No raw HTML, article bodies, API keys, or permission-gated DRAMeXchange observations are distributed.
 Third-party source rights remain separate from the repository's MIT code license.

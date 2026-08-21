@@ -1,0 +1,194 @@
+{
+  "$id": "https://photon7777.github.io/memorypulse/datasets/latest/schemas/device_configuration_snapshots.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Review-gated U.S. device price and configuration snapshots with source tier and comparability labels.",
+  "properties": {
+    "category": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "collected_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "comparability": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "display_class": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "generation": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "gpu_memory_gb": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "manufacturer": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "market": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "model": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "notes": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "observation_date": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "price_basis": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "price_usd": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "processor_family": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "product_family": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "product_tier": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "ram_gb": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "ram_type": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "review_status": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "sku": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "snapshot_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source_label": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source_tier": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source_url": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "storage_gb": {
+      "type": [
+        "number",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "snapshot_id",
+    "observation_date",
+    "collected_at",
+    "market",
+    "category",
+    "manufacturer",
+    "product_family",
+    "generation",
+    "model",
+    "sku",
+    "product_tier",
+    "price_usd",
+    "price_basis",
+    "ram_gb",
+    "ram_type",
+    "storage_gb",
+    "processor_family",
+    "gpu_memory_gb",
+    "display_class",
+    "source_id",
+    "source_url",
+    "source_label",
+    "source_tier",
+    "review_status",
+    "comparability",
+    "notes"
+  ],
+  "title": "MemoryPulse device configuration snapshots row",
+  "type": "object"
+}

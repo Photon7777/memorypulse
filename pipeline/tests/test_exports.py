@@ -33,7 +33,8 @@ def test_export_contracts_are_valid(tmp_path) -> None:
     manifest = json.loads((data_dir / "manifest.json").read_text())
     assert manifest["production_data"] is True
     assert manifest["fixture_data"] is False
-    assert manifest["schema_version"] == "1.6.0"
+    assert manifest["schema_version"] == "1.7.0"
+    assert "device-market.json" in manifest["files"]
     brief = json.loads((data_dir / "decision-brief.json").read_text())
     assert brief["regime"] == "Watch"
     assert brief["conclusion"]
@@ -42,6 +43,8 @@ def test_export_contracts_are_valid(tmp_path) -> None:
     assert analytics["model_readiness"]["advanced_ml_ready"] is False
     story = json.loads((data_dir / "electronics-story.json").read_text())
     assert story["story"]["proves"]
+    device_market = json.loads((data_dir / "device-market.json").read_text())
+    assert device_market["watchlist"]["free_only"] is True
     forecast = json.loads((data_dir / "forecast.json").read_text())
     assert "industry_outlooks" in forecast
     assert "structural_forecasts" in forecast
@@ -64,7 +67,7 @@ def test_fixture_publication_guard_is_detected(tmp_path) -> None:
     data.mkdir()
     for name in (
         "decision-brief.json", "analytics.json", "electronics-story.json", "market-summary.json", "prices.json", "retail.json", "news.json", "forecast.json",
-        "source-health.json", "methodology.json",
+        "source-health.json", "methodology.json", "device-market.json",
     ):
         (data / name).write_text("{}")
     (data / "manifest.json").write_text('{"production_data": true, "fixture_data": true}')

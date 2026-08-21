@@ -14,11 +14,12 @@ from memorypulse.analysis.briefing import (
     build_decision_brief,
     build_electronics_story,
 )
+from memorypulse.analysis.device_market import build_device_market
 from memorypulse.analysis.evidence import build_evidence_readiness
 from memorypulse.indicators.pressure import IndexResult, calculate_index, components_from_database
 from memorypulse.transformations.storage import atomic_write_text
 
-SCHEMA_VERSION = "1.6.0"
+SCHEMA_VERSION = "1.7.0"
 
 
 def _json_value(value: Any) -> Any:
@@ -144,10 +145,21 @@ def _news_export(connection: duckdb.DuckDBPyConnection) -> dict[str, Any]:
         query_category, companies, memory_types, event_tags, short_excerpt, relevance_score
         FROM news_events ORDER BY published_at DESC LIMIT 2000""",
     )
+    official_domains = {
+        "apple.com", "blog.google", "store.google.com", "news.samsung.com", "microsoft.com",
+        "blogs.microsoft.com", "news.xbox.com", "sony.com", "playstation.com", "nintendo.com",
+        "dell.com", "lenovo.com", "hp.com", "asus.com", "acer.com", "sec.gov",
+        "federalregister.gov",
+    }
+    for event in events:
+        domain = str(event["source_domain"])
+        event["source_tier"] = "official" if any(domain == item or domain.endswith(f".{item}") for item in official_domains) else "discovery"
+        event["review_status"] = "approved_metadata" if event["source_tier"] == "official" else "candidate"
     filters = {
         "companies": sorted({item for row in events for item in (row["companies"] or []) if item}),
         "memory_types": sorted({item for row in events for item in (row["memory_types"] or []) if item}),
         "event_tags": sorted({item for row in events for item in (row["event_tags"] or []) if item}),
+        "query_categories": sorted({str(row["query_category"]) for row in events}),
     }
     counts = _rows(connection, "SELECT published_at::DATE AS date, count(*) AS count FROM news_events GROUP BY 1 ORDER BY 1")
     return {"events": events, "daily_counts": counts, "filters": filters, "retention_days": 365}
@@ -248,6 +260,7 @@ def export_frontend(
         "disclaimer": "The Memory Pressure Index is an analytical indicator, not an official industry index or a certain shortage predictor.",
     }
     decision_brief = build_decision_brief(connection, index_result, weights, key_changes, generated)
+    device_market = build_device_market(connection)
     prior_briefs = _rows(
         connection,
         """SELECT brief_id, generated_at, regime, direction, confidence, confidence_score,
@@ -273,6 +286,7 @@ def export_frontend(
     files = {
         "decision-brief.json": decision_brief,
         "electronics-story.json": build_electronics_story(connection, decision_brief),
+        "device-market.json": device_market,
         "analytics.json": build_business_analytics(connection, index_result, weights),
         "market-summary.json": summary,
         "prices.json": _price_export(connection),
@@ -286,13 +300,14 @@ def export_frontend(
             "normalization": "Robust 10th to 90th percentile scaling; values are clamped to 0 to 100.",
             "missing_data": "Available components are reweighted; confidence is represented configured weight.",
             "unit_rule": "Gb means gigabits and GB means gigabytes. Conversion is never inferred from ambiguous text.",
-            "forecasting": "Horizon-specific rolling-origin validation compares ten short-term candidates. A separately governed 12 to 24 month driver ensemble dynamically reweights DDR5 momentum, official semiconductor producer and import prices, capacity utilization, and attributed research. Long-range statistical modeling remains gated by explicit history, source, product-panel, and driver thresholds.",
+            "forecasting": "Horizon-specific rolling-origin validation compares ten short-term candidates. A separately governed 12 to 24 month driver ensemble dynamically reweights DDR5 momentum, official semiconductor producer and import prices, capacity utilization, and attributed research. The downstream device panel is descriptive and never enters the DDR5 training data. Long-range statistical modeling remains gated by explicit history, source, product-panel, and driver thresholds.",
             "caveats": [
                 "Chip spot prices and retail module prices use different definitions.",
                 "Official device starting prices are not always like-for-like when memory, storage, and performance configurations change.",
                 "Device exposure outputs are transparent scenarios, not retail-price forecasts.",
                 "HBM estimates are labeled and are not presented as observed public transaction prices.",
                 "Associations and conceptual mechanisms do not establish causality.",
+                "Unreviewed discovery events never change device metrics; only approved configuration snapshots do.",
             ],
         },
     }

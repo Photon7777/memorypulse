@@ -1,0 +1,85 @@
+version: 1.0.0
+market: US
+free_only: true
+cadence:
+  official_pages: weekly
+  official_newsrooms: daily
+  secondary_discovery: daily
+  manual_review: weekly
+panel_targets:
+  minimum_families: 40
+  target_configurations: 140
+  minimum_primary_source_share: 0.80
+  minimum_comparable_transitions_for_modeling: 100
+source_policy:
+  preferred:
+    - manufacturer product pages
+    - manufacturer newsrooms
+    - regulatory filings and official statistics
+  discovery_only:
+    - GDELT article metadata
+    - reputable technology publications
+  prohibited:
+    - paid APIs in the default workflow
+    - scraped pages whose terms prohibit reuse
+    - unreviewed rumors in published metrics
+categories:
+  smartphones:
+    target_configurations: 36
+    families:
+      Apple: [iPhone, iPhone Plus, iPhone Pro, iPhone Pro Max, iPhone SE]
+      Google: [Pixel, Pixel Pro, Pixel Pro XL, Pixel Fold, Pixel A]
+      Samsung: [Galaxy S, Galaxy S Plus, Galaxy S Ultra, Galaxy Z Fold, Galaxy Z Flip, Galaxy A]
+      OnePlus: [OnePlus flagship, OnePlus R, OnePlus Open, Nord]
+      Motorola: [Razr, Razr Plus, Edge, Moto G]
+  laptops:
+    target_configurations: 42
+    families:
+      Apple: [MacBook Air 13, MacBook Air 15, MacBook Pro 14, MacBook Pro 16]
+      Dell: [XPS 13, XPS 14, XPS 16, Dell Premium, Alienware]
+      Microsoft: [Surface Laptop 13, Surface Laptop 15, Surface Pro]
+      Lenovo: [ThinkPad X1, ThinkPad T, Yoga, Legion, IdeaPad]
+      HP: [Spectre, OmniBook, EliteBook, Pavilion, Omen]
+      Asus: [Zenbook, Vivobook, ROG Zephyrus, ROG Strix]
+      Acer: [Swift, Aspire, Predator, Nitro]
+      Framework: [Framework Laptop 13, Framework Laptop 16]
+  gaming:
+    target_configurations: 24
+    families:
+      Sony: [PlayStation 5, PlayStation 5 Digital, PlayStation 5 Pro]
+      Microsoft: [Xbox Series X, Xbox Series S]
+      Nintendo: [Nintendo Switch, Nintendo Switch OLED, Nintendo Switch 2]
+      Valve: [Steam Deck LCD, Steam Deck OLED]
+      Asus: [ROG Ally, ROG Ally X]
+      Lenovo: [Legion Go, Legion Go S]
+  tablets:
+    target_configurations: 18
+    families:
+      Apple: [iPad, iPad Air, iPad Pro, iPad mini]
+      Samsung: [Galaxy Tab S, Galaxy Tab FE, Galaxy Tab A]
+      Google: [Pixel Tablet]
+      Microsoft: [Surface Pro]
+      Lenovo: [Yoga Tab, Lenovo Tab]
+  gpus:
+    target_configurations: 20
+    families:
+      Nvidia: [GeForce RTX 50, GeForce RTX 40]
+      AMD: [Radeon RX 9000, Radeon RX 7000]
+      Intel: [Arc B, Arc A]
+      Asus: [ROG graphics cards]
+      Gigabyte: [Aorus graphics cards]
+      MSI: [Gaming graphics cards]
+  direct_components:
+    target_configurations: 20
+    families:
+      Crucial: [DDR5 desktop kits, DDR5 laptop kits, NVMe SSD]
+      Corsair: [Vengeance DDR5, Dominator DDR5]
+      Kingston: [Fury Beast DDR5, Fury Impact DDR5]
+      G.Skill: [Trident Z5 DDR5, Ripjaws DDR5]
+      Samsung: [Consumer SSD]
+      Western Digital: [WD Black SSD]
+      SK hynix: [Platinum SSD]
+upstream_companies:
+  memory_suppliers: [Samsung Electronics, SK hynix, Micron Technology]
+  device_oems: [Apple, Google, Samsung, Microsoft, Sony, Nintendo, Dell, Lenovo, HP, Asus, Acer]
+  silicon_platforms: [Nvidia, AMD, Intel, Qualcomm, MediaTek]

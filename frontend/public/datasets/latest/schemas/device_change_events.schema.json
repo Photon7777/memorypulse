@@ -1,0 +1,222 @@
+{
+  "$id": "https://photon7777.github.io/memorypulse/datasets/latest/schemas/device_change_events.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Derived before-and-after device transitions classified as price increases, specification compression, cost absorption, or insufficient evidence.",
+  "properties": {
+    "category": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "comparability": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "event_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "generation": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "manufacturer": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "market": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "memory_value_change_percent": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "model": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "notes": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "observation_date": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "previous_observation_date": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "previous_price_usd": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "previous_ram_gb": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "previous_snapshot_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "previous_storage_gb": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "price_change_percent": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "price_usd": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "product_family": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "product_tier": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "ram_change_percent": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "ram_gb": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "response_type": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "review_status": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "sku": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source_label": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source_tier": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source_url": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "storage_change_percent": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "storage_gb": {
+      "type": [
+        "number",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "event_id",
+    "previous_snapshot_id",
+    "observation_date",
+    "previous_observation_date",
+    "market",
+    "category",
+    "manufacturer",
+    "product_family",
+    "generation",
+    "model",
+    "sku",
+    "product_tier",
+    "previous_price_usd",
+    "price_usd",
+    "price_change_percent",
+    "previous_ram_gb",
+    "ram_gb",
+    "ram_change_percent",
+    "previous_storage_gb",
+    "storage_gb",
+    "storage_change_percent",
+    "memory_value_change_percent",
+    "comparability",
+    "response_type",
+    "source_id",
+    "source_url",
+    "source_label",
+    "source_tier",
+    "review_status",
+    "notes"
+  ],
+  "title": "MemoryPulse device change events row",
+  "type": "object"
+}

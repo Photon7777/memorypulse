@@ -13,7 +13,13 @@ from pathlib import Path
 from typing import Any
 
 from memorypulse.analysis.evidence import build_evidence_readiness
-from memorypulse.config import indicator_config, repository_root, source_config
+from memorypulse.config import (
+    free_only_enabled,
+    indicator_config,
+    repository_root,
+    source_allowed_in_free_mode,
+    source_config,
+)
 from memorypulse.database import create_database
 from memorypulse.exports.dataset import build_public_dataset, validate_public_dataset
 from memorypulse.exports.frontend import export_frontend
@@ -240,6 +246,7 @@ def run_update(offline: bool, output_root: Path | None, force_forecast: bool = F
     ensure_history_files(history)
     pipeline_run_id = stable_id("pipeline", utc_now().isoformat(), "offline" if offline else "production")
     configs = source_config(repo)
+    free_only = free_only_enabled(repo)
     fixture_dir = repo / "pipeline/tests/fixtures"
     source_runs: list[SourceRun] = []
     successful_core_source = False
@@ -247,6 +254,11 @@ def run_update(offline: bool, output_root: Path | None, force_forecast: bool = F
         config = dict(configs[source_id])
         if offline:
             config["enabled"] = True
+        elif free_only and not source_allowed_in_free_mode(config):
+            config["enabled"] = False
+            config["disabled_reason"] = (
+                "Excluded by the free-only public-pipeline policy; fixtures may still exercise this adapter."
+            )
         adapter = adapter_type(config, repo)
         started = utc_now()
         fixture = fixture_dir / FIXTURES[source_id] if offline else None

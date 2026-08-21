@@ -1,14 +1,22 @@
+policy:
+  free_only_default: true
+  allowed_cost_tiers: [free, free_with_key]
+  rule: Paid or redistribution-restricted sources may be tested with fixtures but never enter the public pipeline.
 sources:
   stanford_memory_prices:
     enabled: true
     url: https://dam.stanford.edu/assets/memory-prices/memory-prices.csv
     frequency: monthly
     reliability: research_dataset
+    cost_tier: free
+    eligible_for_public_pipeline: true
   dramexchange_homepage:
     enabled: false
     url: https://www.dramexchange.com/
     frequency: daily
     reliability: public_homepage
+    cost_tier: free
+    eligible_for_public_pipeline: false
     disabled_reason: Permission required; current Terms of Use restrict reproduction or distribution without prior written consent.
   fred_semiconductor:
     enabled: true
@@ -34,6 +42,8 @@ sources:
         unit: percent
     frequency: monthly
     reliability: official_statistics
+    cost_tier: free
+    eligible_for_public_pipeline: true
   bls_semiconductor_employment:
     enabled: true
     url: https://api.bls.gov/publicAPI/v1/timeseries/data/CES3133441301
@@ -42,6 +52,8 @@ sources:
     unit: thousand employees
     frequency: monthly
     reliability: official_statistics
+    cost_tier: free
+    eligible_for_public_pipeline: true
   world_bank_high_tech_exports:
     enabled: true
     url: https://api.worldbank.org/v2/country/WLD/indicator/TX.VAL.TECH.CD?format=json&per_page=100
@@ -50,17 +62,23 @@ sources:
     unit: current USD
     frequency: annual
     reliability: official_statistics
+    cost_tier: free
+    eligible_for_public_pipeline: true
   federal_register_semiconductor:
     enabled: true
     url: https://www.federalregister.gov/api/v1/documents.json?per_page=50&order=newest&conditions%5Bterm%5D=semiconductor
     frequency: daily
     reliability: official_policy_metadata
+    cost_tier: free
+    eligible_for_public_pipeline: true
   gdelt_memory_news:
     enabled: true
     url: https://api.gdeltproject.org/api/v2/doc/doc
     frequency: daily
     reliability: aggregated_news_metadata
     max_records: 50
+    cost_tier: free
+    eligible_for_public_pipeline: true
   bestbuy_memory_products:
     enabled: false
     disabled_reason: Public historical archiving is disabled because the API terms limit content caching to 72 hours; written permission would be required.
@@ -68,8 +86,10 @@ sources:
     url: https://api.bestbuy.com/v1/products
     frequency: daily
     reliability: optional_retail_api
+    cost_tier: free_with_key
+    eligible_for_public_pipeline: false
   keepa_ddr5_panel:
-    enabled: true
+    enabled: false
     requires_env: KEEPA_API_KEY
     url: https://api.keepa.com/product
     source_url: https://keepa.com/#!api
@@ -79,6 +99,8 @@ sources:
     max_products: 50
     frequency: monthly
     reliability: licensed_retail_history
+    cost_tier: paid
+    eligible_for_public_pipeline: false
   census_memory_imports:
     enabled: true
     requires_env: CENSUS_API_KEY
@@ -89,6 +111,8 @@ sources:
     start_month: 2010-01
     frequency: monthly
     reliability: official_statistics
+    cost_tier: free_with_key
+    eligible_for_public_pipeline: true
   census_memory_exports:
     enabled: true
     requires_env: CENSUS_API_KEY
@@ -99,6 +123,8 @@ sources:
     start_month: 2010-01
     frequency: monthly
     reliability: official_statistics
+    cost_tier: free_with_key
+    eligible_for_public_pipeline: true
   sec_memory_supplier_fundamentals:
     enabled: true
     requires_env: SEC_CONTACT_EMAIL
@@ -107,6 +133,8 @@ sources:
     ticker: MU
     frequency: quarterly
     reliability: official_company_filings
+    cost_tier: free
+    eligible_for_public_pipeline: true
     facts:
       - tag: InventoryNet
         name: inventory

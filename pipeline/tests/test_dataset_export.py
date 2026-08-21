@@ -26,13 +26,15 @@ def test_public_dataset_has_catalog_schemas_bundle_and_checksums(tmp_path) -> No
     )
     connection.close()
 
-    assert catalog["dataset_version"] == "1.4.0"
-    assert len(catalog["resources"]) == 26
+    assert catalog["dataset_version"] == "1.5.0"
+    assert len(catalog["resources"]) == 30
     assert any(resource["id"] == "structural_forecasts-parquet" for resource in catalog["resources"])
+    assert any(resource["id"] == "device_change_events-parquet" for resource in catalog["resources"])
     assert (output / catalog["bundle"]["path"]).exists()
     assert (output / "parquet/memory_prices.parquet").exists()
     assert (output / "parquet/electronics_prices.parquet").exists()
     assert (output / "parquet/industry_outlooks.parquet").exists()
+    assert (output / "parquet/device_configuration_snapshots.parquet").exists()
     schema = json.loads((output / "schemas/memory_prices.schema.json").read_text())
     assert "observation_id" in schema["properties"]
     assert validate_public_dataset(output) == []

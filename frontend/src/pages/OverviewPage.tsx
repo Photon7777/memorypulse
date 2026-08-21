@@ -83,11 +83,11 @@ export function OverviewPage() {
       <section className="story-hero">
         <div className="story-hero__copy">
           <p className="kicker"><span className="live-pip" />Memory markets and consumer electronics</p>
-          <h1>Memory market pressure is reaching consumer electronics.</h1>
-          <p className="story-hero__lede">Compare public DDR5 indicators with official PlayStation, Xbox, Nintendo, and MacBook price records. Forecasts and assumptions remain separately labeled.</p>
+          <h1>What happens when memory gets expensive?</h1>
+          <p className="story-hero__lede">Follow the chain from DDR5 market pressure to console price increases and leaner entry configurations in phones and laptops. Forecasts, observed product changes, and assumptions remain separately labeled.</p>
           <div className="hero-actions">
             <button className="button button--primary" type="button" onClick={() => scrollToChapter('price-story')}>Review the evidence</button>
-            <HashLink className="button button--quiet" to="/forecasts">Review forecasts</HashLink>
+            <HashLink className="button button--quiet" to="/devices">Explore device changes</HashLink>
             <HashLink className="button button--text" to="/data">Download the dataset ↗</HashLink>
           </div>
           <div className="story-hero__proof">
@@ -99,7 +99,7 @@ export function OverviewPage() {
           <div className="signal-stage__halo" />
           <span className="signal-node signal-node--one">DDR5</span>
           <span className="signal-node signal-node--two">CONSOLES</span>
-          <span className="signal-node signal-node--three">LAPTOPS</span>
+          <span className="signal-node signal-node--three">DEVICES</span>
           <aside className="signal-readout">
             <span>PRESSURE INDEX</span>
             <strong><AnimatedMetric value={brief.data?.pressure_score} decimals={0} /></strong>
@@ -109,7 +109,7 @@ export function OverviewPage() {
       </section>
 
       <nav className="story-rail" aria-label="Story chapters">
-        <button type="button" onClick={() => scrollToChapter('price-story')}><b>01</b><span>Product prices</span></button>
+        <button type="button" onClick={() => scrollToChapter('price-story')}><b>01</b><span>Consumer impact</span></button>
         <button type="button" onClick={() => scrollToChapter('cost-path')}><b>02</b><span>Cost transmission</span></button>
         <button type="button" onClick={() => scrollToChapter('forecast-story')}><b>03</b><span>Market outlook</span></button>
         <button type="button" onClick={() => scrollToChapter('decision-story')}><b>04</b><span>Current conclusion</span></button>
@@ -118,7 +118,7 @@ export function OverviewPage() {
       <section className="story-chapter" id="price-story">
         <div className="story-chapter__intro">
           <span className="chapter-number">01</span>
-          <div><p className="kicker">Official price records</p><h2>Console prices increased. Laptop comparisons require configuration context.</h2></div>
+          <div><p className="kicker">Reviewed product records</p><h2>Some prices rose. Some entry configurations became leaner.</h2></div>
           <p>{story.data?.thesis}</p>
         </div>
         <div className="story-evidence-grid">
@@ -132,8 +132,9 @@ export function OverviewPage() {
         <article className="chart-card story-price-chart">
           <div className="section-heading"><div><p className="kicker">Official milestones</p><h2>Starting prices across product generations</h2></div><p>Solid lines are the closest comparisons. Dashed lines connect evolving laptop entry tiers and must be read with their configuration changes.</p></div>
           <ElectronicsStoryChart series={storySeries} />
-          <p className="chart-takeaway"><strong>Analyst note</strong>Official same-family records show higher PS5 and Xbox prices. MacBook starting tiers also rose, but changes in memory, storage, and performance limit direct comparison.</p>
+          <p className="chart-takeaway"><strong>Analyst note</strong>Official same-family records show higher PS5 and Xbox prices. The separate device tracker compares RAM and storage changes for products such as Pixel and Surface, with limitations attached to each transition.</p>
         </article>
+        <div className="chapter-action"><HashLink className="button button--quiet" to="/devices">Open the device response tracker →</HashLink></div>
         <div className="manufacturer-signal">
           <span className="manufacturer-signal__mark">X</span>
           <div><p className="kicker">Manufacturer disclosure</p><h3>Microsoft connected its 2026 console increase to storage and memory pressure.</h3><p>The statement supports a component-cost channel. It does not quantify memory's share of the retail price increase.</p></div>

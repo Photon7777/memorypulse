@@ -21,6 +21,17 @@ QUERIES = [
     '"Samsung memory"',
     '"SK hynix memory"',
     '"Micron memory"',
+    '"base RAM"',
+    '"RAM configuration"',
+    '"memory configuration"',
+    '"8GB RAM" laptop',
+    '"12GB RAM" phone',
+    '"device price increase"',
+    '"component costs" electronics',
+    '"console price"',
+    '"laptop price" memory',
+    '"smartphone price" memory',
+    '"graphics card" VRAM price',
 ]
 TAG_RULES = {
     "supply expansion": ("supply expansion", "increase output", "capacity expansion"),
@@ -33,11 +44,30 @@ TAG_RULES = {
     "earnings guidance": ("earnings guidance", "outlook", "revenue guidance"),
     "shortage": ("shortage", "tight supply", "supply constraint"),
     "inventory": ("inventory", "stockpile"),
+    "RAM reduction": ("less ram", "reduced ram", "ram reduction", "cut ram", "base ram"),
+    "configuration change": ("configuration", "base model", "entry model", "starting model"),
+    "storage change": ("storage change", "ssd capacity", "base storage"),
+    "consumer price pressure": ("price increase", "higher price", "more expensive", "price hike"),
+    "tariff or trade policy": ("tariff", "export control", "trade restriction"),
+    "product launch": ("launches", "unveils", "announces", "introduced"),
 }
 COMPANY_RULES = {
     "Samsung": ("samsung",),
     "SK hynix": ("sk hynix", "skhynix"),
     "Micron": ("micron",),
+    "Apple": ("apple", "iphone", "macbook", "ipad"),
+    "Google": ("google pixel", "pixel 11", "pixel 10"),
+    "Microsoft": ("microsoft", "surface", "xbox"),
+    "Sony": ("sony", "playstation", "ps5"),
+    "Nintendo": ("nintendo", "switch 2"),
+    "Dell": ("dell", "xps"),
+    "Lenovo": ("lenovo", "thinkpad", "legion go"),
+    "HP": (" hp ", "hewlett-packard", "omnibook"),
+    "Asus": ("asus", "rog ally", "zenbook"),
+    "Acer": ("acer", "predator"),
+    "Nvidia": ("nvidia", "geforce", "rtx"),
+    "AMD": ("amd", "radeon"),
+    "Intel": ("intel", "arc gpu"),
 }
 MEMORY_RULES = {
     "DDR4": ("ddr4",),
@@ -45,6 +75,27 @@ MEMORY_RULES = {
     "HBM": ("hbm", "high bandwidth memory"),
     "DRAM": ("dram",),
 }
+DEVICE_TERMS = (
+    "pixel", "iphone", "galaxy", "macbook", "surface", "xps", "thinkpad", "laptop",
+    "playstation", "ps5", "xbox", "switch 2", "steam deck", "rog ally", "ipad",
+    "tablet", "geforce", "radeon", "graphics card",
+)
+CONFIGURATION_TERMS = (
+    "ram", "memory configuration", "base model", "entry model", "storage", "price increase",
+    "price hike", "more expensive", "starting price",
+)
+POLICY_TERMS = ("tariff", "export control", "trade restriction", "subsidy", "regulation")
+
+
+def query_lane(text: str) -> str:
+    if any(token in text for token in POLICY_TERMS):
+        return "market_policy"
+    if any(token in text for token in DEVICE_TERMS):
+        if any(token in text for token in CONFIGURATION_TERMS):
+            return "device_configuration"
+        if any(token in text for token in ("launches", "unveils", "announces", "introduced")):
+            return "official_product"
+    return "upstream_memory"
 
 
 def canonical_url(value: str) -> str:
@@ -118,7 +169,7 @@ class GdeltMemoryNewsSource(SourceAdapter[NewsEvent]):
                 source_domain=domain,
                 source_name=str(row.get("domain", domain)),
                 article_url=url,
-                query_category="memory_market",
+                query_category=query_lane(combined),
                 companies=companies,
                 memory_types=memory_types,
                 event_tags=tags,

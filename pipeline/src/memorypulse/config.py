@@ -21,6 +21,28 @@ def source_config(root: Path | None = None) -> dict[str, dict[str, Any]]:
     return load_yaml("sources.yml", root).get("sources", {})
 
 
+def source_policy(root: Path | None = None) -> dict[str, Any]:
+    return load_yaml("sources.yml", root).get("policy", {})
+
+
+def device_watchlist(root: Path | None = None) -> dict[str, Any]:
+    return load_yaml("device_watchlist.yml", root)
+
+
+def free_only_enabled(root: Path | None = None) -> bool:
+    configured = bool(source_policy(root).get("free_only_default", True))
+    value = os.getenv("MEMORYPULSE_FREE_ONLY")
+    if value is None:
+        return configured
+    return value.strip().lower() not in {"0", "false", "no", "off"}
+
+
+def source_allowed_in_free_mode(config: dict[str, Any]) -> bool:
+    return bool(config.get("eligible_for_public_pipeline", True)) and str(
+        config.get("cost_tier", "free")
+    ) in {"free", "free_with_key"}
+
+
 def indicator_config(root: Path | None = None) -> dict[str, Any]:
     return load_yaml("indicators.yml", root)
 

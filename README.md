@@ -2,14 +2,14 @@
 
 MemoryPulse is a continuously updated, open-source market-intelligence project that tracks public
 signals around AI infrastructure demand, HBM allocation, DRAM supply, semiconductor conditions,
-consumer memory prices, and official electronics price milestones. It preserves historical facts, builds an ephemeral analytical database,
+consumer memory prices, and reviewed device configuration changes. It preserves historical facts, builds an ephemeral analytical database,
 publishes a transparent 0–100 Memory Pressure Index, produces an auditable business conclusion on
 every validated run, withholds forecasts until the history is sufficient, and serves an interactive
 React decision-support site through GitHub Pages.
 
-Its core is designed to operate for **$0**: no continuously running server, paid database, paid API,
-API-key requirement, or paid LLM. Optional Census, SEC, and licensed Keepa integrations can expand the
-evidence without becoming core dependencies. Its language describes association and market context—not
+Its public workflow is designed to operate for **$0**: no continuously running server, paid database,
+paid API, paid LLM, or required paid credential. Optional free Census and SEC integrations can expand the
+evidence. Paid and redistribution-restricted adapters are excluded by a code-level free-only guard. Its language describes association and market context, not
 unsupported causality.
 
 > **Disclaimer:** MemoryPulse is an independent research project. Its Memory Pressure Index and
@@ -31,7 +31,7 @@ missingness, and uncertainty visible.
 ```mermaid
 flowchart LR
   A["Public sources\nStanford · FRED · BLS · World Bank\nFederal Register · GDELT"] --> B["Source adapters\ntimeouts · retries · validation"]
-  K["Optional evidence\nCensus trade · SEC filings\nlicensed Keepa panel"] -.-> B
+  K["Optional free evidence\nCensus trade · SEC filings"] -.-> B
   B --> C["Canonical history\nCSV · NDJSON"]
   C --> D["Ephemeral DuckDB"]
   D --> E["Polars normalization\nquality checks · views"]
@@ -39,7 +39,7 @@ flowchart LR
   E --> G["Forecast selection\n1 · 3 · 6 month horizons\nhorizon-specific backtests"]
   E --> S["Structural scenarios\n12 · 18 · 24 months\ndrivers · easing · base · tight supply"]
   O["Attributed industry outlooks\nmetric · horizon · source"] --> H
-  C --> P["Official device milestones\nPlayStation · Xbox · Nintendo · MacBook"]
+  C --> P["Reviewed device panel\nphones · PCs · consoles · tablets · GPUs"]
   P --> H
   F --> Q["Executive decision brief\nposture · drivers · risks"]
   F --> H["Atomic static JSON"]
@@ -73,12 +73,12 @@ dataset release; no live database or application server is required.
 | [FRED](https://fred.stlouisfed.org/series/PCU3344133441) | Semiconductor producer/import prices, capacity utilization, computer CPI, and electronics production | None | Enabled |
 | [Census International Trade API](https://www.census.gov/data/developers/data-sets/international-trade.html) | Monthly HS 854232 memory integrated-circuit imports and exports | Free API key | Adapter included; disabled without key |
 | [SEC Company Facts](https://www.sec.gov/search-filings/edgar-application-programming-interfaces) | Optional supplier inventory, capital expenditure, and revenue | Approved automated-access identity | Adapter included; disabled without owner-approved identity |
-| [Keepa Data Access](https://keepa.com/#!api) | Licensed multi-product DDR5 historical price panel | Subscription, ASIN panel, and export-rights acknowledgement | Permission-gated |
+| [Keepa Data Access](https://keepa.com/#!api) | Licensed adapter retained for private experiments | Subscription | Excluded from the free public workflow |
 | [BLS Public Data API](https://www.bls.gov/developers/home.htm) | U.S. semiconductor manufacturing employment | None | Enabled |
 | [World Bank Indicators API](https://api.worldbank.org/v2/country/WLD/indicator/TX.VAL.TECH.CD?format=json) | Global high-technology export context | None | Enabled |
 | [Federal Register API](https://www.federalregister.gov/developers/documentation/api/v1) | Official semiconductor policy and rule metadata | None | Enabled |
 | [GDELT DOC API](https://blog.gdeltproject.org/gdelt-doc-2-0-api-debuts/) | Article metadata and short excerpts | None | Enabled; failures are non-blocking |
-| Official manufacturer announcements | PlayStation, Xbox, Nintendo, and MacBook U.S. price milestones | None | Curated with source URLs and comparability labels |
+| Official manufacturer product pages and announcements | Review-gated U.S. price, RAM, storage, and configuration snapshots across phones, PCs, consoles, tablets, GPUs, and components | None | Curated with source tier, review status, and comparability labels |
 | [TrendForce](https://www.trendforce.com/presscenter/news/20260730-13158.html) and [Gartner](https://www.gartner.com/en/newsroom/press-releases/2026-02-26-gartner-says-surging-memory-costs-will-reduce-global-pc-and-smartphone-shipments-in-2026) | Attributed 2026–2027 industry and device-price outlooks | None | Curated; never blended silently into observed-series forecasts |
 | [DRAMeXchange homepage](https://www.dramexchange.com/) | Public homepage spot/module tables only | None | Disabled pending owner terms/robots review |
 | [Best Buy Products API](https://developers.bestbuy.com/legal) | Current retail product content | Key plus written archival permission | Historical public archiving disabled under the current 72-hour caching limit |
@@ -208,6 +208,10 @@ monthly DDR5 observations exist; the site reports the remaining evidence gap.
 Interactive tools include DDR-generation/source/date-range filters, per-series visibility controls,
 shareable price views, CSV downloads, event search/sort/export, forecast-horizon selection, device-cost
 scenarios, and a procurement lab that compares modeled price movement with inventory carrying cost.
+The Device tracker adds price-versus-RAM scatter analysis, manufacturer-response counts, before-and-after
+configuration cards, category and response filters, and an explicit evidence gate. Its 102-family
+watchlist targets 160 representative configurations. Discovery metadata creates review candidates only;
+it never changes a public metric automatically.
 
 ## Public dataset
 
@@ -216,7 +220,8 @@ release includes canonical CSV or NDJSON, equivalent Zstandard Parquet files, JS
 catalog, Schema.org metadata, SHA-256 checksums, and a complete ZIP. The catalog records row counts,
 date coverage, source IDs, artifact sizes, and content hashes. Scheduled updates rebuild the release only
 after validation; the first scheduled run of each UTC month also attaches the bundle to a versioned
-GitHub Release for durable snapshots. Version 1.3 includes official electronics price milestones,
+GitHub Release for durable snapshots. Version 1.5 includes reviewed device configuration snapshots,
+derived device change events, official electronics price milestones,
 transparent device-category exposure assumptions, sourced expert outlooks, and 12–24 month structural
 scenarios so the published story
 and the distinction between statistical forecasts and industry expectations can be reproduced.
@@ -283,12 +288,12 @@ The Vite base path is derived from `GITHUB_REPOSITORY` during Actions builds; lo
 
 No local code can change the repository’s Pages source setting.
 
-## Optional evidence credentials
+## Optional free evidence credentials
 
 MemoryPulse works without these integrations. `CENSUS_API_KEY` enables official monthly memory-chip
 trade data. `SEC_CONTACT_EMAIL` supplies the contact identity required for compliant EDGAR automation.
-The licensed DDR5 panel additionally requires `KEEPA_API_KEY`, a comma-separated `KEEPA_DDR5_ASINS`
-panel, and `KEEPA_PUBLIC_EXPORT_ACKNOWLEDGED=true` only after the owner confirms redistribution rights.
+Both services are free. `MEMORYPULSE_FREE_ONLY=true` is the default and is set explicitly in GitHub
+Actions. Licensed Keepa and archival-restricted Best Buy adapters remain outside the public workflow.
 
 For scheduled updates, add the relevant values under **GitHub repository → Settings → Secrets and
 variables → Actions**. Secrets remain server-side and are never generated into browser JavaScript.

@@ -8,6 +8,24 @@ Eligible normalized records are also packaged under `frontend/public/datasets/la
 text, Parquet, schemas, checksums, and a ZIP. Distribution never overrides upstream rights: users must
 review [DATA_LICENSE.md](DATA_LICENSE.md) and the source-specific notes below before redistribution.
 
+## Reviewed device configuration panel
+
+- **Scope:** A U.S. watchlist of 102 product families and 160 target configurations across smartphones,
+  laptops, gaming systems and handhelds, tablets, GPUs, and direct consumer memory components.
+- **Preferred sources:** Official manufacturer product pages, newsrooms, and regulatory records.
+  Reputable publications and GDELT metadata are discovery aids when a manufacturer page does not expose
+  an earlier configuration.
+- **Collected:** List or launch price, price basis, RAM, RAM type, storage, processor family, product tier,
+  market, source tier, review status, and a comparability label.
+- **Change events:** DuckDB compares approved consecutive snapshots within the same market, product family,
+  and tier. It classifies price increases, specification compression, combined price-and-spec compression,
+  cost absorption, mixed outcomes, new tiers, and insufficient evidence.
+- **Review boundary:** News never writes a configuration snapshot automatically. Candidates must be checked
+  against the product, market, price basis, date, and source before approval.
+- **Redistribution:** Normalized facts and links are published, not copied product photography or page bodies.
+- **Cost:** The default workflow is free-only. Paid and redistribution-restricted adapters are rejected by
+  policy even if a credential is present.
+
 ## Official electronics price milestones
 
 - **Sources:** Official U.S. announcements and product pages from PlayStation, Xbox, Nintendo, and Apple.
@@ -145,7 +163,7 @@ review [DATA_LICENSE.md](DATA_LICENSE.md) and the source-specific notes below be
   `SEC_CONTACT_EMAIL`. MemoryPulse does not invent the repository owner's identity, so the feed reports
   disabled until an owner-approved contact is configured. Failed access never affects core health.
 
-## Permission-gated licensed Keepa DDR5 panel
+## Excluded licensed Keepa DDR5 panel
 
 - **Source:** Keepa Data Access product history API.
 - **Collected:** Monthly in-stock new-price observations for a curated 1–50 product DDR5 ASIN panel,
@@ -153,9 +171,8 @@ review [DATA_LICENSE.md](DATA_LICENSE.md) and the source-specific notes below be
 - **Authentication:** `KEEPA_API_KEY` plus `KEEPA_DDR5_ASINS`.
 - **Normalization:** Raw change events are converted to one month-level price per product. Explicit
   unavailable events create gaps and are never forward-filled as valid prices.
-- **Permission gate:** The public repository will not collect this source unless
-  `KEEPA_PUBLIC_EXPORT_ACKNOWLEDGED=true` is also configured after the owner confirms the subscription
-  permits the intended public dataset distribution.
+- **Permission gate:** The free public workflow never collects this source. The adapter and fixture remain
+  available only for private experiments and regression testing.
 - **Caveats:** Product-panel breadth does not create additional independent time periods. Product mix,
   marketplace sellers, promotions, and availability can move the panel independently of wholesale DDR5.
 
@@ -163,7 +180,8 @@ review [DATA_LICENSE.md](DATA_LICENSE.md) and the source-specific notes below be
 
 - **URL:** <https://api.gdeltproject.org/api/v2/doc/doc>
 - **Collected:** Article title, publisher/domain, canonical source URL, published/seen time, short API
-  excerpt when supplied, memory/company keyword matches, explainable event tags, relevance score,
+  excerpt when supplied, memory/company and device-family keyword matches, an upstream/device/product/policy
+  lane, explainable event tags, relevance score,
   and deduplication group. No full article text.
 - **Frequency:** Once during the daily run, querying the preceding day with a bounded result count.
 - **Authentication:** None.
