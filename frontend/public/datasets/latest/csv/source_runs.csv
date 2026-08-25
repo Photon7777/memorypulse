@@ -10,6 +10,7 @@ run_054ccb262cbe58b00781,census_memory_exports,2026-08-17T10:50:14Z,2026-08-17T1
 run_05a5e10de0fd920b6256,census_memory_exports,2026-08-22T10:43:21Z,2026-08-22T10:43:21Z,disabled,0,0,0,,Optional CENSUS_API_KEY is not configured,,0.0,false
 run_069b1909f3b9e1e4bb54,dramexchange_homepage,2026-08-21T10:50:55Z,2026-08-21T10:50:55Z,disabled,0,0,0,,Permission required; current Terms of Use restrict reproduction or distribution without prior written consent.,,0.0,false
 run_073dc28580e48ea722bb,fred_semiconductor,2026-08-15T10:42:27Z,2026-08-15T10:42:28Z,success,655,0,2812,200,,2026-07-01T00:00:00Z,1.0,false
+run_07c84fabb1c314ef8ff4,sec_memory_supplier_fundamentals,2026-08-25T10:52:32Z,2026-08-25T10:52:32Z,disabled,0,0,0,,Optional SEC_CONTACT_EMAIL is not configured,,0.0,false
 run_08c6f63141d6bee70d5f,federal_register_semiconductor,2026-08-18T10:49:16Z,2026-08-18T10:49:17Z,success,50,0,50,200,,2026-08-17T00:00:00Z,1.0,false
 run_0956580932af7aada612,bestbuy_memory_products,2026-08-10T11:28:56Z,2026-08-10T11:28:56Z,disabled,0,0,0,,Optional BESTBUY_API_KEY is not configured,,0.0,false
 run_0a0b01125ed4cecb7f79,world_bank_high_tech_exports,2026-08-12T11:12:44Z,2026-08-12T11:12:46Z,success,66,0,13,200,,2023-01-01T00:00:00Z,2.0,false
@@ -38,19 +39,24 @@ run_1e4d2bd30a4bd00921d7,federal_register_semiconductor,2026-08-23T10:44:13Z,202
 run_1ea962cc91cc7e126d75,census_memory_imports,2026-08-23T10:44:25Z,2026-08-23T10:44:25Z,disabled,0,0,0,,Optional CENSUS_API_KEY is not configured,,0.0,false
 run_2042efda49dfc430c2a3,bls_semiconductor_employment,2026-08-11T04:17:54Z,2026-08-11T04:17:55Z,success,30,0,30,200,,2026-06-01T00:00:00Z,1.0,false
 run_208d47323a6431d36de7,fred_semiconductor,2026-08-21T10:50:55Z,2026-08-21T10:50:55Z,success,655,0,2815,200,,2026-07-01T00:00:00Z,0.0,false
+run_2094e2528912d060885a,world_bank_high_tech_exports,2026-08-25T10:52:19Z,2026-08-25T10:52:20Z,success,66,0,13,200,,2023-01-01T00:00:00Z,1.0,false
 run_21247358be56d5c9d13d,gdelt_memory_news,2026-08-11T03:39:02Z,2026-08-11T03:39:12Z,degraded,0,0,0,429,GDELT DOC API rate limit reached (HTTP 429); the next scheduled update will retry.,,10.0,false
 run_2188636961a315e1ddc4,census_memory_imports,2026-08-17T10:50:14Z,2026-08-17T10:50:14Z,disabled,0,0,0,,Optional CENSUS_API_KEY is not configured,,0.0,false
 run_224988f71be30ee69ade,bestbuy_memory_products,2026-08-11T03:35:11Z,2026-08-11T03:35:11Z,disabled,0,0,0,,Optional BESTBUY_API_KEY is not configured,,0.0,false
 run_239623dc922e04458a89,fred_semiconductor,2026-08-05T12:19:43Z,2026-08-05T12:19:44Z,success,499,0,499,200,,2026-06-01T00:00:00Z,1.0,false
 run_262b8b77fffd641f0fa8,bls_semiconductor_employment,2026-08-18T10:49:15Z,2026-08-18T10:49:16Z,success,30,0,30,200,,2026-06-01T00:00:00Z,1.0,false
+run_26cb3630115b5c30b0c8,bls_semiconductor_employment,2026-08-25T10:52:18Z,2026-08-25T10:52:19Z,success,30,0,30,200,,2026-06-01T00:00:00Z,1.0,false
 run_2a3ce25ceeb298daade2,gdelt_memory_news,2026-08-11T03:34:55Z,2026-08-11T03:35:11Z,success,50,43,0,200,,2026-08-11T02:45:00Z,16.0,false
 run_2bd065bac55ec19b500a,fred_semiconductor,2026-08-17T10:49:57Z,2026-08-17T10:49:58Z,success,655,0,2812,200,,2026-07-01T00:00:00Z,1.0,false
+run_2c336dea262fc02f548f,stanford_memory_prices,2026-08-25T10:52:12Z,2026-08-25T10:52:13Z,success,705,0,705,200,,2026-07-01T00:00:00Z,1.0,false
 run_2e98d2cea31168377bb0,stanford_memory_prices,2026-08-04T18:04:51Z,2026-08-04T18:04:51Z,success,705,0,705,304,,2026-07-01T00:00:00Z,0.0,false
 run_2e9e728784791e060b03,fred_semiconductor,2026-08-09T10:54:49Z,2026-08-09T10:54:49Z,success,499,0,499,200,,2026-06-01T00:00:00Z,0.0,false
 run_2f40ef1d7d440da185e9,keepa_ddr5_panel,2026-08-11T11:07:40Z,2026-08-11T11:07:40Z,disabled,0,0,0,,"Keepa requires KEEPA_API_KEY, KEEPA_DDR5_ASINS, and explicit public-export acknowledgement",,0.0,false
 run_2f86e65e1d31150bba18,bls_semiconductor_employment,2026-08-10T21:51:38Z,2026-08-10T21:51:38Z,success,30,0,30,200,,2026-06-01T00:00:00Z,0.0,false
+run_2fb49e4b5cefcb91b123,bestbuy_memory_products,2026-08-25T10:52:32Z,2026-08-25T10:52:32Z,disabled,0,0,0,,Excluded by the free-only public-pipeline policy; fixtures may still exercise this adapter.,,0.0,false
 run_2fcf451ebe2108c96f71,bls_semiconductor_employment,2026-08-06T12:21:21Z,2026-08-06T12:21:22Z,success,29,0,29,200,,2026-05-01T00:00:00Z,1.0,false
 run_2ff8c5add48b1909a4f8,world_bank_high_tech_exports,2026-08-13T11:12:46Z,2026-08-13T11:13:12Z,success,66,0,13,200,,2023-01-01T00:00:00Z,26.0,false
+run_3071308e32419e5afec5,gdelt_memory_news,2026-08-25T10:52:20Z,2026-08-25T10:52:32Z,degraded,0,0,0,429,GDELT DOC API rate limit reached (HTTP 429); the next scheduled update will retry.,,12.0,false
 run_30d5f13394c382a2735e,sec_memory_supplier_fundamentals,2026-08-14T11:10:44Z,2026-08-14T11:10:44Z,disabled,0,0,0,,Optional SEC_CONTACT_EMAIL is not configured,,0.0,false
 run_30f69093bfd4d7308fda,keepa_ddr5_panel,2026-08-18T10:49:28Z,2026-08-18T10:49:28Z,disabled,0,0,0,,"Keepa requires KEEPA_API_KEY, KEEPA_DDR5_ASINS, and explicit public-export acknowledgement",,0.0,false
 run_313f1172fdf74efb90b2,dramexchange_homepage,2026-08-23T10:44:09Z,2026-08-23T10:44:09Z,disabled,0,0,0,,Excluded by the free-only public-pipeline policy; fixtures may still exercise this adapter.,,0.0,false
@@ -108,11 +114,13 @@ run_5ae5970e48c7496bfd97,sec_memory_supplier_fundamentals,2026-08-22T10:43:21Z,2
 run_5b6f15495ac9d8b3d63d,world_bank_high_tech_exports,2026-08-14T11:10:32Z,2026-08-14T11:10:32Z,success,66,0,13,200,,2023-01-01T00:00:00Z,0.0,false
 run_5b6f347dd010e84ad866,world_bank_high_tech_exports,2026-08-15T10:42:28Z,2026-08-15T10:42:29Z,success,66,0,13,200,,2023-01-01T00:00:00Z,1.0,false
 run_5c569f4ebc01baa85df4,sec_memory_supplier_fundamentals,2026-08-21T10:51:12Z,2026-08-21T10:51:12Z,disabled,0,0,0,,Optional SEC_CONTACT_EMAIL is not configured,,0.0,false
+run_5e5feaf1c589ffc0cdf4,dramexchange_homepage,2026-08-25T10:52:13Z,2026-08-25T10:52:13Z,disabled,0,0,0,,Excluded by the free-only public-pipeline policy; fixtures may still exercise this adapter.,,0.0,false
 run_5e6819defd3fa2962699,bls_semiconductor_employment,2026-08-11T11:07:27Z,2026-08-11T11:07:27Z,success,30,0,30,200,,2026-06-01T00:00:00Z,0.0,false
 run_5e7cc7beb1686f5ef590,gdelt_memory_news,2026-08-10T11:28:45Z,2026-08-10T11:28:56Z,degraded,0,0,0,429,GDELT DOC API rate limit reached (HTTP 429); the next scheduled update will retry.,,11.0,false
 run_5f97a53857aaa28fae25,bls_semiconductor_employment,2026-08-21T10:50:55Z,2026-08-21T10:50:56Z,success,30,0,30,200,,2026-06-01T00:00:00Z,1.0,false
 run_606610e970f15e997496,gdelt_memory_news,2026-08-11T11:07:27Z,2026-08-11T11:07:40Z,degraded,0,0,0,429,GDELT DOC API rate limit reached (HTTP 429); the next scheduled update will retry.,,13.0,false
 run_61624d0d43dc3949da17,keepa_ddr5_panel,2026-08-13T11:13:23Z,2026-08-13T11:13:23Z,disabled,0,0,0,,"Keepa requires KEEPA_API_KEY, KEEPA_DDR5_ASINS, and explicit public-export acknowledgement",,0.0,false
+run_619e194de5d1c1f6d1f5,census_memory_imports,2026-08-25T10:52:32Z,2026-08-25T10:52:32Z,disabled,0,0,0,,Optional CENSUS_API_KEY is not configured,,0.0,false
 run_61d7ae30f54e81b6b1db,bestbuy_memory_products,2026-08-20T10:50:05Z,2026-08-20T10:50:05Z,disabled,0,0,0,,Public historical archiving is disabled because the API terms limit content caching to 72 hours; written permission would be required.,,0.0,false
 run_625c1228515e187792a8,federal_register_semiconductor,2026-08-19T10:48:32Z,2026-08-19T10:48:32Z,success,50,0,50,200,,2026-08-17T00:00:00Z,0.0,false
 run_639828440242ac12110f,federal_register_semiconductor,2026-08-05T17:44:05Z,2026-08-05T17:44:06Z,success,50,0,50,200,,2026-08-03T00:00:00Z,1.0,false
@@ -126,6 +134,7 @@ run_6668991274889b85cd35,dramexchange_homepage,2026-08-10T21:51:38Z,2026-08-10T2
 run_66ab63261e0002cb4fe2,gdelt_memory_news,2026-08-04T18:01:10Z,2026-08-04T18:01:26Z,degraded,0,0,0,429,GDELT DOC API rate limit reached (HTTP 429); the next scheduled update will retry.,,16.0,false
 run_68e6498ccb1c7bb2896c,bestbuy_memory_products,2026-08-09T10:55:17Z,2026-08-09T10:55:17Z,disabled,0,0,0,,Optional BESTBUY_API_KEY is not configured,,0.0,false
 run_6bec420f97c4854e6dbb,census_memory_imports,2026-08-16T10:43:10Z,2026-08-16T10:43:10Z,disabled,0,0,0,,Optional CENSUS_API_KEY is not configured,,0.0,false
+run_6c24a971d83cb6e80ac8,fred_semiconductor,2026-08-25T10:52:13Z,2026-08-25T10:52:18Z,success,655,0,2815,200,,2026-07-01T00:00:00Z,5.0,false
 run_6c3f20c10a0130472057,world_bank_high_tech_exports,2026-08-18T10:49:16Z,2026-08-18T10:49:16Z,success,66,0,13,200,,2023-01-01T00:00:00Z,0.0,false
 run_6d09e56121c9105945e7,bls_semiconductor_employment,2026-08-11T03:34:55Z,2026-08-11T03:34:55Z,success,30,0,30,200,,2026-06-01T00:00:00Z,0.0,false
 run_6de51003e8ee4203df8e,fred_semiconductor,2026-08-04T18:04:51Z,2026-08-04T18:04:51Z,success,499,0,499,200,,2026-06-01T00:00:00Z,0.0,false
@@ -180,6 +189,7 @@ run_8de856a5f6d7234c20b9,sec_memory_supplier_fundamentals,2026-08-24T10:56:33Z,2
 run_8e626903941435bad830,gdelt_memory_news,2026-08-04T15:16:22Z,2026-08-04T15:16:38Z,success,50,22,22,200,,2026-08-04T14:00:00Z,16.0,false
 run_8ef8dd515812f9bcffc1,stanford_memory_prices,2026-08-15T10:42:26Z,2026-08-15T10:42:27Z,success,705,0,705,200,,2026-07-01T00:00:00Z,1.0,false
 run_8f13efed762003e56aae,bls_semiconductor_employment,2026-08-08T10:53:38Z,2026-08-08T10:53:38Z,success,30,0,30,200,,2026-06-01T00:00:00Z,0.0,false
+run_9013dc7e22c752a851b1,federal_register_semiconductor,2026-08-25T10:52:20Z,2026-08-25T10:52:20Z,success,50,0,50,200,,2026-08-24T00:00:00Z,0.0,false
 run_93cf069253f088db1bf0,fred_semiconductor,2026-08-11T03:39:01Z,2026-08-11T03:39:02Z,success,654,0,1410,200,,2026-06-01T00:00:00Z,1.0,false
 run_94f293cd7b6aad715265,world_bank_high_tech_exports,2026-08-21T10:50:56Z,2026-08-21T10:50:56Z,success,66,0,13,200,,2023-01-01T00:00:00Z,0.0,false
 run_94f4adbd31aab6de29a2,federal_register_semiconductor,2026-08-09T10:55:05Z,2026-08-09T10:55:05Z,success,50,0,50,200,,2026-08-07T00:00:00Z,0.0,false
@@ -208,6 +218,7 @@ run_a589162416eda55641e1,fred_semiconductor,2026-08-22T10:43:08Z,2026-08-22T10:4
 run_a5cb9098a04dba2452ce,sec_memory_supplier_fundamentals,2026-08-20T10:50:05Z,2026-08-20T10:50:05Z,disabled,0,0,0,,Optional SEC_CONTACT_EMAIL is not configured,,0.0,false
 run_a5f0a3a3d92a8fa62352,bls_semiconductor_employment,2026-08-05T12:19:44Z,2026-08-05T12:19:44Z,success,29,0,29,200,,2026-05-01T00:00:00Z,0.0,false
 run_a6a956d5a4b55267b721,stanford_memory_prices,2026-08-10T21:51:37Z,2026-08-10T21:51:38Z,success,705,0,705,304,,2026-07-01T00:00:00Z,1.0,false
+run_a778c80ec7e5a0632ebf,keepa_ddr5_panel,2026-08-25T10:52:32Z,2026-08-25T10:52:32Z,disabled,0,0,0,,"Keepa requires KEEPA_API_KEY, KEEPA_DDR5_ASINS, and explicit public-export acknowledgement",,0.0,false
 run_a7919bb49a50f900f706,dramexchange_homepage,2026-08-11T11:07:25Z,2026-08-11T11:07:25Z,disabled,0,0,0,,Permission required; current Terms of Use restrict reproduction or distribution without prior written consent.,,0.0,false
 run_a793fb1d37a4ab023f7c,bestbuy_memory_products,2026-08-07T11:09:58Z,2026-08-07T11:09:58Z,disabled,0,0,0,,Optional BESTBUY_API_KEY is not configured,,0.0,false
 run_a7c3d6449a9514ceddbc,federal_register_semiconductor,2026-08-11T04:39:04Z,2026-08-11T04:39:04Z,success,50,0,50,200,,2026-08-07T00:00:00Z,0.0,false
@@ -301,6 +312,7 @@ run_e83c9b7c4dde30414d7a,fred_semiconductor,2026-08-20T10:49:50Z,2026-08-20T10:4
 run_ea4c822824e0660493f9,stanford_memory_prices,2026-08-11T04:14:54Z,2026-08-11T04:14:55Z,success,705,0,705,304,,2026-07-01T00:00:00Z,1.0,false
 run_ea9106f76128aab4de5f,keepa_ddr5_panel,2026-08-16T10:43:10Z,2026-08-16T10:43:10Z,disabled,0,0,0,,"Keepa requires KEEPA_API_KEY, KEEPA_DDR5_ASINS, and explicit public-export acknowledgement",,0.0,false
 run_eb43f722014a48234394,census_memory_exports,2026-08-11T04:18:08Z,2026-08-11T04:18:08Z,disabled,0,0,0,,Optional CENSUS_API_KEY is not configured,,0.0,false
+run_ebc40e5532a3a36c2436,census_memory_exports,2026-08-25T10:52:32Z,2026-08-25T10:52:32Z,disabled,0,0,0,,Optional CENSUS_API_KEY is not configured,,0.0,false
 run_ec1f0c7295c7694ea95e,bestbuy_memory_products,2026-08-11T03:39:12Z,2026-08-11T03:39:12Z,disabled,0,0,0,,Optional BESTBUY_API_KEY is not configured,,0.0,false
 run_eca5cd15835a8b52669f,sec_memory_supplier_fundamentals,2026-08-11T03:39:12Z,2026-08-11T03:39:12Z,disabled,0,0,0,,Optional SEC Company Facts integration requires an owner-approved contact identity for compliant automated access.,,0.0,false
 run_ed09ddfbbc0681cab616,gdelt_memory_news,2026-08-13T11:13:12Z,2026-08-13T11:13:23Z,degraded,0,0,0,429,GDELT DOC API rate limit reached (HTTP 429); the next scheduled update will retry.,,11.0,false
