@@ -16,7 +16,7 @@ dependencies = [
   "feedparser>=6.0,<7",
   "numpy>=1.26,<3",
   "polars>=1.17,<2",
-  "pyarrow>=16,<22",
+  "pyarrow>=16,<26",
   "PyYAML>=6.0,<7",
   "pytz>=2024.1",
   "requests>=2.32,<3",
@@ -25,8 +25,8 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-  "pytest>=8.3,<9",
-  "pytest-cov>=5,<7",
+  "pytest>=8.3,<10",
+  "pytest-cov>=5,<8",
   "ruff>=0.8,<1",
 ]
 
